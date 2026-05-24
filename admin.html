@@ -4,11 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Admin Panel - TESET System</title>
+  <title>ระบบควบคุมผู้ดูแลระบบ & วิเคราะห์สถิติ | ACS Exam Admin</title>
   <!-- Google Fonts: Prompt & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -17,11 +19,14 @@
         🎨 ระบบธีมสีและสไตล์แดชบอร์ดดึงมาจาก index.html เพื่อความกลมกลืน (Unified Design System)
         ========================================================================== */
     :root {
-      --primary: #c21a22; /* แดงเข้ม อัสสัมชัญ (ACS Crimson Red) */
+      --primary: #c21a22;
+      /* แดงเข้ม อัสสัมชัญ (ACS Crimson Red) */
       --primary-hover: #981218;
-      --secondary: #6b0f14; /* แดงเบอร์กันดีสำหรับองค์ประกอบหลัก (Burgundy Red) */
+      --secondary: #6b0f14;
+      /* แดงเบอร์กันดีสำหรับองค์ประกอบหลัก (Burgundy Red) */
       --secondary-light: #8c141a;
-      --accent: #d97706; /* ทองสง่างาม (ACS Gold) */
+      --accent: #d97706;
+      /* ทองสง่างาม (ACS Gold) */
       --accent-light: #fef3c7;
 
       /* สีสถานะ */
@@ -46,7 +51,7 @@
       --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
       --shadow-md: 0 8px 24px rgba(107, 15, 20, 0.08);
       --shadow-lg: 0 16px 36px rgba(107, 15, 20, 0.12);
-      
+
       --radius-sm: 8px;
       --radius-md: 16px;
       --radius-lg: 24px;
@@ -129,9 +134,17 @@
     }
 
     @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-      100% { transform: scale(1); }
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.03);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
     .school-logo-img {
@@ -177,8 +190,15 @@
     }
 
     @keyframes flash {
-      0%, 100% { opacity: 0.85; }
-      50% { opacity: 1; }
+
+      0%,
+      100% {
+        opacity: 0.85;
+      }
+
+      50% {
+        opacity: 1;
+      }
     }
 
     .header-actions {
@@ -230,12 +250,15 @@
         text-align: center;
         padding: 25px 15px;
       }
+
       .school-logo-container {
         margin: 0 auto;
       }
+
       .header-text p {
         justify-content: center;
       }
+
       .header-actions {
         width: 100%;
         justify-content: center;
@@ -272,8 +295,15 @@
     }
 
     @keyframes modalSlideIn {
-      from { opacity: 0; transform: translateY(24px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     .lock-logo-container {
@@ -366,15 +396,31 @@
     }
 
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-8px); }
-      40%, 80% { transform: translateX(8px); }
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20%,
+      60% {
+        transform: translateX(-8px);
+      }
+
+      40%,
+      80% {
+        transform: translateX(8px);
+      }
     }
 
     /* ==========================================================================
         📦 การ์ดแบบ Glassmorphism ดึงสไตล์เด่นมาจาก index.html
         ========================================================================== */
-    .card, .stat-card, .curriculum-card, .grades-rooms-card, .management-card {
+    .card,
+    .stat-card,
+    .curriculum-card,
+    .grades-rooms-card,
+    .management-card {
       background: var(--card-bg);
       border-radius: var(--radius-md);
       padding: 25px;
@@ -383,7 +429,11 @@
       transition: var(--transition);
     }
 
-    .card:hover, .stat-card:hover, .curriculum-card:hover, .grades-rooms-card:hover, .management-card:hover {
+    .card:hover,
+    .stat-card:hover,
+    .curriculum-card:hover,
+    .grades-rooms-card:hover,
+    .management-card:hover {
       box-shadow: var(--shadow-lg);
     }
 
@@ -452,20 +502,50 @@
     }
 
     /* เส้นสีขอบข้างแบบเดียวกับการ์ดสถานะใน index.html */
-    .stat-card.all { border-left: 5px solid var(--text-main); }
-    .stat-card.all .stat-card-icon { background: rgba(30, 41, 59, 0.08); color: var(--text-main); }
+    .stat-card.all {
+      border-left: 5px solid var(--text-main);
+    }
 
-    .stat-card.approved { border-left: 5px solid var(--success); }
-    .stat-card.approved .stat-card-icon { background: var(--success-bg); color: var(--success); }
+    .stat-card.all .stat-card-icon {
+      background: rgba(30, 41, 59, 0.08);
+      color: var(--text-main);
+    }
 
-    .stat-card.pending { border-left: 5px solid var(--warning); }
-    .stat-card.pending .stat-card-icon { background: var(--warning-bg); color: var(--warning); }
+    .stat-card.approved {
+      border-left: 5px solid var(--success);
+    }
 
-    .stat-card.rejected { border-left: 5px solid var(--danger); }
-    .stat-card.rejected .stat-card-icon { background: var(--danger-bg); color: var(--danger); }
+    .stat-card.approved .stat-card-icon {
+      background: var(--success-bg);
+      color: var(--success);
+    }
 
-    .stat-card.revenue { border-left: 5px solid var(--accent); }
-    .stat-card.revenue .stat-card-icon { background: var(--accent-light); color: var(--accent); }
+    .stat-card.pending {
+      border-left: 5px solid var(--warning);
+    }
+
+    .stat-card.pending .stat-card-icon {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .stat-card.rejected {
+      border-left: 5px solid var(--danger);
+    }
+
+    .stat-card.rejected .stat-card-icon {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .stat-card.revenue {
+      border-left: 5px solid var(--accent);
+    }
+
+    .stat-card.revenue .stat-card-icon {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
 
     /* ==========================================================================
         🏛️ ส่วนวิเคราะห์ตามประเภทหลักสูตร (Curriculum Stats)
@@ -615,8 +695,13 @@
       transition: width 1s ease-out;
     }
 
-    .normal .exam-progress-bar { background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%); }
-    .mlp .exam-progress-bar { background: linear-gradient(90deg, var(--accent) 0%, #b45309 100%); }
+    .normal .exam-progress-bar {
+      background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+    }
+
+    .mlp .exam-progress-bar {
+      background: linear-gradient(90deg, var(--accent) 0%, #b45309 100%);
+    }
 
     /* ==========================================================================
         📈 แดชบอร์ดรายระดับชั้นเรียนและรายห้องเรียน
@@ -679,7 +764,8 @@
       font-size: 0.9rem;
     }
 
-    .rooms-table th, .rooms-table td {
+    .rooms-table th,
+    .rooms-table td {
       padding: 11px 15px;
       border-bottom: 1px solid var(--border-color);
     }
@@ -853,7 +939,8 @@
       background: #ffffff;
     }
 
-    .data-table th, .data-table td {
+    .data-table th,
+    .data-table td {
       padding: 14px 16px;
       border-bottom: 1px solid var(--border-color);
       vertical-align: middle;
@@ -872,7 +959,8 @@
     }
 
     .data-table tbody tr:hover {
-      background: #fdfafb; /* ไฮไลต์สีชมพูบางอัสสัมชัญ */
+      background: #fdfafb;
+      /* ไฮไลต์สีชมพูบางอัสสัมชัญ */
     }
 
     .data-table tbody tr:last-child td {
@@ -929,9 +1017,20 @@
       margin-bottom: 4px;
     }
 
-    .exam-tag.teset { background: rgba(194, 26, 34, 0.08); color: var(--primary); }
-    .exam-tag.tsb { background: rgba(107, 15, 20, 0.08); color: var(--secondary); }
-    .exam-tag.both { background: var(--accent-light); color: var(--accent); }
+    .exam-tag.teset {
+      background: rgba(194, 26, 34, 0.08);
+      color: var(--primary);
+    }
+
+    .exam-tag.tsb {
+      background: rgba(107, 15, 20, 0.08);
+      color: var(--secondary);
+    }
+
+    .exam-tag.both {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
 
     .exam-price {
       font-weight: 700;
@@ -971,7 +1070,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.4);
+      background: rgba(0, 0, 0, 0.4);
       color: white;
       display: flex;
       align-items: center;
@@ -1005,9 +1104,23 @@
       transition: var(--transition);
     }
 
-    .status-badge.approved { background: var(--success-bg); color: var(--success-text); border: 1px solid rgba(16, 185, 129, 0.15); }
-    .status-badge.pending { background: var(--warning-bg); color: var(--warning-text); border: 1px solid rgba(245, 158, 11, 0.15); }
-    .status-badge.rejected { background: var(--danger-bg); color: var(--danger-text); border: 1px solid rgba(239, 68, 68, 0.15); }
+    .status-badge.approved {
+      background: var(--success-bg);
+      color: var(--success-text);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .status-badge.pending {
+      background: var(--warning-bg);
+      color: var(--warning-text);
+      border: 1px solid rgba(245, 158, 11, 0.15);
+    }
+
+    .status-badge.rejected {
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+    }
 
     /* ปุ่มจัดการรายแถว */
     .actions-cell {
@@ -1119,8 +1232,15 @@
     }
 
     @keyframes modalSlideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
 
     .modal-header-premium {
@@ -1200,7 +1320,7 @@
     .lightbox-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.9);
+      background: rgba(0, 0, 0, 0.9);
       z-index: 10000;
       display: none;
       align-items: center;
@@ -1239,8 +1359,8 @@
       max-height: 100%;
       object-fit: contain;
       border-radius: 8px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-      border: 2px solid rgba(255,255,255,0.1);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      border: 2px solid rgba(255, 255, 255, 0.1);
       transition: transform 0.3s ease;
     }
 
@@ -1251,8 +1371,8 @@
     }
 
     .btn-lightbox-tool {
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
       color: white;
       padding: 10px 18px;
       border-radius: 30px;
@@ -1266,7 +1386,7 @@
     }
 
     .btn-lightbox-tool:hover {
-      background: rgba(255,255,255,0.3);
+      background: rgba(255, 255, 255, 0.3);
     }
 
     /* สกรีนโหลดหลังบ้าน (Loading Screen ดึงดีไซน์ index.html) */
@@ -1295,7 +1415,9 @@
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .loading-text {
@@ -1328,12 +1450,24 @@
       gap: 15px;
     }
 
-    .edit-col-12 { grid-column: span 12; }
-    .edit-col-6 { grid-column: span 6; }
-    .edit-col-4 { grid-column: span 4; }
+    .edit-col-12 {
+      grid-column: span 12;
+    }
+
+    .edit-col-6 {
+      grid-column: span 6;
+    }
+
+    .edit-col-4 {
+      grid-column: span 4;
+    }
 
     @media (max-width: 600px) {
-      .edit-col-6, .edit-col-4 { grid-column: span 12; }
+
+      .edit-col-6,
+      .edit-col-4 {
+        grid-column: span 12;
+      }
     }
 
     .edit-field {
@@ -1373,7 +1507,6 @@
       margin-top: auto;
       border-top: 1px solid rgba(15, 32, 66, 0.05);
     }
-
   </style>
 </head>
 
@@ -1385,16 +1518,18 @@
   <div class="lock-screen-overlay" id="lockScreen">
     <div class="lock-box">
       <div class="lock-logo-container">
-        <img src="https://i.postimg.cc/FK5XzhGZ/logo-ACS.png" alt="ACS Logo" style="width: 80%; height: 80%; object-fit: contain;">
+        <img src="https://i.postimg.cc/FK5XzhGZ/logo-ACS.png" alt="ACS Logo"
+          style="width: 80%; height: 80%; object-fit: contain;">
       </div>
       <h2>เข้าสู่ระบบผู้ดูแลระบบ</h2>
       <p>ระบุรหัสผ่านผู้ดูแลระบบเพื่อเชื่อมโยงฐานข้อมูลโรงเรียนอัสสัมชัญศรีราชา</p>
-      
+
       <div class="passcode-input-group">
         <i class="fa-solid fa-key"></i>
-        <input type="password" id="adminPasscode" class="passcode-control" placeholder="••••••••" maxlength="20" autocomplete="off" onkeydown="if(event.key === 'Enter') unlockAdminSystem()">
+        <input type="password" id="adminPasscode" class="passcode-control" placeholder="••••••••" maxlength="20"
+          autocomplete="off" onkeydown="if(event.key === 'Enter') unlockAdminSystem()">
       </div>
-      
+
       <button class="btn-unlock" onclick="unlockAdminSystem()">
         <i class="fa-solid fa-unlock-keyhole"></i> ยืนยันรหัสผ่าน
       </button>
@@ -1405,11 +1540,12 @@
       🏛️ 2. แดชบอร์ดหลักควบคุมและประมวลข้อมูล (Dashboard Content Area)
       ========================================== -->
   <div class="container" style="display: none;" id="mainAppArea">
-    
+
     <!-- 🏛️ แบนเนอร์หัวแดชบอร์ดล้อดีไซน์หน้าบ้าน index.html -->
     <header class="header-banner">
       <div class="school-logo-container">
-        <img src="https://i.postimg.cc/FK5XzhGZ/logo-ACS.png" alt="Assumption College Sriracha Logo" class="school-logo-img">
+        <img src="https://i.postimg.cc/FK5XzhGZ/logo-ACS.png" alt="Assumption College Sriracha Logo"
+          class="school-logo-img">
       </div>
       <div class="header-text">
         <h1>ระบบควบคุมแอดมิน & วิเคราะห์สถิติ</h1>
@@ -1420,7 +1556,7 @@
           </span>
         </p>
       </div>
-      
+
       <div class="header-actions">
         <button class="btn-header" onclick="loadAllApplicantsData()">
           <i class="fa-solid fa-rotate"></i> ดึงข้อมูลใหม่
@@ -1432,10 +1568,11 @@
     </header>
 
     <!-- 📊 สถิติจำนวนคนสมัครและการเงิน Real-time -->
-    <h2 class="stats-section-title"><i class="fa-solid fa-chart-pie"></i> ข้อมูลสถิติเชิงลึก (Registration Statistics Dashboard)</h2>
-    
+    <h2 class="stats-section-title"><i class="fa-solid fa-chart-pie"></i> ข้อมูลสถิติเชิงลึก (Registration Statistics
+      Dashboard)</h2>
+
     <div class="stats-row">
-      
+
       <div class="stat-card all">
         <div class="stat-card-info">
           <h3>ผู้สมัครทั้งหมด</h3>
@@ -1485,7 +1622,7 @@
 
     <!-- 🏛️ การวิเคราะห์เจาะลึกประเภทหลักสูตร (ปกติ VS MLP) -->
     <div class="curriculum-grid">
-      
+
       <!-- ฝั่งหลักสูตรปกติ -->
       <div class="curriculum-card">
         <div class="curriculum-card-header normal">
@@ -1503,9 +1640,10 @@
               <strong class="highlight" id="curNormalRevenue">0 บาท</strong>
             </div>
           </div>
-          
+
           <div class="exams-breakdown-title">
-            <img src="https://i.postimg.cc/15Wx4Q4H/TESET-LOGO.png" alt="TESET" style="width:16px; height:16px; object-fit:contain;">
+            <img src="https://i.postimg.cc/15Wx4Q4H/TESET-LOGO.png" alt="TESET"
+              style="width:16px; height:16px; object-fit:contain;">
             <span>ยอดจำแนกวิชาสอบ (ปกติ)</span>
           </div>
           <div class="exam-bar-container" id="curNormalExamsArea">
@@ -1531,9 +1669,10 @@
               <strong class="highlight" style="color:var(--accent);" id="curMlpRevenue">0 บาท</strong>
             </div>
           </div>
-          
+
           <div class="exams-breakdown-title">
-            <img src="https://i.postimg.cc/02tgrsrZ/TSB-LOGO.png" alt="TSB" style="width:16px; height:16px; object-fit:contain;">
+            <img src="https://i.postimg.cc/02tgrsrZ/TSB-LOGO.png" alt="TSB"
+              style="width:16px; height:16px; object-fit:contain;">
             <span>ยอดจำแนกวิชาสอบ (MLP)</span>
           </div>
           <div class="exam-bar-container" id="curMlpExamsArea">
@@ -1546,7 +1685,7 @@
 
     <!-- 📈 สถิติจำนวนคนรายระดับชั้น และ ยอดรายห้อง -->
     <div class="grades-rooms-row">
-      
+
       <!-- สถิติตามระดับชั้น ป.1 - ม.6 -->
       <div class="grades-rooms-card">
         <h3 class="card-title"><i class="fa-solid fa-stairs"></i> สถิติแยกตามระดับชั้น (Grade-Level Breakdown)</h3>
@@ -1557,7 +1696,8 @@
 
       <!-- สถิติตามห้องเรียน -->
       <div class="grades-rooms-card">
-        <h3 class="card-title"><i class="fa-solid fa-chalkboard-user"></i> ยอดผู้ลงทะเบียนจำแนกรายห้องเรียน (Classroom Statistics)</h3>
+        <h3 class="card-title"><i class="fa-solid fa-chalkboard-user"></i> ยอดผู้ลงทะเบียนจำแนกรายห้องเรียน (Classroom
+          Statistics)</h3>
         <div class="rooms-table-container">
           <table class="rooms-table">
             <thead>
@@ -1579,22 +1719,26 @@
 
     <!-- 📋 ตารางควบคุม ค้นหา กรองข้อมูลฐานข้อมูล -->
     <div class="management-card">
-      
-      <h2 class="stats-section-title"><i class="fa-solid fa-database"></i> จัดการข้อมูลประวัติและแก้ไขผู้สมัคร (CRUD Control Centre)</h2>
-      
+
+      <h2 class="stats-section-title"><i class="fa-solid fa-database"></i> จัดการข้อมูลประวัติและแก้ไขผู้สมัคร (CRUD
+        Control Centre)</h2>
+
       <!-- แผงค้นหาและตัวกรองข้อมูลล้อดีไซน์ Checker -->
       <div class="filter-panel">
-        
+
         <div class="search-row">
           <div class="search-input-wrap">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="dbSearchInput" class="search-control" placeholder="พิมพ์ชื่อผู้สมัคร, เลขประจำตัวนักเรียน (5 หลัก), เลขบัตรประชาชน หรือ เลขใบสมัคร..." oninput="handleDbFilterChange()">
-            <button class="btn-search-clear" id="dbSearchClear" onclick="clearDbSearch()"><i class="fa-solid fa-circle-xmark"></i></button>
+            <input type="text" id="dbSearchInput" class="search-control"
+              placeholder="พิมพ์ชื่อผู้สมัคร, เลขประจำตัวนักเรียน (5 หลัก), เลขบัตรประชาชน หรือ เลขใบสมัคร..."
+              oninput="handleDbFilterChange()">
+            <button class="btn-search-clear" id="dbSearchClear" onclick="clearDbSearch()"><i
+                class="fa-solid fa-circle-xmark"></i></button>
           </div>
         </div>
 
         <div class="filter-grid">
-          
+
           <div class="filter-field">
             <label for="filterGrade">ระดับชั้นเรียน</label>
             <select id="filterGrade" class="filter-select" onchange="handleDbFilterChange()">
@@ -1650,7 +1794,8 @@
       <!-- รายละเอียดจำนวนแถวผลการค้นหา -->
       <div class="table-header-row">
         <div class="records-count-indicator">
-          สืบค้นผู้ลงทะเบียนพบ: <strong id="recordsCountFiltered">0</strong> ราย จากในฐานข้อมูลทั้งหมด <span id="recordsCountTotal">0</span> ราย
+          สืบค้นผู้ลงทะเบียนพบ: <strong id="recordsCountFiltered">0</strong> ราย จากในฐานข้อมูลทั้งหมด <span
+            id="recordsCountTotal">0</span> ราย
         </div>
       </div>
 
@@ -1680,7 +1825,8 @@
     <!-- สัญลักษณ์และท้ายแดชบอร์ด -->
     <footer>
       <p>&copy; 2569 โรงเรียนอัสสัมชัญศรีราชา - ระบบวิเคราะห์สถิติและความปลอดภัยฐานข้อมูลผู้สมัครสอบ</p>
-      <p style="margin-top:5px; font-size: 0.8rem; opacity: 0.6;">ออกแบบและพัฒนาเพื่อความกลมกลืนกับระบบลงทะเบียนสอบหลัก (AC Sriracha Design System)</p>
+      <p style="margin-top:5px; font-size: 0.8rem; opacity: 0.6;">ออกแบบและพัฒนาเพื่อความกลมกลืนกับระบบลงทะเบียนสอบหลัก
+        (AC Sriracha Design System)</p>
     </footer>
 
   </div>
@@ -1715,9 +1861,9 @@
       <div class="modal-body">
         <form id="editApplicantForm" onsubmit="handleEditFormSubmit(event)">
           <input type="hidden" id="editRegId">
-          
+
           <div class="edit-form-grid">
-            
+
             <div class="edit-col-6 edit-field">
               <label for="editStudentId">เลขประจำตัวนักเรียน (5 หลัก)</label>
               <input type="text" id="editStudentId" class="edit-control" maxlength="5" required pattern="\d{5}">
@@ -1753,6 +1899,8 @@
               <select id="editTitleEn" class="edit-control" required>
                 <option value="Master">Master</option>
                 <option value="Miss">Miss</option>
+                <option value="Mr.">Mr.</option>
+                <option value="Ms.">Ms.</option>
               </select>
             </div>
 
@@ -1831,7 +1979,8 @@
 
             <div class="edit-col-12 edit-field">
               <label for="editAdminComment">หมายเหตุแจ้งแจ้งผู้สมัคร (Admin Comment)</label>
-              <textarea id="editAdminComment" class="edit-control" rows="3" placeholder="ข้อความจะแสดงหน้าเว็บเมื่อผู้สมัครเข้าตรวจสอบสถานะ"></textarea>
+              <textarea id="editAdminComment" class="edit-control" rows="3"
+                placeholder="ข้อความจะแสดงหน้าเว็บเมื่อผู้สมัครเข้าตรวจสอบสถานะ"></textarea>
             </div>
 
           </div>
@@ -1858,7 +2007,7 @@
   <script>
     // ⚙️ ลิงก์เชื่อมต่อ API ไปยัง Google Apps Script
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw5PjTnoTHvlPu5eqiXplZsAg4SbuzfqhKL0l0tE1KpJIowH8FX7zxzkkmMDKwtGvRJ/exec";
-    
+
     let cachedApplicants = [];
     let currentRotation = 0;
 
@@ -1899,7 +2048,7 @@
       }
 
       showLoading(true, "กำลังเชื่อมโยงรหัสความปลอดภัยเข้าเซิร์ฟเวอร์...");
-      
+
       if (WEB_APP_URL && !WEB_APP_URL.includes("ใส่ลิงก์เว็บแอป")) {
         callBackendApi("adminGetList", { passcode: passcode })
           .then(response => {
@@ -1910,7 +2059,7 @@
               setTimeout(() => {
                 document.getElementById('lockScreen').style.display = 'none';
                 document.getElementById('mainAppArea').style.display = 'flex';
-                
+
                 cachedApplicants = response.records || [];
                 renderDashboardAndTable();
               }, 250);
@@ -1953,14 +2102,14 @@
         alert("รหัสผ่านโหมดจำลองไม่ถูกต้อง! กรุณาใช้รหัส: Hoshijima760");
         return;
       }
-      
+
       sessionStorage.setItem('acs_admin_passcode', passcode);
       document.getElementById('lockScreen').style.opacity = '0';
       setTimeout(() => {
         document.getElementById('lockScreen').style.display = 'none';
         document.getElementById('mainAppArea').style.display = 'flex';
         document.getElementById('mockupBadge').style.display = 'inline-flex';
-        
+
         createPremiumMockupData();
         renderDashboardAndTable();
       }, 250);
@@ -1974,13 +2123,13 @@
       const firstNamesEn = ["Somrak", "Jarupong", "Pimonpa", "Thanapon", "Nalinnipa", "Prachya", "Piyapat", "Waranyu", "Nattika", "Cholasit", "Hathaichanok", "Krittin", "Pattadon", "Ravisara", "Krikpon"];
       const lastNamesEn = ["Meechai", "Jongjit", "Thongdee", "Lertwattana", "Jitsawang", "Rattanapakdee", "Sirikuldech", "Samosorn", "Kaewmanee", "Phiromrak", "Boonprasert", "Wijitsin", "Kiatpaiboon", "Submangkang", "Rungruangkit"];
       const grades = ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
-      
+
       const exams = [
         "Thailand English Skills Evaluation Test (TESET2026)",
         "Thailand Spelling Bee (TSB2025)",
         "TESET2026 & TSB2025 (สมัครสองรายการ)"
       ];
-      
+
       const statuses = ["ยืนยันแล้ว", "รอตรวจสอบ", "เอกสารไม่ถูกต้อง"];
       const comments = [
         "ได้รับยอดโอนชำระเงินเรียบร้อยแล้ว เลขที่นั่งสอบจะจัดพิมพ์ล่วงหน้า 1 สัปดาห์",
@@ -1993,17 +2142,17 @@
       for (let i = 0; i < 15; i++) {
         const index = i;
         const regId = `REG-2026-${String(index + 1).padStart(4, '0')}`;
-        
+
         const grade = grades[index % grades.length];
         const rooms = classRoomMap[grade];
         const room = rooms[index % rooms.length];
         const classType = grade + room;
-        
+
         const nameIndex = index;
         const isMale = nameIndex % 2 === 0;
         const titleTh = isMale ? titlesTh[nameIndex % 2 === 0 ? 0 : 2] : titlesTh[nameIndex % 2 === 0 ? 1 : 3];
         const titleEn = isMale ? titlesEn[0] : titlesEn[1];
-        
+
         const exam = exams[index % exams.length];
         let totalFee = 380;
         if (exam.includes("TSB")) totalFee = 360;
@@ -2102,19 +2251,19 @@
     // ==========================================
     function getCurriculumType(classType) {
       if (!classType) return "ปกติ";
-      
+
       if (classType.includes('/')) {
         const roomPart = classType.split('/')[1];
         if (roomPart && !isNaN(roomPart.charAt(0))) {
           return "ปกติ";
         }
       }
-      
+
       if (/[A-Za-z]/.test(classType)) {
         return "MLP";
       }
 
-      return "ปกติ"; 
+      return "ปกติ";
     }
 
     function renderDashboardAndTable() {
@@ -2149,7 +2298,7 @@
       cachedApplicants.forEach(rec => {
         const fee = parseFloat(rec.totalFee) || 0;
         const curType = getCurriculumType(rec.classType);
-        
+
         if (rec.status === "ยืนยันแล้ว") {
           countApproved++;
           totalRevenueAll += fee;
@@ -2210,7 +2359,7 @@
 
     function renderExamsProgress(elementId, total, teset, tsb, both) {
       const area = document.getElementById(elementId);
-      
+
       const pctTeset = total > 0 ? Math.round((teset / total) * 100) : 0;
       const pctTsb = total > 0 ? Math.round((tsb / total) * 100) : 0;
       const pctBoth = total > 0 ? Math.round((both / total) * 100) : 0;
@@ -2274,7 +2423,7 @@
       tbody.innerHTML = "";
 
       const rooms = Object.keys(roomStatsMap).sort();
-      
+
       if (rooms.length === 0) {
         tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">ยังไม่มีข้อมูลห้องเรียน</td></tr>';
         return;
@@ -2330,12 +2479,12 @@
           const studentId = rec.studentId.toLowerCase();
           const nationalId = rec.nationalId.toLowerCase();
           const regId = rec.registrationId.toLowerCase();
-          
-          if (!nameTh.includes(searchVal) && 
-              !nameEn.includes(searchVal) && 
-              !studentId.includes(searchVal) && 
-              !nationalId.includes(searchVal) && 
-              !regId.includes(searchVal)) {
+
+          if (!nameTh.includes(searchVal) &&
+            !nameEn.includes(searchVal) &&
+            !studentId.includes(searchVal) &&
+            !nationalId.includes(searchVal) &&
+            !regId.includes(searchVal)) {
             return false;
           }
         }
@@ -2381,7 +2530,7 @@
         let examBadgeClass = "teset";
         let examShortText = "TESET 2026";
         let examLogo = "https://i.postimg.cc/15Wx4Q4H/TESET-LOGO.png";
-        
+
         if (rec.exams.includes("TSB")) {
           examBadgeClass = "tsb";
           examShortText = "TSB 2025";
@@ -2499,7 +2648,7 @@
     function openSlipLightbox(url) {
       if (!url) return;
       const directUrl = getDirectDriveImageUrl(url);
-      
+
       currentRotation = 0;
       const img = document.getElementById('lightboxTargetImg');
       img.src = directUrl;
@@ -2507,7 +2656,7 @@
 
       document.getElementById('btnLightboxDownload').href = url;
       document.getElementById('slipLightbox').style.display = 'flex';
-      document.body.style.overflow = 'hidden'; 
+      document.body.style.overflow = 'hidden';
     }
 
     function closeSlipLightbox() {
@@ -2528,7 +2677,7 @@
       if (!record) return;
 
       if (!confirm(`คุณต้องการเปลี่ยนสถานะของ ${record.titleTh}${record.firstNameTh} ${record.lastNameTh} เป็น "${newStatus}" ใช่หรือไม่?`)) {
-        loadAllApplicantsData(); 
+        loadAllApplicantsData();
         return;
       }
 
@@ -2585,7 +2734,7 @@
       if (!record) return;
 
       const verifyName = `${record.titleTh}${record.firstNameTh} ${record.lastNameTh}`;
-      
+
       if (!confirm(`⚠️ คำเตือนสำคัญ!\n\nคุณกำลังจะลบรายชื่อผู้สมัครสอบ "${verifyName}" (รหัส: ${regId}) ออกจากฐานข้อมูลใน Google Sheet อย่างถาวร!\n\nต้องการดำเนินการต่อใช่หรือไม่?`)) {
         return;
       }
@@ -2643,7 +2792,7 @@
       document.getElementById('editFirstNameEn').value = record.firstNameEn;
       document.getElementById('editLastNameEn').value = record.lastNameEn;
       document.getElementById('editGrade').value = record.grade;
-      
+
       updateEditClassRoomOptions();
       document.getElementById('editClassType').value = record.classType;
 
