@@ -1,0 +1,2815 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ระบบควบคุมผู้ดูแลระบบ & วิเคราะห์สถิติ | ACS Exam Admin</title>
+  <!-- Google Fonts: Prompt & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ==========================================================================
+        🎨 ระบบธีมสีและสไตล์แดชบอร์ด (Dashboard Design System)
+        ========================================================================== */
+    :root {
+      --primary: #c21a22; /* แดงอัสสัมชัญ */
+      --primary-hover: #981218;
+      --secondary: #6b0f14; /* แดงเบอร์กันดี */
+      --accent: #d97706; /* ทองสง่า */
+      --accent-light: #fef3c7;
+      
+      /* Dark / Glassmorphism Design Tokens */
+      --dark-slate-900: #0f172a;
+      --dark-slate-800: #1e293b;
+      --dark-slate-700: #334155;
+      --light-bg: #f8fafc;
+      --border-color: #e2e8f0;
+      
+      /* สีแสดงสถานะการชำระเงิน */
+      --success: #10b981;
+      --success-bg: #d1fae5;
+      --success-text: #065f46;
+      --warning: #f59e0b;
+      --warning-bg: #fef3c7;
+      --warning-text: #92400e;
+      --danger: #ef4444;
+      --danger-bg: #fee2e2;
+      --danger-text: #991b1b;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 18px rgba(15, 23, 42, 0.05);
+      --shadow-lg: 0 12px 30px rgba(15, 23, 42, 0.08);
+      
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Prompt', 'Inter', sans-serif;
+      background-color: var(--light-bg);
+      color: #1e293b;
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* สกรีนยืนยันตัวตน (Lock Screen Overlay) */
+    .lock-screen-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--dark-slate-900) 0%, var(--secondary) 100%);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: var(--transition);
+    }
+
+    .lock-box {
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: zoomIn 0.4s ease-out;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .lock-logo-container {
+      background: var(--primary);
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px auto;
+      box-shadow: 0 8px 16px rgba(194, 26, 34, 0.2);
+    }
+
+    .lock-logo-container i {
+      color: #ffffff;
+      font-size: 2.2rem;
+    }
+
+    .lock-box h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--dark-slate-900);
+      margin-bottom: 10px;
+    }
+
+    .lock-box p {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-bottom: 25px;
+    }
+
+    .passcode-input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .passcode-input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 1.1rem;
+    }
+
+    .passcode-control {
+      width: 100%;
+      padding: 14px 14px 14px 45px;
+      font-size: 1.1rem;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      outline: none;
+      transition: var(--transition);
+      letter-spacing: 2px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .passcode-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(194, 26, 34, 0.1);
+    }
+
+    .btn-unlock {
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      font-family: 'Prompt', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(194, 26, 34, 0.2);
+      transition: var(--transition);
+    }
+
+    .btn-unlock:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    /* สั่นเตือนรหัสผิด */
+    .shake {
+      animation: shake 0.4s linear;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-10px); }
+      40%, 80% { transform: translateX(10px); }
+    }
+
+    /* ==========================================================================
+        🏛️ โครงสร้างเลย์เอาต์หลักแดชบอร์ด (Dashboard Main Layout)
+        ========================================================================== */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ส่วนหัว Dashboard Header */
+    .dashboard-header {
+      background: linear-gradient(135deg, var(--dark-slate-900) 0%, var(--secondary) 100%);
+      color: #ffffff;
+      padding: 15px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-md);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-logo {
+      background: #ffffff;
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .header-title h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .header-title p {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-header {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-family: 'Prompt', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .btn-header:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-header.danger {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    .btn-header.danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+      color: #ffffff;
+    }
+
+    /* พื้นที่เนื้อหาหลัก Main Dashboard Area */
+    .dashboard-content {
+      flex: 1;
+      padding: 30px;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* ==========================================================================
+        📊 บล็อกการ์ดสถิติ (Statistics Block)
+        ========================================================================== */
+    .stats-section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--dark-slate-900);
+      margin-bottom: -15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stats-section-title i {
+      color: var(--primary);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat-card-info h3 {
+      font-size: 0.88rem;
+      color: #64748b;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .stat-card-info .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--dark-slate-900);
+    }
+
+    .stat-card-info .stat-desc {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    .stat-card-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    /* ธีมสีแยกตามประเภทสถิติ */
+    .stat-card.all { border-left: 5px solid var(--dark-slate-800); }
+    .stat-card.all .stat-card-icon { background: rgba(30, 41, 59, 0.08); color: var(--dark-slate-800); }
+
+    .stat-card.approved { border-left: 5px solid var(--success); }
+    .stat-card.approved .stat-card-icon { background: rgba(16, 185, 129, 0.08); color: var(--success); }
+
+    .stat-card.pending { border-left: 5px solid var(--warning); }
+    .stat-card.pending .stat-card-icon { background: rgba(245, 158, 11, 0.08); color: var(--warning); }
+
+    .stat-card.rejected { border-left: 5px solid var(--danger); }
+    .stat-card.rejected .stat-card-icon { background: rgba(239, 108, 108, 0.08); color: var(--danger); }
+
+    .stat-card.revenue { border-left: 5px solid var(--accent); }
+    .stat-card.revenue .stat-card-icon { background: rgba(217, 119, 6, 0.08); color: var(--accent); }
+
+    /* ==========================================================================
+        🏛️ ส่วนวิเคราะห์ตามประเภทหลักสูตร (Curriculum Analytics Grid)
+        ========================================================================== */
+    .curriculum-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+    }
+
+    @media (max-width: 1024px) {
+      .curriculum-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .curriculum-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .curriculum-card-header {
+      padding: 20px 24px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .curriculum-card-header.normal {
+      background: linear-gradient(135deg, var(--dark-slate-800) 0%, var(--dark-slate-700) 100%);
+    }
+
+    .curriculum-card-header.mlp {
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+    }
+
+    .curriculum-card-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .curriculum-card-header .cur-badge {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .curriculum-card-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      flex: 1;
+    }
+
+    .cur-stat-top-row {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 15px;
+      background: var(--light-bg);
+      border-radius: var(--radius-md);
+      padding: 15px;
+      border: 1px solid var(--border-color);
+    }
+
+    .cur-top-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cur-top-item span {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    .cur-top-item strong {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--dark-slate-900);
+    }
+
+    .cur-top-item strong.highlight {
+      color: var(--primary);
+    }
+
+    /* สถิติสอบย่อย (Exams Sub-Stats) */
+    .exams-breakdown-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #475569;
+      border-bottom: 1.5px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+
+    .exam-bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .exam-bar-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .exam-bar-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+    }
+
+    .exam-bar-label {
+      font-weight: 500;
+      color: var(--dark-slate-800);
+    }
+
+    .exam-bar-value {
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .exam-progress-bg {
+      background: #e2e8f0;
+      height: 8px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .exam-progress-bar {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 1s ease-out;
+    }
+
+    .normal .exam-progress-bar { background: var(--dark-slate-700); }
+    .mlp .exam-progress-bar { background: var(--primary); }
+
+    /* ==========================================================================
+        📈 สถิติรายระดับชั้นเรียนและรายห้องเรียน (Grades & Rooms Analytics)
+        ========================================================================== */
+    .grades-rooms-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+    }
+
+    @media (max-width: 1024px) {
+      .grades-rooms-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .grades-rooms-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--dark-slate-900);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid rgba(15, 23, 42, 0.05);
+      padding-bottom: 12px;
+    }
+
+    .card-title i {
+      color: var(--primary);
+    }
+
+    .grades-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    /* ตารางแสดงข้อมูลรายห้องแบบ Collapse */
+    .rooms-table-container {
+      max-height: 380px;
+      overflow-y: auto;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+    }
+
+    .rooms-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .rooms-table th, .rooms-table td {
+      padding: 10px 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .rooms-table th {
+      background: var(--light-bg);
+      color: #475569;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .rooms-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .rooms-table tbody tr:hover {
+      background: rgba(15, 23, 42, 0.01);
+    }
+
+    /* ==========================================================================
+        ⚙️ แผงควบคุม ค้นหา กรองข้อมูล (Search & Control Panel)
+        ========================================================================== */
+    .management-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .filter-panel {
+      background: var(--light-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 15px;
+      width: 100%;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-input-wrap i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+    }
+
+    .search-control {
+      width: 100%;
+      padding: 12px 12px 12px 42px;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      outline: none;
+      font-family: 'Prompt', sans-serif;
+      transition: var(--transition);
+    }
+
+    .search-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(194, 26, 34, 0.1);
+    }
+
+    .btn-search-clear {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      display: none;
+    }
+
+    .btn-search-clear:hover {
+      color: var(--danger);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    @media (max-width: 820px) {
+      .filter-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .filter-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .filter-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-field label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .filter-select {
+      font-family: 'Prompt', sans-serif;
+      padding: 10px;
+      font-size: 0.9rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      outline: none;
+      background-color: #ffffff;
+      color: var(--dark-slate-900);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .filter-select:focus {
+      border-color: var(--primary);
+    }
+
+    /* ส่วนหัวตารางจัดการและผลการค้นหา */
+    .table-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .records-count-indicator {
+      font-size: 0.9rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .records-count-indicator strong {
+      color: var(--primary);
+    }
+
+    /* ==========================================================================
+        📋 ตารางแสดงผลรายชื่อผู้สมัคร (Applicants Data Table)
+        ========================================================================== */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+      min-width: 1200px;
+    }
+
+    .data-table th, .data-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    .data-table th {
+      background: var(--light-bg);
+      color: #475569;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      letter-spacing: 0.5px;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .data-table tbody tr:hover {
+      background: #f8fafc;
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* รหัสสมัคร REG ID */
+    .reg-id-cell {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.85rem;
+    }
+
+    /* ข้อมูลส่วนตัวผู้สมัคร */
+    .student-info-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .student-name-th {
+      font-weight: 600;
+      color: var(--dark-slate-900);
+    }
+
+    .student-name-en {
+      font-size: 0.78rem;
+      color: #64748b;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .student-meta {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 3px;
+    }
+
+    /* วิชาสอบ */
+    .exam-cell {
+      max-width: 200px;
+      line-height: 1.3;
+    }
+
+    .exam-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .exam-tag.teset { background: rgba(194, 26, 34, 0.08); color: var(--primary); }
+    .exam-tag.tsb { background: rgba(15, 23, 42, 0.08); color: var(--dark-slate-800); }
+    .exam-tag.both { background: rgba(217, 119, 6, 0.08); color: var(--accent); }
+
+    .exam-price {
+      font-weight: 700;
+      color: var(--dark-slate-900);
+    }
+
+    /* หลักฐานสลิปพรีวิว (Slip Thumbnail Preview) */
+    .slip-thumbnail-box {
+      width: 50px;
+      height: 70px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      background: #e2e8f0;
+      transition: var(--transition);
+    }
+
+    .slip-thumbnail-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .slip-thumbnail-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .slip-thumbnail-box::after {
+      content: '\f002';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: var(--transition);
+      font-size: 0.9rem;
+    }
+
+    .slip-thumbnail-box:hover::after {
+      opacity: 1;
+    }
+
+    .no-slip-badge {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    /* ป้ายบอกสถานะการชำระเงิน (Status Badges) */
+    .status-badge {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+      transition: var(--transition);
+    }
+
+    .status-badge:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.95);
+    }
+
+    .status-badge.approved { background: var(--success-bg); color: var(--success-text); }
+    .status-badge.pending { background: var(--warning-bg); color: var(--warning-text); }
+    .status-badge.rejected { background: var(--danger-bg); color: var(--danger-text); }
+
+    /* ปุ่มแก้ไข ลบ (Action Buttons) */
+    .actions-cell {
+      white-space: nowrap;
+    }
+
+    .btn-action {
+      background: none;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    .btn-action.edit {
+      color: #2563eb;
+      background: rgba(37, 99, 235, 0.06);
+      border: 1px solid rgba(37, 99, 235, 0.1);
+    }
+
+    .btn-action.edit:hover {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 3px 8px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-action.delete {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.06);
+      border: 1px solid rgba(239, 68, 68, 0.1);
+      margin-left: 8px;
+    }
+
+    .btn-action.delete:hover {
+      background: var(--danger);
+      color: #ffffff;
+      box-shadow: 0 3px 8px rgba(239, 68, 68, 0.2);
+    }
+
+    /* กล่องข้อความความเห็นแอดมิน */
+    .admin-note-indicator {
+      font-size: 0.78rem;
+      color: #64748b;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* กล่องไม่พบข้อมูล (No Data Box) */
+    .no-data-box {
+      padding: 50px 20px;
+      text-align: center;
+      background: #ffffff;
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      color: #94a3b8;
+    }
+
+    .no-data-box i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #cbd5e1;
+    }
+
+    /* ==========================================================================
+        🔔 หน้าต่างป๊อปอัปและฟอร์มแก้ไข (Modals & Lightbox Setup)
+        ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      max-width: 640px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      animation: modalSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes modalSlideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      background: var(--dark-slate-900);
+      color: #ffffff;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .btn-modal-close {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      font-size: 1.25rem;
+      transition: var(--transition);
+    }
+
+    .btn-modal-close:hover {
+      color: #ffffff;
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      max-height: 75vh;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      background: var(--light-bg);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .btn-modal {
+      font-family: 'Prompt', sans-serif;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.92rem;
+      transition: var(--transition);
+    }
+
+    .btn-modal.cancel {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      color: #475569;
+    }
+
+    .btn-modal.cancel:hover {
+      background: #f1f5f9;
+    }
+
+    .btn-modal.save {
+      background: var(--primary);
+      border: none;
+      color: #ffffff;
+    }
+
+    .btn-modal.save:hover {
+      background: var(--primary-hover);
+    }
+
+    /* 🖼️ ภาพขยายสลิปโอนเงิน (Image Lightbox Modal) */
+    .lightbox-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .lightbox-close-btn {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      background: none;
+      border: none;
+      color: #ffffff;
+      font-size: 2.2rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .lightbox-close-btn:hover {
+      color: var(--danger);
+      transform: scale(1.1);
+    }
+
+    .lightbox-image-container {
+      max-width: 90%;
+      max-height: 80%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .lightbox-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      border: 2px solid rgba(255,255,255,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .lightbox-toolbar {
+      margin-top: 20px;
+      display: flex;
+      gap: 15px;
+    }
+
+    .btn-lightbox-tool {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-family: 'Prompt', sans-serif;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .btn-lightbox-tool:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* สกรีนโหลดหลังบ้าน (Loading Screen) */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.85);
+      z-index: 10001;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 15px;
+      backdrop-filter: blur(2px);
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(194, 26, 34, 0.1);
+      border-left-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--dark-slate-900);
+    }
+
+    /* ป้ายสถานะสภาพแวดล้อม (Local Mockup Badge) */
+    .mockup-status-badge {
+      background: #f59e0b;
+      color: #ffffff;
+      padding: 3px 10px;
+      border-radius: 30px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      display: none;
+      align-items: center;
+      gap: 5px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.8; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
+
+    /* ปุ่มแก้ไขสถานะด่วนในแถบตาราง */
+    .quick-status-select {
+      font-family: 'Prompt', sans-serif;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      background-color: #ffffff;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .quick-status-select:focus {
+      border-color: var(--primary);
+    }
+
+    /* ==========================================================================
+        ⚙️ การออกแบบฟอร์มในโมดัล (Modal Form Layout)
+        ========================================================================== */
+    .edit-form-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 15px;
+    }
+
+    .edit-col-12 { grid-column: span 12; }
+    .edit-col-6 { grid-column: span 6; }
+    .edit-col-4 { grid-column: span 4; }
+
+    @media (max-width: 600px) {
+      .edit-col-6, .edit-col-4 { grid-column: span 12; }
+    }
+
+    .edit-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .edit-field label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .edit-control {
+      font-family: 'Prompt', sans-serif;
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      outline: none;
+      background: #ffffff;
+      transition: var(--transition);
+    }
+
+    .edit-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(194, 26, 34, 0.1);
+    }
+
+    /* ท้ายตารางและลิขสิทธิ์ */
+    footer {
+      background: var(--dark-slate-900);
+      color: #94a3b8;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.85rem;
+      margin-top: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- ==========================================
+      🔒 1. ส่วนหน้ากากล็อกอินตรวจสอบสิทธิ์ (Lock Screen)
+      ========================================== -->
+  <div class="lock-screen-overlay" id="lockScreen">
+    <div class="lock-box">
+      <div class="lock-logo-container">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <h2>เข้าสู่ระบบหลังบ้านแอดมิน</h2>
+      <p>กรุณาระบุรหัสผ่านผู้ดูแลระบบที่ตั้งค่าไว้ในระบบเซิร์ฟเวอร์โรงเรียนอัสสัมชัญศรีราชา เพื่อยืนยันสิทธิ์เข้าถึงฐานข้อมูล</p>
+      
+      <div class="passcode-input-group">
+        <i class="fa-solid fa-key"></i>
+        <input type="password" id="adminPasscode" class="passcode-control" placeholder="••••••••" maxlength="20" autocomplete="off" onkeydown="if(event.key === 'Enter') unlockAdminSystem()">
+      </div>
+      
+      <button class="btn-unlock" onclick="unlockAdminSystem()">
+        <i class="fa-solid fa-unlock-keyhole"></i> ตรวจสอบรหัสผ่าน
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+      🏛️ 2. ระบบแดชบอร์ดหลักควบคุมการทำงาน (Dashboard UI)
+      ========================================== -->
+  <div class="app-container" style="display: none;" id="mainAppArea">
+    
+    <!-- แถบนำทางด้านบน Header -->
+    <header class="dashboard-header">
+      <div class="header-brand">
+        <div class="header-logo">
+          <!-- โลโก้จำลองอัสสัมชัญศรีราชาสีส้ม/แดง -->
+          <svg viewBox="0 0 100 100" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="50,10 90,85 10,85" fill="#c21a22" stroke="#d97706" stroke-width="4"/>
+            <text x="50" y="65" font-family="'Prompt', sans-serif" font-size="28" font-weight="bold" fill="white" text-anchor="middle">ACS</text>
+          </svg>
+        </div>
+        <div class="header-title">
+          <h1>ACS Exam Admin Dashboard</h1>
+          <p>
+            ระบบประมวลข้อมูลผู้ลงทะเบียนสอบออนไลน์ ACS TESET & TSB
+            <span class="mockup-status-badge" id="mockupBadge"><i class="fa-solid fa-triangle-exclamation"></i> โหมดทดสอบจำลอง (Mockup)</span>
+          </p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="btn-header" onclick="loadAllApplicantsData()">
+          <i class="fa-solid fa-rotate"></i> รีเฟรชข้อมูล
+        </button>
+        <button class="btn-header danger" onclick="lockAdminSystem()">
+          <i class="fa-solid fa-lock"></i> ล็อกระบบ
+        </button>
+      </div>
+    </header>
+
+    <main class="dashboard-content">
+      
+      <!-- 📊 กราฟสถิติจำนวนคนสมัครและการเงิน Real-time -->
+      <h2 class="stats-section-title"><i class="fa-solid fa-chart-pie"></i> การวิเคราะห์ข้อมูลภาพรวม (System Overview Analytics)</h2>
+      
+      <div class="stats-row">
+        
+        <div class="stat-card all">
+          <div class="stat-card-info">
+            <h3>ผู้สมัครทั้งหมด</h3>
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-desc">จำนวนการทำรายการส่งฟอร์มรวม</div>
+          </div>
+          <div class="stat-card-icon"><i class="fa-solid fa-users"></i></div>
+        </div>
+
+        <div class="stat-card approved">
+          <div class="stat-card-info">
+            <h3>ยืนยันสลิปแล้ว</h3>
+            <div class="stat-value" style="color:var(--success);" id="statApproved">0</div>
+            <div class="stat-desc">ตรวจสอบยอดเงินผ่านเรียบร้อย</div>
+          </div>
+          <div class="stat-card-icon"><i class="fa-solid fa-circle-check"></i></div>
+        </div>
+
+        <div class="stat-card pending">
+          <div class="stat-card-info">
+            <h3>รอการตรวจสอบ</h3>
+            <div class="stat-value" style="color:var(--warning);" id="statPending">0</div>
+            <div class="stat-desc">แนบสลิปใหม่ รอแอดมินยืนยัน</div>
+          </div>
+          <div class="stat-card-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+        </div>
+
+        <div class="stat-card rejected">
+          <div class="stat-card-info">
+            <h3>เอกสารไม่ถูกต้อง</h3>
+            <div class="stat-value" style="color:var(--danger);" id="statRejected">0</div>
+            <div class="stat-desc">สลิปไม่ตรง/เกิดข้อผิดพลาด</div>
+          </div>
+          <div class="stat-card-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+        </div>
+
+        <div class="stat-card revenue">
+          <div class="stat-card-info">
+            <h3>รายได้จากการสมัครรวม</h3>
+            <div class="stat-value" style="color:var(--accent);" id="statTotalRevenue">0 ฿</div>
+            <div class="stat-desc">ยอดเงินรวมทุกประเภทหลักสูตร</div>
+          </div>
+          <div class="stat-card-icon"><i class="fa-solid fa-wallet"></i></div>
+        </div>
+
+      </div>
+
+      <!-- 🏛️ การวิเคราะห์เจาะลึกประเภทหลักสูตร (ปกติ VS MLP) -->
+      <div class="curriculum-grid">
+        
+        <!-- ฝั่งหลักสูตรปกติ -->
+        <div class="curriculum-card">
+          <div class="curriculum-card-header normal">
+            <h2><i class="fa-solid fa-school"></i> หลักสูตรปกติ (Normal Curriculum)</h2>
+            <span class="cur-badge">ห้อง / ตัวเลข (/1, /2...)</span>
+          </div>
+          <div class="curriculum-card-body">
+            <div class="cur-stat-top-row">
+              <div class="cur-top-item">
+                <span>จำนวนคนสมัคร</span>
+                <strong id="curNormalCount">0 คน</strong>
+              </div>
+              <div class="cur-top-item">
+                <span>รวมยอดรายได้สะสม</span>
+                <strong class="highlight" id="curNormalRevenue">0 บาท</strong>
+              </div>
+            </div>
+            
+            <div class="exams-breakdown-title"><i class="fa-solid fa-list-check"></i> ยอดจำแนกวิชาสอบ (Normal)</div>
+            <div class="exam-bar-container" id="curNormalExamsArea">
+              <!-- แถบจำแนกวิชาสอบจะอัปเดตแบบไดนามิก -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ฝั่งหลักสูตร MLP / IEP / SEP / พิเศษ -->
+        <div class="curriculum-card">
+          <div class="curriculum-card-header mlp">
+            <h2><i class="fa-solid fa-award"></i> หลักสูตร MLP / พิเศษ (MLP Curriculum)</h2>
+            <span class="cur-badge">ห้อง / ตัวอักษร (A, B, IS, IB...)</span>
+          </div>
+          <div class="curriculum-card-body">
+            <div class="cur-stat-top-row">
+              <div class="cur-top-item">
+                <span>จำนวนคนสมัคร</span>
+                <strong id="curMlpCount">0 คน</strong>
+              </div>
+              <div class="cur-top-item">
+                <span>รวมยอดรายได้สะสม</span>
+                <strong class="highlight" style="color:var(--primary);" id="curMlpRevenue">0 บาท</strong>
+              </div>
+            </div>
+            
+            <div class="exams-breakdown-title"><i class="fa-solid fa-list-check"></i> ยอดจำแนกวิชาสอบ (MLP)</div>
+            <div class="exam-bar-container" id="curMlpExamsArea">
+              <!-- แถบจำแนกวิชาสอบจะอัปเดตแบบไดนามิก -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 📈 สถิติจำนวนคนรายระดับชั้น และ ยอดรายห้อง -->
+      <div class="grades-rooms-row">
+        
+        <!-- สถิติตามระดับชั้น ป.1 - ม.6 -->
+        <div class="grades-rooms-card">
+          <h3 class="card-title"><i class="fa-solid fa-stairs"></i> สถิติแยกตามระดับชั้น (Grade-Level Breakdown)</h3>
+          <div class="grades-list-container" id="gradeStatsArea">
+            <!-- Progress bar สำหรับระดับชั้น -->
+          </div>
+        </div>
+
+        <!-- สถิติตามห้องเรียน -->
+        <div class="grades-rooms-card">
+          <h3 class="card-title"><i class="fa-solid fa-chalkboard-user"></i> ยอดผู้ลงทะเบียนจำแนกรายห้องเรียน (Classroom Statistics)</h3>
+          <div class="rooms-table-container">
+            <table class="rooms-table">
+              <thead>
+                <tr>
+                  <th>ระดับชั้น/ห้อง</th>
+                  <th>หลักสูตร</th>
+                  <th style="text-align: center;">จำนวนผู้สมัคร</th>
+                  <th style="text-align: right;">เงินสะสมโดยประมาณ</th>
+                </tr>
+              </thead>
+              <tbody id="roomsStatsTableArea">
+                <!-- ข้อมูลห้องเรียนจะแทรกเข้ามา -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 📋 บล็อกการจัดการฐานข้อมูลและสืบค้น -->
+      <div class="management-card">
+        
+        <h2 class="stats-section-title"><i class="fa-solid fa-database"></i> จัดการฐานข้อมูลผู้สมัครสอบ (Applicant Registration Database)</h2>
+        
+        <!-- แผงค้นหาและตัวกรองข้อมูล -->
+        <div class="filter-panel">
+          
+          <div class="search-row">
+            <div class="search-input-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="dbSearchInput" class="search-control" placeholder="พิมพ์ชื่อผู้สมัคร, เลขประจำตัวนักเรียน (5 หลัก), เลขบัตรประชาชน หรือ เลขใบสมัคร..." oninput="handleDbFilterChange()">
+              <button class="btn-search-clear" id="dbSearchClear" onclick="clearDbSearch()"><i class="fa-solid fa-circle-xmark"></i></button>
+            </div>
+          </div>
+
+          <div class="filter-grid">
+            
+            <div class="filter-field">
+              <label for="filterGrade">ระดับชั้นเรียน</label>
+              <select id="filterGrade" class="filter-select" onchange="handleDbFilterChange()">
+                <option value="">-- แสดงทั้งหมด --</option>
+                <option value="ป.1">ประถมศึกษาปีที่ 1 (ป.1)</option>
+                <option value="ป.2">ประถมศึกษาปีที่ 2 (ป.2)</option>
+                <option value="ป.3">ประถมศึกษาปีที่ 3 (ป.3)</option>
+                <option value="ป.4">ประถมศึกษาปีที่ 4 (ป.4)</option>
+                <option value="ป.5">ประถมศึกษาปีที่ 5 (ป.5)</option>
+                <option value="ป.6">ประถมศึกษาปีที่ 6 (ป.6)</option>
+                <option value="ม.1">มัธยมศึกษาปีที่ 1 (ม.1)</option>
+                <option value="ม.2">มัธยมศึกษาปีที่ 2 (ม.2)</option>
+                <option value="ม.3">มัธยมศึกษาปีที่ 3 (ม.3)</option>
+                <option value="ม.4">มัธยมศึกษาปีที่ 4 (ม.4)</option>
+                <option value="ม.5">มัธยมศึกษาปีที่ 5 (ม.5)</option>
+                <option value="ม.6">มัธยมศึกษาปีที่ 6 (ม.6)</option>
+              </select>
+            </div>
+
+            <div class="filter-field">
+              <label for="filterCurriculum">หลักสูตรห้องเรียน</label>
+              <select id="filterCurriculum" class="filter-select" onchange="handleDbFilterChange()">
+                <option value="">-- แสดงทั้งหมด --</option>
+                <option value="ปกติ">หลักสูตรปกติ (ห้อง/ตัวเลข)</option>
+                <option value="MLP">หลักสูตร MLP (ห้อง/ตัวอักษร)</option>
+              </select>
+            </div>
+
+            <div class="filter-field">
+              <label for="filterExam">ประเภทวิชาสอบ</label>
+              <select id="filterExam" class="filter-select" onchange="handleDbFilterChange()">
+                <option value="">-- แสดงทั้งหมด --</option>
+                <option value="TESET">TESET 2026 เท่านั้น</option>
+                <option value="TSB">TSB 2025 เท่านั้น</option>
+                <option value="BOTH">สมัคร 2 รายการสอบ (TESET & TSB)</option>
+              </select>
+            </div>
+
+            <div class="filter-field">
+              <label for="filterStatus">สถานะตรวจสอบสลิป</label>
+              <select id="filterStatus" class="filter-select" onchange="handleDbFilterChange()">
+                <option value="">-- แสดงทั้งหมด --</option>
+                <option value="รอตรวจสอบ">รอตรวจสอบ</option>
+                <option value="ยืนยันแล้ว">ยืนยันแล้ว</option>
+                <option value="เอกสารไม่ถูกต้อง">เอกสารไม่ถูกต้อง</option>
+              </select>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- รายละเอียดจำนวนแถวผลการค้นหา -->
+        <div class="table-header-row">
+          <div class="records-count-indicator">
+            พบผู้สมัครสอบตรงตามเงื่อนไขจำนวน: <strong id="recordsCountFiltered">0</strong> ราย จากทั้งหมด <span id="recordsCountTotal">0</span> ราย
+          </div>
+        </div>
+
+        <!-- ตัวตารางข้อมูลพรีเมียม -->
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th width="80">ลำดับ</th>
+                <th width="110">เลขใบสมัคร</th>
+                <th>ข้อมูลผู้สมัคร</th>
+                <th>วิชาสอบที่เลือก</th>
+                <th width="80" style="text-align: center;">รูปสลิป</th>
+                <th width="180">สถานะชำระเงิน</th>
+                <th>ความเห็นแอดมิน / หมายเหตุ</th>
+                <th width="110" style="text-align: center;">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="applicantsTableBody">
+              <!-- ข้อมูลรายแถวจะแทรกเข้ามา -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- ลิขสิทธิ์ -->
+    <footer>
+      <p>&copy; 2569 โรงเรียนอัสสัมชัญศรีราชา - ระบบหลังบ้านวิเคราะห์สถิติและการเงินความปลอดภัยสูง</p>
+      <p style="margin-top:5px; font-size: 0.78rem; opacity: 0.6;">ออกแบบและพัฒนาโดยทีมงาน Antigravity AI เพื่อประสิทธิภาพสูงสุดในการประมวลผลผ่าน Google Sheets</p>
+    </footer>
+
+  </div>
+
+  <!-- ==========================================
+      🖼️ 3. กล่องป๊อปอัปขยายสลิปขนาดเต็ม (Slip Lightbox Modal)
+      ========================================== -->
+  <div class="lightbox-overlay" id="slipLightbox" onclick="closeSlipLightbox()">
+    <button class="lightbox-close-btn" onclick="closeSlipLightbox()">&times;</button>
+    <div class="lightbox-image-container" onclick="event.stopPropagation()">
+      <img src="" class="lightbox-image" id="lightboxTargetImg" alt="สลิปฉบับเต็ม">
+    </div>
+    <div class="lightbox-toolbar" onclick="event.stopPropagation()">
+      <button class="btn-lightbox-tool" id="btnLightboxRotate" onclick="rotateLightboxImage()">
+        <i class="fa-solid fa-rotate-right"></i> หมุนรูปภาพ
+      </button>
+      <a href="" target="_blank" class="btn-lightbox-tool" id="btnLightboxDownload" style="text-decoration:none;">
+        <i class="fa-solid fa-download"></i> เปิดแท็บใหม่ / ดาวน์โหลด
+      </a>
+    </div>
+  </div>
+
+  <!-- ==========================================
+      ⚙️ 4. โมดัลแก้ไขรายละเอียดผู้สมัคร (Applicant Editor Modal)
+      ========================================== -->
+  <div class="modal-overlay" id="editModalOverlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="editModalTitle">แก้ไขข้อมูลผู้สมัครสอบ</h2>
+        <button class="btn-modal-close" onclick="closeEditModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="editApplicantForm" onsubmit="handleEditFormSubmit(event)">
+          <input type="hidden" id="editRegId">
+          
+          <div class="edit-form-grid">
+            
+            <div class="edit-col-6 edit-field">
+              <label for="editStudentId">เลขประจำตัวนักเรียน (5 หลัก)</label>
+              <input type="text" id="editStudentId" class="edit-control" maxlength="5" required pattern="\d{5}">
+            </div>
+
+            <div class="edit-col-6 edit-field">
+              <label for="editNationalId">เลขประจำตัวประชาชน (13 หลัก)</label>
+              <input type="text" id="editNationalId" class="edit-control" maxlength="13" required pattern="\d{13}">
+            </div>
+
+            <div class="edit-col-4 edit-field">
+              <label for="editTitleTh">คำนำหน้า (TH)</label>
+              <select id="editTitleTh" class="edit-control" required>
+                <option value="เด็กชาย">เด็กชาย (ด.ช.)</option>
+                <option value="เด็กหญิง">เด็กหญิง (ด.ญ.)</option>
+                <option value="นาย">นาย</option>
+                <option value="นางสาว">นางสาว</option>
+              </select>
+            </div>
+
+            <div class="edit-col-4 edit-field">
+              <label for="editFirstNameTh">ชื่อจริง (TH)</label>
+              <input type="text" id="editFirstNameTh" class="edit-control" required>
+            </div>
+
+            <div class="edit-col-4 edit-field">
+              <label for="editLastNameTh">นามสกุล (TH)</label>
+              <input type="text" id="editLastNameTh" class="edit-control" required>
+            </div>
+
+            <div class="edit-col-4 edit-field">
+              <label for="editTitleEn">คำนำหน้า (EN)</label>
+              <select id="editTitleEn" class="edit-control" required>
+                <option value="Master">Master (ด.ช. / นาย)</option>
+                <option value="Miss">Miss (ด.ญ. / น.ส.)</option>
+              </select>
+            </div>
+
+            <div class="edit-col-4 edit-field">
+              <label for="editFirstNameEn">ชื่อจริง (EN)</label>
+              <input type="text" id="editFirstNameEn" class="edit-control" required>
+            </div>
+
+            <div class="edit-col-4 edit-field">
+              <label for="editLastNameEn">นามสกุล (EN)</label>
+              <input type="text" id="editLastNameEn" class="edit-control" required>
+            </div>
+
+            <div class="edit-col-6 edit-field">
+              <label for="editGrade">ระดับชั้นเรียน</label>
+              <select id="editGrade" class="edit-control" onchange="updateEditClassRoomOptions()" required>
+                <option value="ป.1">ป.1</option>
+                <option value="ป.2">ป.2</option>
+                <option value="ป.3">ป.3</option>
+                <option value="ป.4">ป.4</option>
+                <option value="ป.5">ป.5</option>
+                <option value="ป.6">ป.6</option>
+                <option value="ม.1">ม.1</option>
+                <option value="ม.2">ม.2</option>
+                <option value="ม.3">ม.3</option>
+                <option value="ม.4">ม.4</option>
+                <option value="ม.5">ม.5</option>
+                <option value="ม.6">ม.6</option>
+              </select>
+            </div>
+
+            <div class="edit-col-6 edit-field">
+              <label for="editClassType">ห้องเรียน/หลักสูตร</label>
+              <select id="editClassType" class="edit-control" required>
+                <!-- ตัวเลือกห้องเรียนจะโหลดไดนามิกตามระดับชั้น -->
+              </select>
+            </div>
+
+            <div class="edit-col-4 edit-field">
+              <label for="editPhone">เบอร์โทรศัพท์ผู้ปกครอง</label>
+              <input type="text" id="editPhone" class="edit-control" required>
+            </div>
+
+            <div class="edit-col-4 edit-field">
+              <label for="editEmail">อีเมลแอดเดรส</label>
+              <input type="email" id="editEmail" class="edit-control">
+            </div>
+
+            <div class="edit-col-4 edit-field">
+              <label for="editLineId">Line ID</label>
+              <input type="text" id="editLineId" class="edit-control">
+            </div>
+
+            <div class="edit-col-6 edit-field">
+              <label for="editExams">วิชาที่ลงทะเบียนสอบ</label>
+              <select id="editExams" class="edit-control" onchange="adjustEditTotalFee()" required>
+                <option value="Thailand English Skills Evaluation Test (TESET2026)">TESET 2026 (380 ฿)</option>
+                <option value="Thailand Spelling Bee (TSB2025)">TSB 2025 (360 ฿)</option>
+                <option value="TESET2026 & TSB2025 (สมัครสองรายการ)">TESET & TSB สองวิชา (740 ฿)</option>
+              </select>
+            </div>
+
+            <div class="edit-col-6 edit-field">
+              <label for="editTotalFee">ยอดชำระเงินจริง (บาท)</label>
+              <input type="number" id="editTotalFee" class="edit-control" required>
+            </div>
+
+            <div class="edit-col-6 edit-field">
+              <label for="editStatus">สถานะการยืนยัน</label>
+              <select id="editStatus" class="edit-control" required>
+                <option value="รอตรวจสอบ">รอตรวจสอบ</option>
+                <option value="ยืนยันแล้ว">ยืนยันแล้ว</option>
+                <option value="เอกสารไม่ถูกต้อง">เอกสารไม่ถูกต้อง</option>
+              </select>
+            </div>
+
+            <div class="edit-col-12 edit-field">
+              <label for="editAdminComment">หมายเหตุแจ้งผู้สมัคร / ความเห็นแอดมิน</label>
+              <textarea id="editAdminComment" class="edit-control" rows="3" placeholder="เช่น ได้รับยอดชำระเรียบร้อย หรือ กรุณาแนบภาพสลิปใหม่ให้ชัดเจนเนื่องจากยอดไม่ตรง"></textarea>
+            </div>
+
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal cancel" onclick="closeEditModal()">ยกเลิก</button>
+        <button class="btn-modal save" type="submit" form="editApplicantForm">บันทึกข้อมูล</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+      ⚙️ 5. หน้ากากโหลดโปรแกรม (Loading Screen)
+      ========================================== -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loadingText">กำลังประมวลผลข้อมูล...</div>
+  </div>
+
+  <!-- ==========================================
+      ⚙️ 6. ระบบจาวาสคริปต์ควบคุมหลังบ้าน (Client-Side Logic)
+      ========================================== -->
+  <script>
+    // ⚙️ ลิงก์เชื่อมต่อ API ไปยัง Google Apps Script (ดึงจากลิงก์จริงในระบบ)
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw5PjTnoTHvlPu5eqiXplZsAg4SbuzfqhKL0l0tE1KpJIowH8FX7zxzkkmMDKwtGvRJ/exec";
+    
+    // ข้อมูลเก็บในฝั่ง Browser
+    let cachedApplicants = [];
+    let currentRotation = 0;
+
+    // แผนผังห้องเรียนสำหรับใช้ตอนแก้ไขข้อมูล (เหมือนหน้าสมัครสอบ)
+    const classRoomMap = {
+      'ป.1': ['/1', '/2', '/3', '/4', '/5', 'A', 'B', 'C'],
+      'ป.2': ['/1', '/2', '/3', '/4', '/5', 'A', 'B', 'C'],
+      'ป.3': ['/1', '/2', '/3', '/4', '/5', 'A', 'B'],
+      'ป.4': ['/1', '/2', '/3', '/4', '/5', 'A', 'B'],
+      'ป.5': ['/1', '/2', '/3', '/4', '/5', 'A', 'B'],
+      'ป.6': ['/1', '/2', '/3', '/4', '/5', 'A', 'B'],
+      'ม.1': ['/1', '/2', '/3', '/4', '/5', '/6', '/7', 'A', 'B', 'C'],
+      'ม.2': ['/1', '/2', '/3', '/4', '/5', '/6', '/7', 'A', 'B'],
+      'ม.3': ['/1', '/2', '/3', '/4', '/5', '/6', '/7', 'A', 'B'],
+      'ม.4': ['/1', '/2', '/3', '/4', '/5', '/6', '/7', '/8', '/9', 'IS', 'IB'],
+      'ม.5': ['/1', '/2', '/3', '/4', '/5', '/6', '/7', '/8', '/9', 'IS', 'IB'],
+      'ม.6': ['/1', '/2', '/3', '/4', '/5', '/6', '/7', '/8', '/9', 'IS', 'IB']
+    };
+
+    // เช็กสถานะการล็อกอินตอนเปิดหน้าต่าง
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedPasscode = sessionStorage.getItem('acs_admin_passcode');
+      if (savedPasscode) {
+        document.getElementById('adminPasscode').value = savedPasscode;
+        unlockAdminSystem();
+      } else {
+        // แฟลชให้กรอกรหัสผ่านก่อน
+        document.getElementById('lockScreen').style.display = 'flex';
+        document.getElementById('adminPasscode').focus();
+      }
+    });
+
+    // ==========================================
+    // 🔐 ระบบความปลอดภัยและการล็อกหน้าจอ
+    // ==========================================
+    function unlockAdminSystem() {
+      const passcode = document.getElementById('adminPasscode').value.trim();
+      if (!passcode) {
+        alert("กรุณากรอกรหัสผ่าน");
+        return;
+      }
+
+      showLoading(true, "กำลังยืนยันสิทธิ์รักษาความปลอดภัย...");
+      
+      // การเชื่อมต่อกับฐานข้อมูล
+      if (WEB_APP_URL && !WEB_APP_URL.includes("ใส่ลิงก์เว็บแอป")) {
+        callBackendApi("adminGetList", { passcode: passcode })
+          .then(response => {
+            showLoading(false);
+            if (response.success) {
+              // รหัสถูกต้อง เข้าระบบและเก็บ Session
+              sessionStorage.setItem('acs_admin_passcode', passcode);
+              document.getElementById('lockScreen').style.opacity = '0';
+              setTimeout(() => {
+                document.getElementById('lockScreen').style.display = 'none';
+                document.getElementById('mainAppArea').style.display = 'flex';
+                
+                // โหลดข้อมูลผู้สมัครทั้งหมด
+                cachedApplicants = response.records || [];
+                renderDashboardAndTable();
+              }, 250);
+            } else {
+              // รหัสผ่านผิด สั่นเตือนกล่องล็อกอิน
+              sessionStorage.removeItem('acs_admin_passcode');
+              const lockBox = document.querySelector('.lock-box');
+              lockBox.classList.add('shake');
+              setTimeout(() => lockBox.classList.remove('shake'), 400);
+              alert("รหัสผ่านไม่ถูกต้อง! กรุณาลองใหม่อีกครั้ง");
+            }
+          })
+          .catch(err => {
+            showLoading(false);
+            console.error("Auth error:", err);
+            alert("ไม่สามารถติดต่อกับฐานข้อมูล Google Script ได้\nกำลังเริ่มการจำลองฐานข้อมูลในโหมดปลอดภัย (Mockup Mode)");
+            runMockupSystem(passcode);
+          });
+      } else {
+        // Mockup Mode เมื่อรันแบบไม่มี URL (Local Environment)
+        setTimeout(() => {
+          showLoading(false);
+          runMockupSystem(passcode);
+        }, 800);
+      }
+    }
+
+    function lockAdminSystem() {
+      sessionStorage.removeItem('acs_admin_passcode');
+      document.getElementById('adminPasscode').value = "";
+      document.getElementById('mainAppArea').style.display = 'none';
+      document.getElementById('lockScreen').style.display = 'flex';
+      document.getElementById('lockScreen').style.opacity = '1';
+      document.getElementById('adminPasscode').focus();
+    }
+
+    // ==========================================
+    // 🛠️ โหมดการทดสอบจำลอง (Mockup Engine)
+    // ==========================================
+    function runMockupSystem(passcode) {
+      if (passcode !== "Hoshijima760") {
+        alert("รหัสผ่านโหมดทดสอบจำลองไม่ถูกต้อง! รหัสคือ: Hoshijima760");
+        return;
+      }
+      
+      sessionStorage.setItem('acs_admin_passcode', passcode);
+      document.getElementById('lockScreen').style.opacity = '0';
+      setTimeout(() => {
+        document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('mainAppArea').style.display = 'flex';
+        document.getElementById('mockupBadge').style.display = 'inline-flex';
+        
+        // สร้างข้อมูลจำลองพรีเมียม 15 คน
+        createPremiumMockupData();
+        renderDashboardAndTable();
+      }, 250);
+    }
+
+    function createPremiumMockupData() {
+      const titlesTh = ["เด็กชาย", "เด็กหญิง", "นาย", "นางสาว"];
+      const titlesEn = ["Master", "Miss"];
+      const firstNamesTh = ["สมรัก", "จารุพงศ์", "พิมลภา", "ธนพล", "นลินนิภา", "ปรัชญา", "ปิยพัทธ์", "วรัญญู", "ณัฐิกา", "ชลสิทธิ์", "หทัยชนก", "กฤติน", "พัทธดนย์", "รวิสรา", "เกริกพล"];
+      const lastNamesTh = ["มีชัย", "จงจิตเจริญ", "ทองดีงาม", "เลิศวัฒนากุล", "จิตสว่าง", "รัตนภักดี", "สิริกุลเดช", "สโมสร", "แก้วมณี", "ภิรมย์รักษ์", "บุญประเสริฐ", "วิจิตรศิลป์", "เกียรติไพบูลย์", "ทรัพย์มั่งคั่ง", "รุ่งเรืองกิจ"];
+      const firstNamesEn = ["Somrak", "Jarupong", "Pimonpa", "Thanapon", "Nalinnipa", "Prachya", "Piyapat", "Waranyu", "Nattika", "Cholasit", "Hathaichanok", "Krittin", "Pattadon", "Ravisara", "Krikpon"];
+      const lastNamesEn = ["Meechai", "Jongjit", "Thongdee", "Lertwattana", "Jitsawang", "Rattanapakdee", "Sirikuldech", "Samosorn", "Kaewmanee", "Phiromrak", "Boonprasert", "Wijitsin", "Kiatpaiboon", "Submangkang", "Rungruangkit"];
+      const grades = ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
+      
+      const exams = [
+        "Thailand English Skills Evaluation Test (TESET2026)",
+        "Thailand Spelling Bee (TSB2025)",
+        "TESET2026 & TSB2025 (สมัครสองรายการ)"
+      ];
+      
+      const statuses = ["ยืนยันแล้ว", "รอตรวจสอบ", "เอกสารไม่ถูกต้อง"];
+      const comments = [
+        "ได้รับยอดโอนชำระเงินเรียบร้อยแล้ว เลขที่นั่งสอบจะจัดพิมพ์ล่วงหน้า 1 สัปดาห์",
+        "รอตรวจสอบความถูกต้องของสลิป",
+        "แนบสลิปไม่สมบูรณ์ หรือเวลาโอนไม่ตรงกับธนาคาร กรุณาแก้ไข"
+      ];
+
+      const mockupRecords = [];
+
+      for (let i = 0; i < 15; i++) {
+        const index = i;
+        const regId = `REG-2026-${String(index + 1).padStart(4, '0')}`;
+        
+        // เลือกห้องเรียนให้สลับสุ่ม
+        const grade = grades[index % grades.length];
+        const rooms = classRoomMap[grade];
+        const room = rooms[index % rooms.length];
+        const classType = grade + room;
+        
+        const nameIndex = index;
+        const isMale = nameIndex % 2 === 0;
+        const titleTh = isMale ? titlesTh[nameIndex % 2 === 0 ? 0 : 2] : titlesTh[nameIndex % 2 === 0 ? 1 : 3];
+        const titleEn = isMale ? titlesEn[0] : titlesEn[1];
+        
+        const exam = exams[index % exams.length];
+        let totalFee = 380;
+        if (exam.includes("TSB")) totalFee = 360;
+        if (exam.includes("&") || exam.includes("สองรายการ")) totalFee = 740;
+
+        const status = statuses[index % statuses.length];
+        const comment = comments[index % comments.length];
+
+        mockupRecords.push({
+          timestamp: `24/05/2026 ${10 + (index % 12)}:${10 + (index * 3 % 50)} น.`,
+          registrationId: regId,
+          studentId: String(10000 + index * 373 % 90000).substring(0, 5),
+          titleTh: titleTh,
+          firstNameTh: firstNamesTh[nameIndex],
+          lastNameTh: lastNamesTh[nameIndex],
+          titleEn: titleEn,
+          firstNameEn: firstNamesEn[nameIndex],
+          lastNameEn: lastNamesEn[nameIndex],
+          grade: grade,
+          classType: classType,
+          nationalId: `1200100${index}456${index}`,
+          phone: `081${index}55543${index}`,
+          email: `${firstNamesEn[nameIndex].toLowerCase()}@acs.ac.th`,
+          lineId: `${firstNamesEn[nameIndex].toLowerCase()}_line`,
+          exams: exam,
+          totalFee: totalFee,
+          slipUrl: "https://lh3.googleusercontent.com/d/1dA0hOnHP1Mi-bIK71vVYD3lTv6wdfb60", // แฟ้มภาพจำลอง
+          status: status,
+          adminComment: comment
+        });
+      }
+      cachedApplicants = mockupRecords;
+    }
+
+    // ==========================================
+    // 🌐 การเชื่อมต่อระบบเครือข่าย API Gateway
+    // ==========================================
+    async function callBackendApi(action, data) {
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify({
+            action: action,
+            ...data
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("HTTP Status: " + response.status);
+        }
+
+        return await response.json();
+      } catch (error) {
+        throw new Error(error.message);
+      }
+    }
+
+    function loadAllApplicantsData() {
+      const passcode = sessionStorage.getItem('acs_admin_passcode');
+      if (!passcode) {
+        lockAdminSystem();
+        return;
+      }
+
+      showLoading(true, "กำลังดาวน์โหลดประวัติผู้สมัครและยอดสถิติล่าสุด...");
+
+      if (WEB_APP_URL && !WEB_APP_URL.includes("ใส่ลิงก์เว็บแอป")) {
+        callBackendApi("adminGetList", { passcode: passcode })
+          .then(response => {
+            showLoading(false);
+            if (response.success) {
+              cachedApplicants = response.records || [];
+              renderDashboardAndTable();
+            } else {
+              alert("ไม่สามารถดึงข้อมูลได้: " + response.message);
+            }
+          })
+          .catch(err => {
+            showLoading(false);
+            alert("เกิดข้อผิดพลาดในการโหลดข้อมูล: " + err.message + "\nสลับเป็นข้อมูลจำลองเพื่อความต่อเนื่องการใช้งาน");
+          });
+      } else {
+        setTimeout(() => {
+          showLoading(false);
+          createPremiumMockupData();
+          renderDashboardAndTable();
+        }, 500);
+      }
+    }
+
+    // ==========================================
+    // 📊 ฟังก์ชันคำนวณและแสดงผลสถิติ + แดชบอร์ด
+    // ==========================================
+    function getCurriculumType(classType) {
+      if (!classType) return "ปกติ";
+      
+      // กฎข้อที่ 1: ห้องเรียนปกติจะมาจาก ห้อง/ตัวเลข เช่น ป.1/1
+      if (classType.includes('/')) {
+        const roomPart = classType.split('/')[1];
+        if (roomPart && !isNaN(roomPart.charAt(0))) {
+          return "ปกติ";
+        }
+      }
+      
+      // กฎข้อที่ 2: ห้องเรียน MLP จะมาจาก ห้อง/ตัวอักษร เช่น ป.1A, ม.4IS, ม.4IB
+      // สกัดระดับชั้นออก (ป.1 - ม.6) ตัวถัดไปถ้าเป็นตัวอักษรภาษาอังกฤษแสดงว่าเป็น MLP
+      const match = classType.match(/^[ปม]\.[1-6]([A-Za-z]+|\/[A-Za-z]+)?$/);
+      if (/[A-Za-z]/.test(classType)) {
+        return "MLP";
+      }
+
+      return "ปกติ"; // ค่าเริ่มต้น
+    }
+
+    function renderDashboardAndTable() {
+      // 1. ตรวจเช็คความยาวข้อมูลทั้งหมด
+      const totalCount = cachedApplicants.length;
+      document.getElementById('recordsCountTotal').textContent = totalCount;
+      document.getElementById('statTotal').textContent = totalCount;
+
+      // 2. ตัวแปรสำหรับคำนวณกล่องภาพรวมด้านบน
+      let countApproved = 0;
+      let countPending = 0;
+      let countRejected = 0;
+      let totalRevenueAll = 0;
+
+      // 3. ตัวแปรวิเคราะห์ฝั่งหลักสูตรปกติ
+      let countNormal = 0;
+      let revNormal = 0;
+      let normTesetCount = 0;
+      let normTsbCount = 0;
+      let normBothCount = 0;
+
+      // 4. ตัวแปรวิเคราะห์ฝั่งหลักสูตร MLP
+      let countMlp = 0;
+      let revMlp = 0;
+      let mlpTesetCount = 0;
+      let mlpTsbCount = 0;
+      let mlpBothCount = 0;
+
+      // 5. โครงสร้างนับระดับชั้น ป.1 - ม.6
+      const gradeCountMap = {
+        "ป.1": 0, "ป.2": 0, "ป.3": 0, "ป.4": 0, "ป.5": 0, "ป.6": 0,
+        "ม.1": 0, "ม.2": 0, "ม.3": 0, "ม.4": 0, "ม.5": 0, "ม.6": 0
+      };
+
+      // 6. โครงสร้างสถิติรายห้องเรียนแบบละเอียด
+      const roomStatsMap = {};
+
+      cachedApplicants.forEach(rec => {
+        const fee = parseFloat(rec.totalFee) || 0;
+        const curType = getCurriculumType(rec.classType);
+        
+        // ก. นับสถิติตามการชำระเงิน
+        if (rec.status === "ยืนยันแล้ว") {
+          countApproved++;
+          totalRevenueAll += fee;
+        } else if (rec.status === "เอกสารไม่ถูกต้อง") {
+          countRejected++;
+        } else {
+          countPending++;
+        }
+
+        // ข. คัดกรองและประมวลผลฝั่งหลักสูตร
+        if (curType === "ปกติ") {
+          countNormal++;
+          if (rec.status === "ยืนยันแล้ว") revNormal += fee;
+
+          if (rec.exams.includes("TESET") && !rec.exams.includes("&") && !rec.exams.includes("สองรายการ")) normTesetCount++;
+          else if (rec.exams.includes("TSB") && !rec.exams.includes("&") && !rec.exams.includes("สองรายการ")) normTsbCount++;
+          else normBothCount++;
+        } else {
+          countMlp++;
+          if (rec.status === "ยืนยันแล้ว") revMlp += fee;
+
+          if (rec.exams.includes("TESET") && !rec.exams.includes("&") && !rec.exams.includes("สองรายการ")) mlpTesetCount++;
+          else if (rec.exams.includes("TSB") && !rec.exams.includes("&") && !rec.exams.includes("สองรายการ")) mlpTsbCount++;
+          else mlpBothCount++;
+        }
+
+        // ค. สรุปตามระดับชั้นเรียน
+        if (gradeCountMap[rec.grade] !== undefined) {
+          gradeCountMap[rec.grade]++;
+        }
+
+        // ง. สรุปสะสมยอดรายห้อง
+        if (rec.classType) {
+          if (!roomStatsMap[rec.classType]) {
+            roomStatsMap[rec.classType] = { count: 0, revenue: 0, cur: curType };
+          }
+          roomStatsMap[rec.classType].count++;
+          if (rec.status === "ยืนยันแล้ว") {
+            roomStatsMap[rec.classType].revenue += fee;
+          }
+        }
+      });
+
+      // --- แสดงผลสถิติด้านบนแดชบอร์ด ---
+      document.getElementById('statApproved').textContent = countApproved;
+      document.getElementById('statPending').textContent = countPending;
+      document.getElementById('statRejected').textContent = countRejected;
+      document.getElementById('statTotalRevenue').textContent = totalRevenueAll.toLocaleString() + " ฿";
+
+      // --- แสดงผลวิเคราะห์หลักสูตรปกติ ---
+      document.getElementById('curNormalCount').textContent = countNormal + " คน";
+      document.getElementById('curNormalRevenue').textContent = revNormal.toLocaleString() + " บาท";
+      renderExamsProgress('curNormalExamsArea', countNormal, normTesetCount, normTsbCount, normBothCount);
+
+      // --- แสดงผลวิเคราะห์หลักสูตร MLP ---
+      document.getElementById('curMlpCount').textContent = countMlp + " คน";
+      document.getElementById('curMlpRevenue').textContent = revMlp.toLocaleString() + " บาท";
+      renderExamsProgress('curMlpExamsArea', countMlp, mlpTesetCount, mlpTsbCount, mlpBothCount);
+
+      // --- แสดงผลกราฟระดับชั้นเรียน ---
+      renderGradeBars(gradeCountMap, totalCount);
+
+      // --- แสดงตารางสรุปข้อมูลห้องเรียน ---
+      renderRoomsTable(roomStatsMap);
+
+      // --- แสดงรายชื่อผู้สมัครในตารางตามตัวกรอง ---
+      filterAndRenderApplicantsTable();
+    }
+
+    // ฟังก์ชันย่อยวาดกราฟ Progress Bar ของประเภทวิชาสอบ
+    function renderExamsProgress(elementId, total, teset, tsb, both) {
+      const area = document.getElementById(elementId);
+      
+      const pctTeset = total > 0 ? Math.round((teset / total) * 100) : 0;
+      const pctTsb = total > 0 ? Math.round((tsb / total) * 100) : 0;
+      const pctBoth = total > 0 ? Math.round((both / total) * 100) : 0;
+
+      area.innerHTML = `
+        <div class="exam-bar-item">
+          <div class="exam-bar-info">
+            <span class="exam-bar-label">วิชา TESET เท่านั้น</span>
+            <span class="exam-bar-value">${teset} คน (${pctTeset}%)</span>
+          </div>
+          <div class="exam-progress-bg">
+            <div class="exam-progress-bar" style="width: ${pctTeset}%"></div>
+          </div>
+        </div>
+        <div class="exam-bar-item">
+          <div class="exam-bar-info">
+            <span class="exam-bar-label">วิชา TSB เท่านั้น</span>
+            <span class="exam-bar-value">${tsb} คน (${pctTsb}%)</span>
+          </div>
+          <div class="exam-progress-bg">
+            <div class="exam-progress-bar" style="width: ${pctTsb}%"></div>
+          </div>
+        </div>
+        <div class="exam-bar-item">
+          <div class="exam-bar-info">
+            <span class="exam-bar-label">วิชา BOTH (สมัคร 2 รายการ)</span>
+            <span class="exam-bar-value">${both} คน (${pctBoth}%)</span>
+          </div>
+          <div class="exam-progress-bg">
+            <div class="exam-progress-bar" style="width: ${pctBoth}%"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    // วาดกราฟแท่งระดับชั้นเรียน ป.1 - ม.6
+    function renderGradeBars(gradeCountMap, total) {
+      const area = document.getElementById('gradeStatsArea');
+      area.innerHTML = "";
+
+      Object.keys(gradeCountMap).forEach(grade => {
+        const count = gradeCountMap[grade];
+        const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+
+        const html = `
+          <div class="exam-bar-item" style="margin-bottom: 2px;">
+            <div class="exam-bar-info" style="font-size: 0.82rem;">
+              <span class="exam-bar-label" style="font-weight:600;">ระดับชั้น ${grade}</span>
+              <span class="exam-bar-value">${count} คน (${pct}%)</span>
+            </div>
+            <div class="exam-progress-bg" style="height: 6px;">
+              <div class="exam-progress-bar" style="width: ${pct}%; background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);"></div>
+            </div>
+          </div>
+        `;
+        area.insertAdjacentHTML('beforeend', html);
+      });
+    }
+
+    // วาดตารางรายห้องเรียน
+    function renderRoomsTable(roomStatsMap) {
+      const tbody = document.getElementById('roomsStatsTableArea');
+      tbody.innerHTML = "";
+
+      const rooms = Object.keys(roomStatsMap).sort();
+      
+      if (rooms.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#94a3b8;">ยังไม่มีข้อมูลห้องเรียน</td></tr>';
+        return;
+      }
+
+      rooms.forEach(roomName => {
+        const data = roomStatsMap[roomName];
+        const html = `
+          <tr>
+            <td style="font-weight:600; color:var(--dark-slate-900);">${roomName}</td>
+            <td>
+              <span class="exam-tag ${data.cur === 'ปกติ' ? 'tsb' : 'both'}" style="font-size:0.7rem; padding: 2px 6px;">
+                หลักสูตร${data.cur}
+              </span>
+            </td>
+            <td style="text-align: center; font-weight:700;">${data.count} คน</td>
+            <td style="text-align: right; font-weight:700; color:var(--primary);">${data.revenue.toLocaleString()} ฿</td>
+          </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', html);
+      });
+    }
+
+    // ==========================================
+    // 📋 ฟังก์ชันคัดกรองข้อมูล ค้นหา และ วาดตารางผู้สมัคร
+    // ==========================================
+    function handleDbFilterChange() {
+      filterAndRenderApplicantsTable();
+    }
+
+    function clearDbSearch() {
+      document.getElementById('dbSearchInput').value = "";
+      document.getElementById('dbSearchClear').style.display = "none";
+      filterAndRenderApplicantsTable();
+    }
+
+    function filterAndRenderApplicantsTable() {
+      const searchVal = document.getElementById('dbSearchInput').value.trim().toLowerCase();
+      const gradeVal = document.getElementById('filterGrade').value;
+      const curVal = document.getElementById('filterCurriculum').value;
+      const examVal = document.getElementById('filterExam').value;
+      const statusVal = document.getElementById('filterStatus').value;
+
+      // แสดง/ซ่อน ปุ่มลบการค้นหา
+      document.getElementById('dbSearchClear').style.display = searchVal ? "block" : "none";
+
+      const tbody = document.getElementById('applicantsTableBody');
+      tbody.innerHTML = "";
+
+      // คัดกรองข้อมูลตามเงื่อนไข
+      const filtered = cachedApplicants.filter(rec => {
+        // ก. กรองค้นหาข้อความ
+        if (searchVal) {
+          const nameTh = (rec.titleTh + rec.firstNameTh + " " + rec.lastNameTh).toLowerCase();
+          const nameEn = (rec.titleEn + rec.firstNameEn + " " + rec.lastNameEn).toLowerCase();
+          const studentId = rec.studentId.toLowerCase();
+          const nationalId = rec.nationalId.toLowerCase();
+          const regId = rec.registrationId.toLowerCase();
+          
+          if (!nameTh.includes(searchVal) && 
+              !nameEn.includes(searchVal) && 
+              !studentId.includes(searchVal) && 
+              !nationalId.includes(searchVal) && 
+              !regId.includes(searchVal)) {
+            return false;
+          }
+        }
+
+        // ข. กรองระดับชั้น
+        if (gradeVal && rec.grade !== gradeVal) return false;
+
+        // ค. กรองหลักสูตร
+        if (curVal) {
+          const curType = getCurriculumType(rec.classType);
+          if (curType !== curVal) return false;
+        }
+
+        // ง. กรองวิชาสอบ
+        if (examVal) {
+          if (examVal === "TESET" && (rec.exams.includes("&") || rec.exams.includes("สองรายการ") || !rec.exams.includes("TESET"))) return false;
+          if (examVal === "TSB" && (rec.exams.includes("&") || rec.exams.includes("สองรายการ") || !rec.exams.includes("TSB"))) return false;
+          if (examVal === "BOTH" && !rec.exams.includes("&") && !rec.exams.includes("สองรายการ")) return false;
+        }
+
+        // จ. กรองสถานะสลิป
+        if (statusVal && rec.status !== statusVal) return false;
+
+        return true;
+      });
+
+      // อัปเดตจำนวนแถวที่ผ่านตัวกรอง
+      document.getElementById('recordsCountFiltered').textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8">
+              <div class="no-data-box">
+                <i class="fa-solid fa-folder-open"></i>
+                <h3>ไม่พบข้อมูลผู้สมัครที่ต้องการค้นหา</h3>
+                <p>โปรดลองล้างตัวกรอง ค้นหาคำอื่น หรือรีเฟรชข้อมูลใหม่อีกครั้ง</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      // เรียงลำดับตามเลขที่ใบสมัครย้อนหลัง (สมัครใหม่ขึ้นก่อน)
+      filtered.sort((a, b) => b.registrationId.localeCompare(a.registrationId));
+
+      filtered.forEach((rec, idx) => {
+        // ป้ายสัญลักษณ์วิชาสอบ
+        let examBadgeClass = "teset";
+        let examShortText = "TESET 2026";
+        if (rec.exams.includes("TSB")) {
+          examBadgeClass = "tsb";
+          examShortText = "TSB 2025";
+        }
+        if (rec.exams.includes("&") || rec.exams.includes("สองรายการ")) {
+          examBadgeClass = "both";
+          examShortText = "สองรายการสอบ (TESET & TSB)";
+        }
+
+        // ป้ายสัญลักษณ์สถานะชำระเงิน
+        let statusClass = "pending";
+        let statusIcon = '<i class="fa-solid fa-hourglass-half"></i>';
+        if (rec.status === "ยืนยันแล้ว") {
+          statusClass = "approved";
+          statusIcon = '<i class="fa-solid fa-circle-check"></i>';
+        } else if (rec.status === "เอกสารไม่ถูกต้อง") {
+          statusClass = "rejected";
+          statusIcon = '<i class="fa-solid fa-circle-xmark"></i>';
+        }
+
+        // ตัวแปลงลิงก์รูปภาพ Google Drive เป็น Direct Link
+        const directImageUrl = getDirectDriveImageUrl(rec.slipUrl);
+
+        const rowHtml = `
+          <tr>
+            <td style="font-family:'Inter'; color:#64748b;">${idx + 1}</td>
+            <td class="reg-id-cell">${rec.registrationId}</td>
+            <td>
+              <div class="student-info-cell">
+                <span class="student-name-th">${rec.titleTh}${rec.firstNameTh} ${rec.lastNameTh}</span>
+                <span class="student-name-en">${rec.titleEn}${rec.firstNameEn} ${rec.lastNameEn}</span>
+                <div class="student-meta">
+                  <span><i class="fa-solid fa-id-card-clip"></i> ${rec.studentId}</span> |
+                  <span><i class="fa-solid fa-layer-group"></i> ชั้น ${rec.classType}</span> |
+                  <span><i class="fa-solid fa-user-shield"></i> บัตร: ${rec.nationalId}</span>
+                </div>
+                <div class="student-meta" style="margin-top: 1px;">
+                  <span><i class="fa-solid fa-phone"></i> ${rec.phone}</span> |
+                  <span><i class="fa-solid fa-envelope"></i> ${rec.email || 'ไม่มี'}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="exam-cell">
+                <span class="exam-tag ${examBadgeClass}">${examShortText}</span>
+                <div class="exam-price">${rec.totalFee} บาท</div>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              ${rec.slipUrl ? `
+                <div class="slip-thumbnail-box" onclick="openSlipLightbox('${rec.slipUrl}')">
+                  <img src="${directImageUrl}" onerror="this.src='https://placehold.co/100x140/e2e8f0/cbd5e1?text=Slip'" alt="Slip">
+                </div>
+              ` : '<span class="no-slip-badge">ไม่มีสลิป</span>'}
+            </td>
+            <td>
+              <!-- ตัวเลือกอัปเดตสถานะแบบด่วน -->
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <span class="status-badge ${statusClass}">
+                  ${statusIcon} ${rec.status}
+                </span>
+                <select class="quick-status-select" onchange="quickUpdateStatus('${rec.registrationId}', this.value)">
+                  <option value="" disabled selected>-- เปลี่ยนสถานะ --</option>
+                  <option value="รอตรวจสอบ">รอตรวจสอบ</option>
+                  <option value="ยืนยันแล้ว">ยืนยันแล้ว</option>
+                  <option value="เอกสารไม่ถูกต้อง">เอกสารไม่ถูกต้อง</option>
+                </select>
+              </div>
+            </td>
+            <td>
+              <div class="admin-note-indicator" title="${rec.adminComment || 'ไม่มีหมายเหตุ'}">
+                <i class="fa-solid fa-comment-dots" style="color:var(--primary);"></i> 
+                <span>${rec.adminComment || '<i style="color:#94a3b8">ไม่มีหมายเหตุแจ้งผู้สมัคร</i>'}</span>
+              </div>
+              <div style="font-size:0.75rem; color:#94a3b8; margin-top:5px;"><i class="fa-solid fa-clock"></i> ${rec.timestamp}</div>
+            </td>
+            <td style="text-align: center;">
+              <div class="actions-cell">
+                <button class="btn-action edit" onclick="openEditModal('${rec.registrationId}')" title="แก้ไขข้อมูลผู้สมัคร">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button class="btn-action delete" onclick="deleteApplicantRecord('${rec.registrationId}')" title="ลบออกจากระบบ">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+        tbody.insertAdjacentHTML('beforeend', rowHtml);
+      });
+    }
+
+    // ==========================================
+    // 🖼️ ระบบภาพขยายหลักฐานสลิปโอนเงิน (Lightbox Control)
+    // ==========================================
+    function getDirectDriveImageUrl(driveUrl) {
+      if (!driveUrl) return "";
+      let fileId = "";
+      // รองรับ URL ได้ทุกรูปแบบ: /file/d/FILE_ID หรือ id=FILE_ID
+      const match1 = driveUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      const match2 = driveUrl.match(/id=([a-zA-Z0-9_-]+)/);
+      if (match1) {
+        fileId = match1[1];
+      } else if (match2) {
+        fileId = match2[1];
+      }
+
+      if (fileId) {
+        // ใช้ Proxy ความเร็วสูงของ Google ในการดึงภาพ
+        return `https://lh3.googleusercontent.com/d/${fileId}`;
+      }
+      return driveUrl; // คืนลิงก์เดิมในกรณีฉุกเฉิน
+    }
+
+    function openSlipLightbox(url) {
+      if (!url) return;
+      const directUrl = getDirectDriveImageUrl(url);
+      
+      currentRotation = 0;
+      const img = document.getElementById('lightboxTargetImg');
+      img.src = directUrl;
+      img.style.transform = `rotate(${currentRotation}deg)`;
+
+      document.getElementById('btnLightboxDownload').href = url;
+      document.getElementById('slipLightbox').style.display = 'flex';
+      document.body.style.overflow = 'hidden'; // ล็อกการสกรอลล์ด้านหลัง
+    }
+
+    function closeSlipLightbox() {
+      document.getElementById('slipLightbox').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    function rotateLightboxImage() {
+      currentRotation = (currentRotation + 90) % 360;
+      document.getElementById('lightboxTargetImg').style.transform = `rotate(${currentRotation}deg)`;
+    }
+
+    // ==========================================
+    // ⚙️ ระบบแก้ไขและเปลี่ยนสถานะผู้สมัคร (CRUD Actions)
+    // ==========================================
+    
+    // 1. เปลี่ยนสถานะชำระเงินอย่างด่วนผ่านตาราง
+    function quickUpdateStatus(regId, newStatus) {
+      const record = cachedApplicants.find(r => r.registrationId === regId);
+      if (!record) return;
+
+      if (!confirm(`คุณต้องการเปลี่ยนสถานะของ ${record.titleTh}${record.firstNameTh} ${record.lastNameTh} เป็น "${newStatus}" ใช่หรือไม่?`)) {
+        loadAllApplicantsData(); // รีโหลดสเปรดชีตเพื่อรีเซ็ตตัวเลือกในตาราง
+        return;
+      }
+
+      // ดึงข้อความหมายเหตุเริ่มต้นตามสถานะ
+      let defaultComment = record.adminComment;
+      if (newStatus === "ยืนยันแล้ว") {
+        defaultComment = "ได้รับยอดโอนชำระเงินเรียบร้อยแล้ว เลขที่นั่งสอบจะจัดพิมพ์ล่วงหน้า 1 สัปดาห์";
+      } else if (newStatus === "เอกสารไม่ถูกต้อง") {
+        defaultComment = "สลิปโอนเงินไม่ชัดเจนหรือข้อมูลไม่ถูกต้อง กรุณาอัปโหลดเอกสารใหม่ทางหน้าเว็บระบบลงทะเบียนอีกครั้ง";
+      }
+
+      showLoading(true, `กำลังปรับสถานะใบสมัคร ${regId} เป็น ${newStatus}...`);
+
+      const updatedData = {
+        status: newStatus,
+        adminComment: defaultComment
+      };
+
+      const passcode = sessionStorage.getItem('acs_admin_passcode');
+
+      if (WEB_APP_URL && !WEB_APP_URL.includes("ใส่ลิงก์เว็บแอป")) {
+        callBackendApi("adminUpdate", {
+          passcode: passcode,
+          registrationId: regId,
+          updatedData: updatedData
+        })
+          .then(res => {
+            showLoading(false);
+            if (res.success) {
+              // แก้ไขค่าจำลองในตัว
+              record.status = newStatus;
+              record.adminComment = defaultComment;
+              renderDashboardAndTable();
+            } else {
+              alert("เกิดข้อผิดพลาด: " + res.message);
+              loadAllApplicantsData();
+            }
+          })
+          .catch(err => {
+            showLoading(false);
+            alert("เซิร์ฟเวอร์ขัดข้อง: " + err.message);
+            loadAllApplicantsData();
+          });
+      } else {
+        // เปลี่ยนในโหมดจำลอง (Local Mockup)
+        setTimeout(() => {
+          showLoading(false);
+          record.status = newStatus;
+          record.adminComment = defaultComment;
+          renderDashboardAndTable();
+        }, 300);
+      }
+    }
+
+    // 2. ลบแถวข้อมูลผู้ลงทะเบียนสอบ
+    function deleteApplicantRecord(regId) {
+      const record = cachedApplicants.find(r => r.registrationId === regId);
+      if (!record) return;
+
+      const verifyName = `${record.titleTh}${record.firstNameTh} ${record.lastNameTh}`;
+      
+      // การยืนยันสิทธิ์ลบสองขั้นตอนเพื่อความปลอดภัยสูงสุด (Double Confirmation)
+      if (!confirm(`⚠️ คำเตือนสำคัญ!\n\nคุณกำลังจะลบรายชื่อผู้สมัครสอบ "${verifyName}" (รหัส: ${regId}) ออกจากฐานข้อมูลใน Google Sheet อย่างถาวร!\n\nต้องการดำเนินการต่อใช่หรือไม่?`)) {
+        return;
+      }
+      if (!confirm(`ยืนยันการลบอีกครั้ง?\nข้อมูลทั้งหมดรวมถึงลิ้งก์สลิปผู้สมัครท่านนี้จะไม่สามารถกู้คืนได้!`)) {
+        return;
+      }
+
+      showLoading(true, `กำลังนำผู้สมัครรหัส ${regId} ออกจากระบบฐานข้อมูลโรงเรียน...`);
+
+      const passcode = sessionStorage.getItem('acs_admin_passcode');
+
+      if (WEB_APP_URL && !WEB_APP_URL.includes("ใส่ลิงก์เว็บแอป")) {
+        callBackendApi("adminDelete", {
+          passcode: passcode,
+          registrationId: regId
+        })
+          .then(res => {
+            showLoading(false);
+            if (res.success) {
+              // เอาออกจากหน่วยความจำ Cached
+              cachedApplicants = cachedApplicants.filter(r => r.registrationId !== regId);
+              renderDashboardAndTable();
+            } else {
+              alert("เกิดข้อผิดพลาดในการลบข้อมูล: " + res.message);
+            }
+          })
+          .catch(err => {
+            showLoading(false);
+            alert("เกิดข้อผิดพลาด: " + err.message);
+          });
+      } else {
+        // ลบในโหมดจำลอง
+        setTimeout(() => {
+          showLoading(false);
+          cachedApplicants = cachedApplicants.filter(r => r.registrationId !== regId);
+          renderDashboardAndTable();
+        }, 400);
+      }
+    }
+
+    // ==========================================
+    // ⚙️ การควบคุมระบบฟอร์มแก้ไขผู้สมัคร (Editor Modal)
+    // ==========================================
+    function openEditModal(regId) {
+      const record = cachedApplicants.find(r => r.registrationId === regId);
+      if (!record) return;
+
+      document.getElementById('editRegId').value = record.registrationId;
+      document.getElementById('editModalTitle').innerHTML = `<i class="fa-solid fa-user-pen"></i> แก้ไขใบสมัคร: <span style="font-family:'Inter'; color:var(--accent); font-weight:700;">${record.registrationId}</span>`;
+
+      // ใส่ค่าเดิมของข้อมูลลงอินพุต
+      document.getElementById('editStudentId').value = record.studentId;
+      document.getElementById('editNationalId').value = record.nationalId;
+      document.getElementById('editTitleTh').value = record.titleTh;
+      document.getElementById('editFirstNameTh').value = record.firstNameTh;
+      document.getElementById('editLastNameTh').value = record.lastNameTh;
+      document.getElementById('editTitleEn').value = record.titleEn;
+      document.getElementById('editFirstNameEn').value = record.firstNameEn;
+      document.getElementById('editLastNameEn').value = record.lastNameEn;
+      document.getElementById('editGrade').value = record.grade;
+      
+      // ดึงและอัปเดตห้องเรียน
+      updateEditClassRoomOptions();
+      document.getElementById('editClassType').value = record.classType;
+
+      document.getElementById('editPhone').value = record.phone;
+      document.getElementById('editEmail').value = record.email || "";
+      document.getElementById('editLineId').value = record.lineId || "";
+      document.getElementById('editExams').value = record.exams;
+      document.getElementById('editTotalFee').value = record.totalFee;
+      document.getElementById('editStatus').value = record.status;
+      document.getElementById('editAdminComment').value = record.adminComment || "";
+
+      document.getElementById('editModalOverlay').classList.add('active');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModalOverlay').classList.remove('active');
+    }
+
+    // อัปเดตตัวเลือกห้องเรียนตามระดับชั้นในโมดัลแก้ไข
+    function updateEditClassRoomOptions() {
+      const grade = document.getElementById('editGrade').value;
+      const classSelect = document.getElementById('editClassType');
+
+      classSelect.innerHTML = "";
+
+      if (classRoomMap[grade]) {
+        classRoomMap[grade].forEach(room => {
+          const opt = document.createElement('option');
+          opt.value = grade + room;
+          opt.textContent = grade + room;
+          classSelect.appendChild(opt);
+        });
+      }
+    }
+
+    // ปรับราคาเงินโอนค่าสมัครอัตโนมัติตามระดับการเลือกในวิชาสอบ
+    function adjustEditTotalFee() {
+      const val = document.getElementById('editExams').value;
+      const feeInput = document.getElementById('editTotalFee');
+
+      if (val.includes("TESET") && !val.includes("&") && !val.includes("สองรายการ")) {
+        feeInput.value = 380;
+      } else if (val.includes("TSB") && !val.includes("&") && !val.includes("สองรายการ")) {
+        feeInput.value = 360;
+      } else {
+        feeInput.value = 740;
+      }
+    }
+
+    // จัดการส่งฟอร์มเพื่อแก้ไขข้อมูลผู้สมัครลง Google Sheets
+    function handleEditFormSubmit(event) {
+      event.preventDefault();
+
+      const regId = document.getElementById('editRegId').value;
+      const record = cachedApplicants.find(r => r.registrationId === regId);
+      if (!record) return;
+
+      const cleanString = (str) => str ? str.trim() : '';
+      const cleanNumber = (str) => str ? str.replace(/[^0-9]/g, '') : '';
+
+      const studentId = cleanNumber(document.getElementById('editStudentId').value);
+      const nationalId = cleanNumber(document.getElementById('editNationalId').value);
+      const phone = cleanNumber(document.getElementById('editPhone').value);
+
+      if (studentId.length !== 5) {
+        alert("รหัสนักเรียนไม่ถูกต้อง ต้องมี 5 หลัก!");
+        return;
+      }
+      if (nationalId.length !== 13) {
+        alert("บัตรประชาชนไม่ถูกต้อง ต้องมี 13 หลัก!");
+        return;
+      }
+
+      showLoading(true, "กำลังอัปเดตสถิติและข้อมูลผู้สมัครลงชีตหลัก...");
+
+      const updatedData = {
+        studentId: studentId,
+        nationalId: nationalId,
+        phone: phone,
+        titleTh: document.getElementById('editTitleTh').value,
+        firstNameTh: cleanString(document.getElementById('editFirstNameTh').value),
+        lastNameTh: cleanString(document.getElementById('editLastNameTh').value),
+        titleEn: document.getElementById('editTitleEn').value,
+        firstNameEn: cleanString(document.getElementById('editFirstNameEn').value),
+        lastNameEn: cleanString(document.getElementById('editLastNameEn').value),
+        grade: document.getElementById('editGrade').value,
+        classType: document.getElementById('editClassType').value,
+        email: cleanString(document.getElementById('editEmail').value),
+        lineId: cleanString(document.getElementById('editLineId').value),
+        exams: document.getElementById('editExams').value,
+        totalFee: Number(document.getElementById('editTotalFee').value),
+        status: document.getElementById('editStatus').value,
+        adminComment: cleanString(document.getElementById('editAdminComment').value)
+      };
+
+      const passcode = sessionStorage.getItem('acs_admin_passcode');
+
+      if (WEB_APP_URL && !WEB_APP_URL.includes("ใส่ลิงก์เว็บแอป")) {
+        callBackendApi("adminUpdate", {
+          passcode: passcode,
+          registrationId: regId,
+          updatedData: updatedData
+        })
+          .then(res => {
+            showLoading(false);
+            if (res.success) {
+              // แก้ไขค่าจำลองในหน่วยความจำ Cached
+              Object.assign(record, updatedData);
+              closeEditModal();
+              renderDashboardAndTable();
+            } else {
+              alert("เกิดข้อผิดพลาดจากฐานข้อมูล: " + res.message);
+            }
+          })
+          .catch(err => {
+            showLoading(false);
+            alert("ล้มเหลวในการเชื่อมโยงเครือข่าย: " + err.message);
+          });
+      } else {
+        // การกระทำจำลอง (Mockup Mode)
+        setTimeout(() => {
+          showLoading(false);
+          Object.assign(record, updatedData);
+          closeEditModal();
+          renderDashboardAndTable();
+        }, 500);
+      }
+    }
+
+    // ==========================================
+    // 🛠️ เครื่องมือสปินเนอร์และโหลดหน้าจอ (Helpers)
+    // ==========================================
+    function showLoading(show, message = "กำลังประมวลผล...") {
+      const overlay = document.getElementById('loadingOverlay');
+      const text = document.getElementById('loadingText');
+
+      if (show) {
+        text.textContent = message;
+        overlay.style.display = 'flex';
+      } else {
+        overlay.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+
+</html>
