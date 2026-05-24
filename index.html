@@ -351,6 +351,43 @@
       color: var(--secondary);
     }
 
+    /* ปุ่มอ่านระเบียบการแข่งขัน (Regulation Button) */
+    .regulation-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 13px;
+      border-radius: 50px;
+      font-family: 'Prompt', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1.5px solid currentColor;
+      transition: var(--transition);
+      margin-top: 8px;
+      white-space: nowrap;
+    }
+
+    .exam-promo-card.teset .regulation-btn {
+      color: var(--primary);
+      background: rgba(166, 29, 36, 0.05);
+    }
+
+    .exam-promo-card.teset .regulation-btn:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .exam-promo-card.tsb .regulation-btn {
+      color: var(--secondary);
+      background: rgba(15, 32, 66, 0.05);
+    }
+
+    .exam-promo-card.tsb .regulation-btn:hover {
+      background: var(--secondary);
+      color: #ffffff;
+    }
+
     /* ลิสต์รายการข้อมูลทั่วไป */
     .info-list {
       list-style: none;
@@ -1740,6 +1777,10 @@
                     <p style="margin-top: 5px; color: var(--primary); font-weight: 500;"><i
                         class="fa-regular fa-calendar-days"></i> วันอาทิตย์ที่ 16 สิงหาคม 2569<br><i
                         class="fa-regular fa-clock"></i> 9.00 - 10.30 น.</p>
+                    <a class="regulation-btn" href="https://taccontest.com/TESET/process/file/teset.pdf?date=20260524"
+                      target="_blank" rel="noopener">
+                      <i class="fa-solid fa-file-lines"></i> อ่านระเบียบการแข่งขัน
+                    </a>
                   </div>
                 </div>
                 <div class="exam-promo-price">380 บาท</div>
@@ -1757,6 +1798,11 @@
                     <p style="margin-top: 5px; color: var(--secondary); font-weight: 500;"><i
                         class="fa-regular fa-calendar-days"></i> วันอาทิตย์ที่ 16 สิงหาคม 2569<br><i
                         class="fa-regular fa-clock"></i> 11.00 - 12.00 น.</p>
+                    <a class="regulation-btn"
+                      href="https://taccontest.com/TSB/processR1/file/tsbR1-thai.pdf?class=process" target="_blank"
+                      rel="noopener">
+                      <i class="fa-solid fa-file-lines"></i> อ่านระเบียบการแข่งขัน
+                    </a>
                   </div>
                 </div>
                 <div class="exam-promo-price">360 บาท</div>
