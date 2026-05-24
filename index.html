@@ -1,0 +1,2881 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ระบบลงทะเบียนสอบออนไลน์ | โรงเรียนอัสสัมชัญศรีราชา</title>
+  <!-- Google Fonts: Prompt & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ==========================================================================
+       🎨 ระบบธีมสีและสไตล์พื้นฐาน (Design Tokens & Base Styles)
+       ========================================================================== */
+    :root {
+      --primary: #c21a22;
+      /* แดงเข้ม อัสสัมชัญ (ACS Crimson Red) */
+      --primary-hover: #981218;
+      --secondary: #6b0f14;
+      /* แดงเบอร์กันดีสำหรับองค์ประกอบหลัก (Burgundy Red) */
+      --secondary-light: #8c141a;
+      --accent: #d97706;
+      /* ทองสง่างาม (ACS Gold) */
+      --accent-light: #fef3c7;
+
+      /* สีสถานะ */
+      --success: #10b981;
+      /* เขียว */
+      --success-bg: #ecfdf5;
+      --warning: #f59e0b;
+      /* เหลือง */
+      --warning-bg: #fffbeb;
+      --danger: #ef4444;
+      /* แดงสว่าง */
+      --danger-bg: #fef2f2;
+
+      /* สีโทนสว่างและมิติ */
+      --bg-gradient: linear-gradient(135deg, #fdf4f4 0%, #f1f5f9 100%);
+      --card-bg: rgba(255, 255, 255, 0.98);
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+
+      /* เงาและการบิดตัว */
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 8px 24px rgba(107, 15, 20, 0.08);
+      --shadow-lg: 0 16px 36px rgba(107, 15, 20, 0.12);
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Prompt', 'Inter', sans-serif;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      flex: 1;
+    }
+
+    /* ==========================================================================
+       🏛️ ส่วนหัวของเว็บแอป (Header / Branding Banner)
+       ========================================================================== */
+    .header-banner {
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+      color: #ffffff;
+      border-radius: var(--radius-md);
+      padding: 35px 25px;
+      margin-bottom: 25px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* ลวดลายตกแต่งด้านหลังหัวเว็บ (Subtle Grid / Circles Accent) */
+    .header-banner::before {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      top: -100px;
+      right: -100px;
+      pointer-events: none;
+    }
+
+    .school-logo-container {
+      background: #ffffff;
+      border-radius: 12px;
+      width: 90px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-md);
+      flex-shrink: 0;
+      border: 4px solid var(--accent);
+      animation: pulse 3s infinite;
+      padding: 6px;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.03);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .school-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .header-text h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+      text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-text p {
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 300;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-text .badge-deadline {
+      background: var(--accent);
+      color: #ffffff;
+      padding: 3px 12px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ==========================================================================
+       🧭 แถบนำทางแบบเมนูแท็บ (Responsive Navigation Tabs)
+       ========================================================================== */
+    .nav-tabs {
+      display: flex;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 50px;
+      padding: 6px;
+      margin-bottom: 25px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .tab-button {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 12px 15px;
+      font-family: 'Prompt', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .tab-button:hover {
+      color: var(--primary);
+      background: rgba(166, 29, 36, 0.05);
+    }
+
+    .tab-button.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ==========================================================================
+       📦 ส่วนการแสดงเนื้อหาหลัก (Tab Content View)
+       ========================================================================== */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* สไตล์การ์ดหลัก (Glassmorphism Concept) */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 30px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      margin-bottom: 25px;
+      transition: var(--transition);
+    }
+
+    /* ==========================================================================
+       🏠 หน้าที่ 1: ประชาสัมพันธ์และประกาศ (Home Section)
+       ========================================================================== */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 25px;
+    }
+
+    @media (max-width: 820px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info-section-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid rgba(15, 32, 66, 0.1);
+      padding-bottom: 10px;
+    }
+
+    /* การ์ดรายการสอบ (Exam Type Cards) */
+    .exam-promo-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .exam-promo-card {
+      display: flex;
+      border-left: 5px solid var(--accent);
+      background: #ffffff;
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      transition: var(--transition);
+    }
+
+    .exam-promo-card:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(15, 32, 66, 0.08);
+    }
+
+    .exam-promo-card.teset {
+      border-left-color: var(--primary);
+    }
+
+    .exam-promo-card.tsb {
+      border-left-color: var(--secondary);
+    }
+
+    .exam-promo-details h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .exam-promo-details p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .exam-promo-price {
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 1.25rem;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 50px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .exam-promo-card.teset .exam-promo-price {
+      background: rgba(166, 29, 36, 0.08);
+      color: var(--primary);
+    }
+
+    .exam-promo-card.tsb .exam-promo-price {
+      background: rgba(15, 32, 66, 0.08);
+      color: var(--secondary);
+    }
+
+    /* ลิสต์รายการข้อมูลทั่วไป */
+    .info-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .info-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.95rem;
+    }
+
+    .info-list li i {
+      color: var(--primary);
+      margin-top: 4px;
+      font-size: 1.05rem;
+    }
+
+    /* บล็อกข้อมูลการโอนเงิน (Bank Details Box) */
+    .bank-payment-box {
+      background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      text-align: center;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .bank-logo {
+      background: #00875a;
+      /* โทนสีธนาคารทหารไทยธนชาต / หรือกสิกร / ในที่นี้จำลอง ttb สีส้ม/น้ำเงิน */
+      background: linear-gradient(135deg, #f37021 0%, #004899 100%);
+      color: #ffffff;
+      padding: 6px 15px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: inline-block;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+
+    .bank-name {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 5px;
+      color: var(--secondary);
+    }
+
+    .bank-account-num {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 1.5px;
+      margin: 8px 0;
+      display: inline-block;
+      border-bottom: 2px solid rgba(194, 26, 34, 0.2);
+    }
+
+    .bank-holder {
+      font-size: 0.95rem;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    /* QR Code จำลอง */
+    .qr-container {
+      margin-top: 15px;
+      background: white;
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      display: inline-block;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .qr-mockup-svg {
+      width: 140px;
+      height: 140px;
+    }
+
+    /* สไตล์คอลัมน์การชำระเงินในฟอร์มลงทะเบียน */
+    .bank-payment-box-row {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 25px;
+      align-items: center;
+      text-align: left;
+    }
+
+    @media (max-width: 640px) {
+      .bank-payment-box-row {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+    }
+
+    /* ==========================================================================
+       📝 หน้าที่ 2: ฟอร์มลงทะเบียนสอบอย่างเป็นสัดส่วน (Registration Form Section)
+       ========================================================================== */
+    .form-group-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--secondary);
+      margin: 25px 0 15px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group-title:first-of-type {
+      margin-top: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 15px;
+    }
+
+    .col-12 {
+      grid-column: span 12;
+    }
+
+    .col-8 {
+      grid-column: span 8;
+    }
+
+    .col-6 {
+      grid-column: span 6;
+    }
+
+    .col-4 {
+      grid-column: span 4;
+    }
+
+    .col-3 {
+      grid-column: span 3;
+    }
+
+    .col-2 {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 768px) {
+
+      .col-8,
+      .col-6,
+      .col-4,
+      .col-3,
+      .col-2 {
+        grid-column: span 12;
+      }
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-field label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .form-field label span.required {
+      color: var(--danger);
+      margin-left: 3px;
+    }
+
+    .input-control {
+      font-family: 'Prompt', sans-serif;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: var(--transition);
+      background-color: #ffffff;
+      color: var(--text-main);
+      width: 100%;
+    }
+
+    .input-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(166, 29, 36, 0.15);
+    }
+
+    .input-control::placeholder {
+      color: #94a3b8;
+    }
+
+    .input-control:disabled {
+      background-color: #f1f5f9;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+
+    /* กล่องเลือกวิชาสอบ (Interactive Exam Selection Cards) */
+    .exams-selector-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 640px) {
+      .exams-selector-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .exam-option-card {
+      position: relative;
+      border: 2px solid var(--border-color);
+      background: #ffffff;
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .exam-option-card:hover {
+      border-color: rgba(166, 29, 36, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .exam-option-card input[type="radio"] {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .exam-option-card.selected {
+      border-color: var(--primary);
+      background: rgba(166, 29, 36, 0.02);
+      box-shadow: 0 4px 10px rgba(166, 29, 36, 0.05);
+    }
+
+    .exam-option-card.selected::after {
+      content: '\f00c';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      bottom: 12px;
+      right: 15px;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .exam-option-card h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-right: 25px;
+      /* กันไม่ให้ทับกับ Radio button */
+    }
+
+    .exam-option-card .fee {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-top: auto;
+    }
+
+    /* กล่องอัปโหลดภาพ (Premium Drag & Drop Uploader) */
+    .uploader-container {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 25px;
+      text-align: center;
+      cursor: pointer;
+      background: #ffffff;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .uploader-container:hover,
+    .uploader-container.dragover {
+      border-color: var(--primary);
+      background: rgba(166, 29, 36, 0.02);
+    }
+
+    .uploader-icon {
+      font-size: 2.2rem;
+      color: var(--primary);
+    }
+
+    .uploader-text {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .uploader-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .slip-preview-box {
+      margin-top: 15px;
+      display: none;
+      position: relative;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      background: #f8fafc;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .slip-preview-img {
+      width: 100%;
+      height: auto;
+      max-height: 250px;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+
+    .remove-preview-btn {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--danger);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .remove-preview-btn:hover {
+      transform: scale(1.1);
+      background: #dc2626;
+    }
+
+    /* กล่องสรุปราคารวมแบบ Dynamic */
+    .summary-fee-box {
+      background: var(--secondary);
+      color: #ffffff;
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .summary-fee-box span {
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+
+    .summary-fee-box strong {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #ffffff;
+      border-bottom: 2px double var(--accent);
+    }
+
+    /* ปุ่มบันทึกฟอร์ม (Submit Button) */
+    .btn-submit {
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px 20px;
+      font-family: 'Prompt', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(166, 29, 36, 0.2);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 15px rgba(166, 29, 36, 0.3);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      background-color: #cbd5e1;
+      color: #64748b;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* หน้าต่างผลลัพธ์การส่งฟอร์ม (Success State screen Overlay) */
+    .result-overlay-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .result-success-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--success-bg);
+      color: var(--success);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      border: 3px solid var(--success);
+    }
+
+    .result-overlay-screen h2 {
+      font-size: 1.6rem;
+      color: var(--secondary);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .result-overlay-screen p {
+      color: var(--text-muted);
+      max-width: 500px;
+      margin-bottom: 25px;
+    }
+
+    .success-info-table {
+      width: 100%;
+      max-width: 450px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-bottom: 25px;
+      text-align: left;
+    }
+
+    .success-info-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .success-info-table td {
+      padding: 10px 15px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 0.9rem;
+    }
+
+    .success-info-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .success-info-table td.label-cell {
+      font-weight: 600;
+      color: var(--secondary);
+      width: 40%;
+      background: #f8fafc;
+    }
+
+    .success-info-table td.value-cell {
+      color: var(--text-main);
+    }
+
+    .btn-reset-form {
+      background: var(--secondary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 24px;
+      font-family: 'Prompt', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-reset-form:hover {
+      background: var(--secondary-light);
+    }
+
+    /* ==========================================================================
+       🔍 หน้าที่ 3: ตรวจสอบสถานะการลงทะเบียน (Status Checker Section)
+       ========================================================================== */
+    .checker-search-box {
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+
+    .checker-grid {
+      display: flex;
+      gap: 15px;
+      align-items: flex-end;
+    }
+
+    @media (max-width: 640px) {
+      .checker-grid {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    .checker-field {
+      flex: 1;
+    }
+
+    .btn-check-status {
+      background: var(--secondary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 11px 25px;
+      font-family: 'Prompt', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 42px;
+    }
+
+    .btn-check-status:hover {
+      background: var(--secondary-light);
+      box-shadow: 0 4px 10px rgba(15, 32, 66, 0.15);
+    }
+
+    /* ส่วนแสดงผลข้อมูลสถานะนักเรียน (Status Results Area) */
+    .status-results-container {
+      margin-top: 10px;
+    }
+
+    .status-result-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .status-result-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 6px;
+      background: var(--warning);
+    }
+
+    .status-result-card.approved::before {
+      background: var(--success);
+    }
+
+    .status-result-card.rejected::before {
+      background: var(--danger);
+    }
+
+    .status-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 12px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .status-reg-id {
+      font-weight: 700;
+      color: var(--secondary);
+      font-size: 1.1rem;
+    }
+
+    /* ป้ายแสดงสถานะ (Status Badges) */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .status-badge.waiting {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .status-badge.approved {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .status-badge.rejected {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    /* รายละเอียดในสถานะการ์ด */
+    .status-details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 640px) {
+      .status-details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .status-detail-item {
+      display: flex;
+      gap: 8px;
+    }
+
+    .status-detail-label {
+      color: var(--text-muted);
+      font-weight: 500;
+      min-width: 110px;
+      flex-shrink: 0;
+    }
+
+    .status-detail-value {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* กล่องข้อความแจ้งเตือนจากแอดมิน (Admin Comment Box) */
+    .admin-comment-box {
+      background: #f8fafc;
+      border-radius: var(--radius-sm);
+      padding: 12px 15px;
+      font-size: 0.88rem;
+      border-left: 3px solid var(--text-muted);
+      margin-top: 12px;
+      color: var(--text-main);
+    }
+
+    .status-result-card.approved .admin-comment-box {
+      border-left-color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .status-result-card.rejected .admin-comment-box {
+      border-left-color: var(--danger);
+      background: var(--danger-bg);
+    }
+
+    .admin-comment-title {
+      font-weight: 600;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .admin-comment-box i {
+      font-size: 0.95rem;
+    }
+
+    /* ไม่พบข้อมูล */
+    .no-data-box {
+      text-align: center;
+      padding: 40px 20px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      box-shadow: var(--shadow-sm);
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .no-data-icon {
+      font-size: 2.5rem;
+      color: #cbd5e1;
+      margin-bottom: 12px;
+    }
+
+    /* ==========================================================================
+       ⌛ ตัวโหลดข้อมูล (Loading Overlay / Spinner)
+       ========================================================================== */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(30, 10, 12, 0.65);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 15px;
+      color: #ffffff;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-text {
+      font-size: 1rem;
+      font-weight: 500;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ==========================================================================
+       👣 ส่วนท้ายเว็บ (Footer / Credits)
+       ========================================================================== */
+    footer {
+      text-align: center;
+      padding: 25px 20px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: auto;
+      border-top: 1px solid rgba(15, 32, 66, 0.05);
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* บล๊อกเตือนความปลอดภัยของข้อมูล */
+    .privacy-notice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(15, 32, 66, 0.03);
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 15px;
+      border: 1px solid rgba(15, 32, 66, 0.05);
+    }
+
+    /* ==========================================================================
+       📱 ระบบแสดงผลแบบปรับตามหน้าจอ (Responsive Overrides for Desktop, iPad, Mobile)
+       ========================================================================== */
+
+    /* 1. สำหรับหน้าจอแท็บเล็ตและอุปกรณ์พกพาขนาดกลาง (iPad / Tablets: 576px - 991px) */
+    @media (max-width: 991px) {
+      .container {
+        max-width: 1000px;
+        padding: 16px;
+      }
+
+      .header-banner {
+        padding: 25px 20px;
+        gap: 15px;
+      }
+
+      .school-logo-container {
+        width: 80px;
+        height: 80px;
+        border-width: 3px;
+      }
+
+      .header-text h1 {
+        font-size: 1.5rem;
+      }
+
+      .header-text p {
+        font-size: 0.95rem;
+      }
+
+      .card {
+        padding: 20px;
+      }
+    }
+
+    /* 2. คืนค่าฟอร์ม 2 คอลัมน์สำหรับหน้าจอ iPad (768px) และแท็บเล็ตทั่วไป เพื่อไม่ให้ยืดยาวเกินไป */
+    @media (min-width: 576px) and (max-width: 991px) {
+      .form-grid {
+        gap: 12px;
+      }
+
+      /* บังคับให้ช่องที่ควรอยู่คู่กันแสดงเป็น 2 คอลัมน์บนแท็บเล็ตแทนที่จะเป็นแถวเดี่ยว */
+      .form-grid .col-6 {
+        grid-column: span 6 !important;
+      }
+
+      .form-grid .col-12 {
+        grid-column: span 12 !important;
+      }
+
+      .exams-selector-container {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 10px;
+      }
+
+      .exam-option-card {
+        padding: 12px;
+      }
+
+      .exam-option-card h4 {
+        font-size: 0.88rem;
+      }
+
+      .exam-option-card .fee {
+        font-size: 1.05rem;
+      }
+    }
+
+    /* 3. จัดการการแสดงผลสำหรับหน้าจอขนาดเล็กและมือถือ (Mobile: 0 - 575px) */
+    @media (max-width: 575px) {
+      .container {
+        padding: 12px;
+      }
+
+      /* แบนเนอร์หัวข้อจัดเรียงแนวตั้งตรงกลางเพื่อความสมดุล */
+      .header-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 25px 15px;
+        gap: 15px;
+        border-radius: var(--radius-md);
+      }
+
+      .school-logo-container {
+        width: 75px;
+        height: 75px;
+        border-width: 3px;
+        margin: 0 auto;
+      }
+
+      .header-text h1 {
+        font-size: 1.3rem;
+        line-height: 1.4;
+      }
+
+      .header-text p {
+        font-size: 0.88rem;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .header-text .badge-deadline {
+        margin-top: 4px;
+        font-size: 0.8rem;
+        padding: 4px 10px;
+      }
+
+      /* แถบเมนูนำทางแบบยืดหยุ่นแสดงผลครบถ้วนไม่ถูกบีบอัด (Perfectly Responsive Full Tab Menu) */
+      .nav-tabs {
+        border-radius: 50px;
+        display: flex;
+        overflow: visible;
+        width: 100%;
+        padding: 4px;
+        gap: 2px;
+      }
+
+      .tab-button {
+        flex: 1;
+        /* เฉลี่ยเนื้อหาเท่ากันทุกคอลัมน์ */
+        padding: 10px 4px;
+        /* กระชับ Padding เพื่อประหยัดพื้นที่ */
+        font-size: 0.8rem;
+        /* ลดขนาดตัวอักษรเล็กน้อยเพื่อความพอดี */
+        border-radius: 50px;
+        justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+        /* ป้องกันไม่ให้ตัวหนังสือตัดขึ้นบรรทัดใหม่ */
+      }
+
+      .tab-button i {
+        display: none;
+        /* ซ่อนไอคอนบนโทรศัพท์มือถือเพื่อประหยัดเนื้อที่การแสดงผล */
+      }
+
+      .card {
+        padding: 18px 15px;
+        border-radius: var(--radius-sm);
+      }
+
+      /* การ์ดประชาสัมพันธ์วิชาสอบ */
+      .exam-promo-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 15px;
+      }
+
+      .exam-promo-price {
+        align-self: flex-end;
+        font-size: 1.1rem;
+        padding: 6px 14px;
+      }
+
+      /* ฟอร์มกรอกข้อมูลสลับเป็น 1 คอลัมน์เต็มบนมือถือ */
+      .form-grid .col-6,
+      .form-grid .col-12 {
+        grid-column: span 12 !important;
+      }
+
+      /* การเลือกวิชาสอบ */
+      .exams-selector-container {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+      }
+
+      .exam-option-card {
+        padding: 14px;
+      }
+
+      /* กล่องโอนเงินธนาคารและ QR Code */
+      .bank-payment-box-row {
+        grid-template-columns: 1fr !important;
+        text-align: center;
+        gap: 20px;
+      }
+
+      .bank-account-num {
+        font-size: 1.25rem;
+      }
+
+      /* ตัวอัปโหลดรูปสลิป */
+      .uploader-container {
+        padding: 20px 15px;
+      }
+
+      .uploader-icon {
+        font-size: 1.8rem;
+      }
+
+      .uploader-text {
+        font-size: 0.85rem;
+      }
+
+      /* ตารางสรุปราคาและปุ่มยืนยัน */
+      .summary-fee-box {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+        padding: 12px 15px;
+      }
+
+      .summary-fee-box span {
+        font-size: 0.88rem;
+      }
+
+      .summary-fee-box strong {
+        font-size: 1.25rem;
+      }
+
+      .btn-submit {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+      }
+
+      /* ส่วนตรวจสอบสถานะ */
+      .checker-grid {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px;
+      }
+
+      .checker-grid div[style*="align-self: center"] {
+        margin: 4px 0 !important;
+      }
+
+      .btn-check-status {
+        width: 100%;
+        margin-top: 5px;
+      }
+    }
+
+    /* ==========================================
+       🎨 Custom Modal System (แทนที่ alert ดั้งเดิม)
+       ========================================== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      animation: modalOverlayIn 0.25s ease;
+    }
+
+    @keyframes modalOverlayIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes modalOverlayOut {
+      from {
+        opacity: 1;
+      }
+
+      to {
+        opacity: 0;
+      }
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes modalSlideOut {
+      from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+
+      to {
+        opacity: 0;
+        transform: translateY(16px) scale(0.97);
+      }
+    }
+
+    @keyframes modalIconPulse {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      60% {
+        transform: scale(1.15);
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-overlay.closing {
+      animation: modalOverlayOut 0.2s ease forwards;
+    }
+
+    .modal-overlay.closing .modal-box {
+      animation: modalSlideOut 0.2s ease forwards;
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      max-width: 420px;
+      width: 100%;
+      overflow: hidden;
+      animation: modalSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-header {
+      padding: 28px 28px 0;
+      text-align: center;
+    }
+
+    .modal-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 14px;
+      animation: modalIconPulse 0.5s ease 0.15s both;
+    }
+
+    .modal-icon.error {
+      background: linear-gradient(135deg, #fee2e2, #fecaca);
+      color: #dc2626;
+    }
+
+    .modal-icon.warning {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #d97706;
+    }
+
+    .modal-icon.info {
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+      color: #2563eb;
+    }
+
+    .modal-icon.success {
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      color: #059669;
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .modal-body {
+      padding: 12px 28px 24px;
+      text-align: center;
+    }
+
+    .modal-message {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .modal-footer {
+      padding: 0 28px 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .modal-btn {
+      font-family: 'Prompt', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 40px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 0.3px;
+    }
+
+    .modal-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-btn:active {
+      transform: translateY(0);
+    }
+
+    .modal-btn.error {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: #fff;
+    }
+
+    .modal-btn.warning {
+      background: linear-gradient(135deg, #d97706, #b45309);
+      color: #fff;
+    }
+
+    .modal-btn.info {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+    }
+
+    .modal-btn.success {
+      background: linear-gradient(135deg, #059669, #047857);
+      color: #fff;
+    }
+
+    /* ==========================================
+       ✅ Inline Validation Error States
+       ========================================== */
+    .input-control.input-error {
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+      animation: inputShake 0.4s ease;
+    }
+
+    @keyframes inputShake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20% {
+        transform: translateX(-4px);
+      }
+
+      40% {
+        transform: translateX(4px);
+      }
+
+      60% {
+        transform: translateX(-3px);
+      }
+
+      80% {
+        transform: translateX(2px);
+      }
+    }
+
+    .field-error-text {
+      color: #ef4444;
+      font-size: 0.78rem;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      animation: errorTextIn 0.3s ease;
+    }
+
+    @keyframes errorTextIn {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .field-error-text i {
+      font-size: 0.72rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ⌛ แถบโหลดเซิร์ฟเวอร์ -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">กำลังติดต่อเซิร์ฟเวอร์...</div>
+  </div>
+
+  <!-- 🔔 กล่องแจ้งเตือนสวยงาม (Custom Modal) -->
+  <div class="modal-overlay" id="customModalOverlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-icon error" id="customModalIcon">
+          <i class="fa-solid fa-triangle-exclamation" id="customModalIconInner"></i>
+        </div>
+        <h3 class="modal-title" id="customModalTitle">แจ้งเตือน</h3>
+      </div>
+      <div class="modal-body">
+        <p class="modal-message" id="customModalMessage">ข้อความแจ้งเตือน</p>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn error" id="customModalBtn" onclick="closeModal()">ตกลง</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- 🏛️ แบนเนอร์ด้านบนโรงเรียนอัสสัมชัญศรีราชา -->
+    <header class="header-banner">
+      <div class="school-logo-container">
+        <img src="https://i.postimg.cc/FK5XzhGZ/logo-ACS.png" alt="Assumption College Sriracha Logo"
+          class="school-logo-img">
+      </div>
+      <div class="header-text">
+        <h1>ระบบลงทะเบียนสอบออนไลน์</h1>
+        <p>
+          โครงการประเมินทักษะวิชาการ โรงเรียนอัสสัมชัญศรีราชา ร่วมกับ อคาเดมิค คอนเทสต์ ประเทศไทย
+          <span class="badge-deadline">
+            <i class="fa-solid fa-clock"></i> รับลงทะเบียนถึง 3 ก.ค. 2569
+          </span>
+        </p>
+      </div>
+    </header>
+
+    <!-- 🧭 แถบนำทาง (Tabs Navigation) -->
+    <nav class="nav-tabs">
+      <button class="tab-button active" onclick="switchTab('home')">
+        <i class="fa-solid fa-circle-info"></i> แจ้งข้อมูลการสอบ
+      </button>
+      <button class="tab-button" onclick="switchTab('register')">
+        <i class="fa-solid fa-user-plus"></i> ลงทะเบียนสอบ
+      </button>
+      <button class="tab-button" onclick="switchTab('check')">
+        <i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบสถานะ
+      </button>
+    </nav>
+
+    <!-- ==========================================================================
+         🏠 หน้าย่อยที่ 1: หน้าประชาสัมพันธ์และข้อมูล (Home Tab)
+         ========================================================================== -->
+    <main class="tab-content active" id="tab-home">
+      <div class="info-grid">
+
+        <!-- ฝั่งซ้าย: ข้อมูลประกาศการรับลงทะเบียน -->
+        <div>
+          <div class="card">
+            <h2 class="info-section-title">
+              <i class="fa-solid fa-graduation-cap"></i> สนามสอบ โรงเรียนอัสสัมชัญศรีราชา
+            </h2>
+
+            <div class="exam-promo-container">
+
+              <!-- การ์ดวิชาที่ 1 -->
+              <div class="exam-promo-card teset">
+                <div style="display: flex; gap: 15px; align-items: center;">
+                  <img src="https://i.postimg.cc/15Wx4Q4H/TESET-LOGO.png" alt="TESET Logo"
+                    style="width: 60px; height: 60px; object-fit: contain;">
+                  <div class="exam-promo-details">
+                    <h3>Thailand English Skills Evaluation Test (TESET2026)</h3>
+                    <p><i class="fa-solid fa-award"></i> โครงการประเมินทักษะภาษาอังกฤษระดับประเทศ</p>
+                    <p style="margin-top: 5px; color: var(--primary); font-weight: 500;"><i
+                        class="fa-regular fa-calendar-days"></i> วันอาทิตย์ที่ 16 สิงหาคม 2569<br><i
+                        class="fa-regular fa-clock"></i> 9.00 - 10.30 น.</p>
+                  </div>
+                </div>
+                <div class="exam-promo-price">380 บาท</div>
+              </div>
+
+              <!-- การ์ดวิชาที่ 2 -->
+              <div class="exam-promo-card tsb">
+                <div style="display: flex; gap: 15px; align-items: center;">
+                  <img src="https://i.postimg.cc/02tgrsrZ/TSB-LOGO.png" alt="TSB Logo"
+                    style="width: 60px; height: 60px; object-fit: contain;">
+                  <div class="exam-promo-details">
+                    <h3>Thailand Spelling Bee (TSB2026)</h3>
+                    <p><i class="fa-solid fa-spell-check"></i>
+                      โครงการแข่งขันด้านคำศัพท์และการสะกดคำภาษาอังกฤษระดับประเทศ</p>
+                    <p style="margin-top: 5px; color: var(--secondary); font-weight: 500;"><i
+                        class="fa-regular fa-calendar-days"></i> วันอาทิตย์ที่ 16 สิงหาคม 2569<br><i
+                        class="fa-regular fa-clock"></i> 11.00 - 12.00 น.</p>
+                  </div>
+                </div>
+                <div class="exam-promo-price">360 บาท</div>
+              </div>
+
+            </div>
+
+            <h2 class="info-section-title" style="margin-top: 30px;">
+              <i class="fa-solid fa-map-location-dot"></i> ข้อมูลและสถานที่จัดสอบ
+            </h2>
+            <ul class="info-list">
+              <li>
+                <i class="fa-solid fa-school"></i>
+                <div>
+                  <strong>สนามสอบ:</strong> โรงเรียนอัสสัมชัญศรีราชา (จะแจ้งสถานที่สอบให้ในภายหลัง)
+                </div>
+              </li>
+              <li>
+                <i class="fa-solid fa-calendar-day"></i>
+                <div>
+                  <strong>กำหนดการเปิดรับลงทะเบียน:</strong> ลงทะเบียนได้ตั้งแต่วันนี้ ถึง <strong>3 กรกฎาคม พ.ศ.
+                    2569</strong>
+                </div>
+              </li>
+              <li>
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <div>
+                  <strong>เป้าหมายผู้สอบ:</strong> นักเรียนระดับชั้น ประถมศึกษาปีที่ 1 ถึง มัธยมศึกษาปีที่ 6 (ป.1 - ม.6)
+                  ทั้งหลักสูตรปกติ, สสวท./IEP/SEP และ MLP
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ฝั่งขวา: สรุปขั้นตอนการลงทะเบียน -->
+        <div>
+          <div class="card" style="margin-bottom: 20px; border-left: 5px solid var(--accent);">
+            <h2 class="info-section-title">
+              <i class="fa-solid fa-list-check"></i> 3 ขั้นตอนการลงทะเบียนสอบ
+            </h2>
+            <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom: 20px;">
+              กรุณาศึกษาขั้นตอนการลงทะเบียนก่อนเริ่มต้นลงทะเบียนด้านล่างนี้
+            </p>
+
+            <ul class="info-list" style="gap: 20px;">
+              <li style="align-items: flex-start;">
+                <div
+                  style="background: var(--primary); color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; margin-right: 5px;">
+                  1</div>
+                <div>
+                  <strong>กรอกประวัติผู้ลงทะเบียน</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                    กรอกข้อมูลประจำตัวผู้ลงทะเบียนเรียน (ภาษาไทย และภาษาอังกฤษ) พร้อมเบอร์โทรและระดับชั้น</p>
+                </div>
+              </li>
+              <li style="align-items: flex-start;">
+                <div
+                  style="background: var(--primary); color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; margin-right: 5px;">
+                  2</div>
+                <div>
+                  <strong>เลือกวิชาและโอนเงินชำระค่าสอบ</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">เลือกวิชาสอบที่ต้องการ
+                    ระบบจะสรุปยอดเงินและแสดงบัญชีธนาคารพร้อม QR Code สำหรับโอนเงิน</p>
+                </div>
+              </li>
+              <li style="align-items: flex-start;">
+                <div
+                  style="background: var(--primary); color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; margin-right: 5px;">
+                  3</div>
+                <div>
+                  <strong>แนบหลักฐานสลิปเพื่อยืนยันตัวตน</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                    อัปโหลดภาพรูปสลิปการโอนเงินสำเร็จเข้าสู่ระบบ ระบบจะทำการตรวจสอบและบันทึกการลงทะเบียนทันที</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <button class="btn-submit" onclick="switchTab('register')" style="margin-top: 5px;">
+            ลงทะเบียนสอบทันที <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- ==========================================================================
+         📝 หน้าย่อยที่ 2: ฟอร์มลงทะเบียนสอบ (Register Tab)
+         ========================================================================== -->
+    <main class="tab-content" id="tab-register">
+
+      <!-- หน้าฟอร์มกรอกข้อมูล -->
+      <div class="card" id="formCard">
+        <form id="registrationForm" onsubmit="handleFormSubmit(event)">
+
+          <!-- ส่วนที่ 1: ข้อมูลนักเรียนไทย -->
+          <div class="form-group-title">
+            <i class="fa-solid fa-user-graduate" style="color:var(--primary);"></i> 1. ข้อมูลประจำตัวผู้ลงทะเบียน
+            (ภาษาไทย)
+          </div>
+
+          <div class="form-grid">
+
+            <div class="col-6 form-field">
+              <label for="studentId">เลขประจำตัวนักเรียน (5 หลัก)<span class="required">*</span></label>
+              <input type="text" id="studentId" class="input-control" required placeholder="เช่น 12345" maxlength="5"
+                pattern="\d{5}" oninput="validateNumberInput(this)">
+            </div>
+
+            <div class="col-6 form-field" style="display:none; /* ซ่อนคอลัมน์เพื่อความเรียบร้อย */"></div>
+
+            <div class="col-12 form-field">
+              <label for="titleTh">คำนำหน้า<span class="required">*</span></label>
+              <select id="titleTh" class="input-control" required style="max-width: 250px;">
+                <option value="" disabled selected>-- เลือก --</option>
+                <option value="เด็กชาย">เด็กชาย</option>
+                <option value="เด็กหญิง">เด็กหญิง</option>
+                <option value="นาย">นาย</option>
+                <option value="นางสาว">นางสาว</option>
+              </select>
+            </div>
+
+            <div class="col-6 form-field">
+              <label for="firstNameTh">ชื่อจริง (ไม่ต้องมีคำนำหน้า)<span class="required">*</span></label>
+              <input type="text" id="firstNameTh" class="input-control" required placeholder="ภาษาไทย เช่น สมชาย">
+            </div>
+
+            <div class="col-6 form-field">
+              <label for="lastNameTh">นามสกุล<span class="required">*</span></label>
+              <input type="text" id="lastNameTh" class="input-control" required placeholder="ภาษาไทย เช่น ใจดี">
+            </div>
+
+          </div>
+
+          <!-- ส่วนที่ 2: ข้อมูลประจำตัวภาษาอังกฤษ -->
+          <div class="form-group-title">
+            <i class="fa-solid fa-language" style="color:var(--secondary);"></i> 2. ข้อมูลผู้ลงทะเบียนภาษาอังกฤษ
+            (English
+            Profile)
+          </div>
+
+          <div class="form-grid">
+
+            <div class="col-12 form-field">
+              <label for="titleEn">คำนำหน้า (EN)<span class="required">*</span></label>
+              <select id="titleEn" class="input-control" required style="max-width: 250px;">
+                <option value="" disabled selected>-- Select --</option>
+                <option value="Master">Master</option>
+                <option value="Miss">Miss</option>
+                <option value="Mr.">Mr.</option>
+                <option value="Ms.">Ms.</option>
+              </select>
+            </div>
+
+            <div class="col-6 form-field">
+              <label for="firstNameEn">ชื่อจริง (EN - No Title)<span class="required">*</span></label>
+              <input type="text" id="firstNameEn" class="input-control" required placeholder="English e.g. Somchai"
+                pattern="[A-Za-z\s]+" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
+            </div>
+
+            <div class="col-6 form-field">
+              <label for="lastNameEn">นามสกุล (EN)<span class="required">*</span></label>
+              <input type="text" id="lastNameEn" class="input-control" required placeholder="English e.g. Jaidee"
+                pattern="[A-Za-z\s]+" oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')">
+            </div>
+
+          </div>
+
+          <!-- ส่วนที่ 3: ระดับชั้นและประเภทหลักสูตร -->
+          <div class="form-group-title">
+            <i class="fa-solid fa-sliders" style="color:var(--accent);"></i> 3. ระดับการเรียนและห้องเรียน
+          </div>
+
+          <div class="form-grid">
+
+            <div class="col-6 form-field">
+              <label for="grade">ระดับชั้นปัจจุบัน<span class="required">*</span></label>
+              <select id="grade" class="input-control" required onchange="updateClassRoomOptions()">
+                <option value="" disabled selected>-- เลือกระดับชั้น --</option>
+                <optgroup label="ประถมศึกษา">
+                  <option value="ป.1">ประถมศึกษาปีที่ 1</option>
+                  <option value="ป.2">ประถมศึกษาปีที่ 2</option>
+                  <option value="ป.3">ประถมศึกษาปีที่ 3</option>
+                  <option value="ป.4">ประถมศึกษาปีที่ 4</option>
+                  <option value="ป.5">ประถมศึกษาปีที่ 5</option>
+                  <option value="ป.6">ประถมศึกษาปีที่ 6</option>
+                </optgroup>
+                <optgroup label="มัธยมศึกษาตอนต้น">
+                  <option value="ม.1">มัธยมศึกษาปีที่ 1</option>
+                  <option value="ม.2">มัธยมศึกษาปีที่ 2</option>
+                  <option value="ม.3">มัธยมศึกษาปีที่ 3</option>
+                </optgroup>
+                <optgroup label="มัธยมศึกษาตอนปลาย">
+                  <option value="ม.4">มัธยมศึกษาปีที่ 4</option>
+                  <option value="ม.5">มัธยมศึกษาปีที่ 5</option>
+                  <option value="ม.6">มัธยมศึกษาปีที่ 6</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div class="col-6 form-field">
+              <label for="classType">ห้อง/ชั้น<span class="required">*</span></label>
+              <select id="classType" class="input-control" required disabled>
+                <option value="" disabled selected>-- กรุณาเลือกระดับชั้นก่อน --</option>
+              </select>
+            </div>
+
+          </div>
+
+          <!-- ส่วนที่ 4: ข้อมูลติดต่อและข้อมูลสำคัญ -->
+          <div class="form-group-title">
+            <i class="fa-solid fa-address-card" style="color:var(--text-muted);"></i> 4. เอกสารประจำตัวและการติดต่อ
+          </div>
+
+          <div class="form-grid">
+
+            <div class="col-6 form-field">
+              <label for="nationalId">เลขบัตรประจำตัวประชาชน (13 หลัก)<span class="required">*</span></label>
+              <input type="text" id="nationalId" class="input-control" required placeholder="กรอกเฉพาะตัวเลข 13 หลัก"
+                maxlength="13" pattern="\d{13}" oninput="validateNumberInput(this)">
+            </div>
+
+            <div class="col-6 form-field">
+              <label for="phone">เบอร์โทรศัพท์สำหรับติดต่อ<span class="required">*</span></label>
+              <input type="tel" id="phone" class="input-control" required placeholder="เช่น 0812345678" maxlength="10"
+                pattern="[0-9]{9,10}" oninput="validateNumberInput(this)">
+            </div>
+
+            <div class="col-6 form-field">
+              <label for="email">อีเมล (E-mail)<span class="required">*</span></label>
+              <input type="email" id="email" class="input-control" required placeholder="เช่น somchai@gmail.com">
+            </div>
+
+            <div class="col-6 form-field">
+              <label for="lineId">LINE ID</label>
+              <input type="text" id="lineId" class="input-control" placeholder="ระบุเพื่อความสะดวกในการติดต่อกลับ">
+            </div>
+
+          </div>
+
+          <!-- ส่วนที่ 5: การลงทะเบียนวิชาสอบ -->
+          <div class="form-group-title">
+            <i class="fa-solid fa-pen-to-square" style="color:var(--primary);"></i> 5. วิชาที่ต้องการลงทะเบียนสอบ
+          </div>
+
+          <div class="exams-selector-container">
+
+            <!-- ตัวเลือก 1: TESET เท่านั้น -->
+            <div class="exam-option-card" onclick="selectExamOption('TESET')">
+              <input type="radio" name="examsRadio" id="examTeset" value="TESET" required
+                onclick="event.stopPropagation(); updateFeeSummary();">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://i.postimg.cc/15Wx4Q4H/TESET-LOGO.png" alt="TESET Logo"
+                  style="width: 32px; height: 32px; object-fit: contain;">
+                <h4>TESET 2026</h4>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Thailand English Skills Evaluation Test</p>
+              <p style="font-size:0.8rem; color:var(--primary);"><i class="fa-regular fa-calendar-days"></i> 16 ส.ค.
+                2569<br><i class="fa-regular fa-clock"></i> 9.00 - 10.30 น.</p>
+              <div class="fee">380 บาท</div>
+            </div>
+
+            <!-- ตัวเลือก 2: TSB เท่านั้น -->
+            <div class="exam-option-card" onclick="selectExamOption('TSB')">
+              <input type="radio" name="examsRadio" id="examTsb" value="TSB" required
+                onclick="event.stopPropagation(); updateFeeSummary();">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://i.postimg.cc/02tgrsrZ/TSB-LOGO.png" alt="TSB Logo"
+                  style="width: 32px; height: 32px; object-fit: contain;">
+                <h4>TSB 2026</h4>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted);">Thailand Spelling Bee</p>
+              <p style="font-size:0.8rem; color:var(--secondary);"><i class="fa-regular fa-calendar-days"></i> 16 ส.ค.
+                2569<br><i class="fa-regular fa-clock"></i> 11.00 - 12.00 น.</p>
+              <div class="fee">360 บาท</div>
+            </div>
+
+            <!-- ตัวเลือก 3: ทั้งสองรายวิชา -->
+            <div class="exam-option-card" onclick="selectExamOption('BOTH')">
+              <input type="radio" name="examsRadio" id="examBoth" value="BOTH" required
+                onclick="event.stopPropagation(); updateFeeSummary();">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="display: flex; gap: -5px;">
+                  <img src="https://i.postimg.cc/15Wx4Q4H/TESET-LOGO.png" alt="TESET Logo"
+                    style="width: 24px; height: 24px; object-fit: contain;">
+                  <img src="https://i.postimg.cc/02tgrsrZ/TSB-LOGO.png" alt="TSB Logo"
+                    style="width: 24px; height: 24px; object-fit: contain;">
+                </div>
+                <h4>ลงทะเบียนทั้ง 2 รายการ</h4>
+              </div>
+              <p style="font-size:0.8rem; color:var(--text-muted);">ประเมินทักษะ & Spelling Bee</p>
+              <p style="font-size:0.8rem; color:var(--primary);"><i class="fa-regular fa-calendar-days"></i> 16 ส.ค.
+                2569<br><i class="fa-regular fa-clock"></i> 9.00 - 12.00 น.</p>
+              <div class="fee">740 บาท</div>
+            </div>
+
+          </div>
+
+          <!-- ส่วนที่ 6: ช่องทางการชำระเงิน -->
+          <div class="form-group-title">
+            <i class="fa-solid fa-credit-card" style="color:var(--accent);"></i> 6. ช่องทางการชำระเงิน
+          </div>
+
+          <div class="bank-payment-box" style="margin-bottom: 20px;">
+            <div class="bank-payment-box-row">
+              <div>
+                <div class="bank-logo" style="background: linear-gradient(135deg, #138f2d 0%, #0a6e1f 100%);">KBank
+                </div>
+                <div class="bank-name">ธนาคารกสิกรไทย</div>
+                <div class="bank-account-num">016-8-92742-8</div>
+                <div class="bank-holder">ชื่อบัญชี: พลวิชญ์ มูลครบุรี</div>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 15px; line-height: 1.5;">
+                  <i class="fa-solid fa-circle-info"></i> กรุณาสแกนจ่ายเงินค่าลงทะเบียนสอบผ่าน QR Code
+                  หรือโอนเข้าบัญชีธนาคารตามที่แสดง จากนั้นให้แนบไฟล์รูปภาพสลิปที่โอนเงินสำเร็จใน <strong>ส่วนที่
+                    7</strong> ด้านล่าง
+                </p>
+              </div>
+              <div
+                style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div class="qr-container"
+                  style="margin-top: 0; background: white; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); display: inline-block;">
+                  <img src="https://i.postimg.cc/qMHmNQ3t/QR-xon-cxd.png" alt="QR Code ชำระเงิน"
+                    style="width: 160px; height: auto; border-radius: 4px;">
+                  <div style="font-size:0.75rem; font-weight:700; color:var(--secondary); margin-top:5px;">
+                    <i class="fa-solid fa-qrcode"></i> Scan to Pay (สแกนชำระเงิน)
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ส่วนที่ 7: แนบหลักฐานสลิปโอนเงินค่าลงทะเบียนสอบ -->
+          <div class="form-group-title">
+            <i class="fa-solid fa-file-invoice-dollar" style="color:var(--success);"></i> 7.
+            แนบหลักฐานสลิปโอนเงินค่าลงทะเบียนสอบ
+          </div>
+
+          <div class="form-field">
+            <label>หลักฐานการโอนเงิน (สลิป)<span class="required">*</span></label>
+
+            <div class="uploader-container" id="uploaderBox" onclick="triggerFileInput()">
+              <i class="fa-solid fa-cloud-arrow-up uploader-icon"></i>
+              <div class="uploader-text" id="uploaderText">คลิกเพื่ออัปโหลด หรือลากไฟล์รูปสลิปมาวางที่นี่</div>
+              <div class="uploader-hint">รองรับไฟล์รูปภาพ .png, .jpg, .jpeg ขนาดสูงสุดไม่เกิน 5MB</div>
+              <input type="file" id="slipFileInput" class="file-input" accept="image/png, image/jpeg, image/jpg"
+                onchange="handleFileSelect(event)">
+            </div>
+
+            <!-- บล็อกดูภาพตัวอย่าง -->
+            <div class="slip-preview-box" id="slipPreviewBox">
+              <button type="button" class="remove-preview-btn" onclick="removeSlipFile()" title="ลบรูปสลิปนี้">
+                <i class="fa-solid fa-times"></i>
+              </button>
+              <img src="" alt="สลิปโอนเงิน" class="slip-preview-img" id="slipPreviewImage">
+            </div>
+          </div>
+
+          <!-- Dynamic Fee Summary Card -->
+          <div class="summary-fee-box">
+            <span>สรุปยอดเงินชำระค่าลงทะเบียนสอบทั้งหมด:</span>
+            <strong><span id="summaryPriceText">0</span> บาท</strong>
+          </div>
+
+          <div class="privacy-notice">
+            <i class="fa-solid fa-shield-halved" style="color:var(--primary); font-size:1.2rem;"></i>
+            <div>
+              <strong>การคุ้มครองข้อมูลส่วนบุคคล:</strong>
+              ข้อมูลนี้จะจัดเก็บอย่างปลอดภัยบนระบบฐานข้อมูลของโรงเรียนอัสสัมชัญศรีราชา
+              และจะนำไปใช้ในการลงทะเบียนและประกาศผลสอบในโครงการเท่านั้น
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <i class="fa-solid fa-paper-plane"></i> ส่งข้อมูลและยืนยันการลงทะเบียนสอบ
+          </button>
+
+        </form>
+      </div>
+
+      <!-- ส่วนผลการทำงานสำเร็จหลังจากบันทึกฟอร์มเสร็จสิ้น -->
+      <div class="card result-overlay-screen" id="successResultScreen">
+        <div class="result-success-icon">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <h2>บันทึกข้อมูลการลงทะเบียนสอบเรียบร้อยแล้ว!</h2>
+        <p>
+          ระบบได้รับข้อมูลประวัติลงทะเบียนและสลิปการโอนเงินเรียบร้อยแล้ว
+          แอดมินจะดำเนินการตรวจสอบความถูกต้องของสลิปในลำดับถัดไป
+          คุณสามารถนำเลขประจำตัวนักเรียนหรือเลขบัตรประชาชนมาตรวจสอบสถานะล่าสุดได้ที่แท็บ "ตรวจสอบสถานะ"
+        </p>
+
+        <div class="success-info-table">
+          <table>
+            <tr>
+              <td class="label-cell">เลขการลงทะเบียน</td>
+              <td class="value-cell" style="font-weight:700; color:var(--primary);" id="resRegId">-</td>
+            </tr>
+            <tr>
+              <td class="label-cell">ชื่อผู้ลงทะเบียน</td>
+              <td class="value-cell" id="resStudentName">-</td>
+            </tr>
+            <tr>
+              <td class="label-cell">วิชาที่ลงทะเบียนสอบ</td>
+              <td class="value-cell" id="resExams">-</td>
+            </tr>
+            <tr>
+              <td class="label-cell">ยอดค่าธรรมเนียม</td>
+              <td class="value-cell" style="font-weight:700;" id="resTotalFee">-</td>
+            </tr>
+            <tr>
+              <td class="label-cell">สถานะการชำระเงิน</td>
+              <td class="value-cell">
+                <span class="status-badge waiting">
+                  <i class="fa-solid fa-hourglass-half"></i> รอแอดมินตรวจสอบ
+                </span>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <button class="btn-reset-form" onclick="resetFormToRegisterNew()">
+          <i class="fa-solid fa-plus-circle"></i> ลงทะเบียนสอบเพิ่มเติม
+        </button>
+      </div>
+
+    </main>
+
+    <!-- ==========================================================================
+         🔍 หน้าย่อยที่ 3: ตรวจสอบข้อมูลสถานะ (Check Tab)
+         ========================================================================== -->
+    <main class="tab-content" id="tab-check">
+      <div class="card">
+        <h2 class="info-section-title">
+          <i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบข้อมูลการลงทะเบียนสอบ
+        </h2>
+        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom: 20px;">
+          กรอกเลขประจำตัวนักเรียน (5 หลัก) หรือเลขบัตรประชาชน (13 หลัก) เพื่อตรวจสอบข้อมูล ลำดับการลงทะเบียน
+          และสถานะยืนยันการรับสลิปเงินโอน
+        </p>
+
+        <div class="checker-search-box">
+          <div class="checker-grid">
+
+            <div class="checker-field form-field">
+              <label for="searchStudentId">เลขประจำตัวนักเรียน (5 หลัก)</label>
+              <input type="text" id="searchStudentId" class="input-control" placeholder="เช่น 12345" maxlength="5"
+                pattern="\d{5}" oninput="validateNumberInput(this)">
+            </div>
+
+            <div
+              style="align-self: center; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">
+              หรือ</div>
+
+            <div class="checker-field form-field">
+              <label for="searchNationalId">เลขประจำตัวประชาชน (13 หลัก)</label>
+              <input type="text" id="searchNationalId" class="input-control" placeholder="กรอกเฉพาะตัวเลข 13 หลัก"
+                maxlength="13" pattern="\d{13}" oninput="validateNumberInput(this)">
+            </div>
+
+            <button class="btn-check-status" onclick="handleStatusCheck()">
+              <i class="fa-solid fa-search"></i> ค้นหา
+            </button>
+
+          </div>
+        </div>
+
+        <!-- พื้นที่แสดงผลการค้นหา -->
+        <div id="checkResultsArea">
+          <!-- การ์ดตัวอย่างแสดงสถานะ (เริ่มต้นจะไม่แสดงผลจนกว่าจะกดค้นหา) -->
+        </div>
+
+      </div>
+    </main>
+
+    <!-- 👣 ส่วนล่างและลิขสิทธิ์ -->
+    <footer>
+      <p>&copy; 2569 โรงเรียนอัสสัมชัญศรีราชา. สงวนลิขสิทธิ์ทั้งหมด.</p>
+      <p style="margin-top:5px; font-size: 0.8rem;">
+        ออกแบบและพัฒนาเป็นพิเศษสำหรับระบบ Google App Script ใน Google Sites
+      </p>
+    </footer>
+
+  </div>
+
+  <!-- ==========================================================================
+       ⚙️ ระบบจาวาสคริปต์ควบคุมการทำงาน (Client-Side Logic)
+       ========================================================================== -->
+  <script>
+    // ⚙️ ตั้งค่าลิงก์เชื่อมต่อ API ของโรงเรียน (Google Apps Script Web App URL)
+    // เมื่อกด Deploy -> New Deployment ใน Google Apps Script ให้นำลิงก์มาวางแทนที่ด้านล่างนี้ครับ:
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw5PjTnoTHvlPu5eqiXplZsAg4SbuzfqhKL0l0tE1KpJIowH8FX7zxzkkmMDKwtGvRJ/exec";
+
+    /**
+     * ฟังก์ชันส่งคำขอเบื้องหลังไปยัง Google Apps Script (API Gateway)
+     */
+    async function callGoogleApi(action, data) {
+      try {
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8" // ใช้ text/plain เพื่อเลี่ยงการทำ CORS Preflight OPTIONS
+          },
+          body: JSON.stringify({
+            action: action,
+            ...data
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("การตอบรับจากเซิร์ฟเวอร์ล้มเหลว (HTTP Status: " + response.status + ")");
+        }
+
+        return await response.json();
+      } catch (error) {
+        console.error("Connection error:", error);
+        return {
+          success: false,
+          message: "ไม่สามารถเชื่อมต่อกับระบบฐานข้อมูลโรงเรียนได้: " + error.message + " กรุณาลองใหม่อีกครั้ง หรือติดต่อผู้ดูแลระบบ"
+        };
+      }
+    }
+
+    // ข้อมูลเก็บไฟล์สลิป
+    let uploadedSlipBase64 = "";
+    let uploadedSlipFileName = "";
+
+    // โหลดครั้งแรก
+    window.addEventListener('DOMContentLoaded', () => {
+      setupDragAndDrop();
+    });
+
+    // ==========================================
+    // 🧭 ฟังก์ชันเปลี่ยนแท็บใช้งานแบบ SPA
+    // ==========================================
+    function switchTab(tabName) {
+      // 1. ลบคลาส Active จากปุ่มนำทางทั้งหมด
+      const buttons = document.querySelectorAll('.tab-button');
+      buttons.forEach(btn => btn.classList.remove('active'));
+
+      // 2. ลบคลาส Active จากเนื้อหาทั้งหมด
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => content.classList.remove('active'));
+
+      // 3. ใส่คลาส Active ให้ปุ่มและเนื้อหาที่เลือก
+      if (tabName === 'home') {
+        buttons[0].classList.add('active');
+        document.getElementById('tab-home').classList.add('active');
+      } else if (tabName === 'register') {
+        buttons[1].classList.add('active');
+        document.getElementById('tab-register').classList.add('active');
+      } else if (tabName === 'check') {
+        buttons[2].classList.add('active');
+        document.getElementById('tab-check').classList.add('active');
+      }
+    }
+
+    // ==========================================
+    // 🎛️ การจัดการฟิลด์และอินพุตต่าง ๆ
+    // ==========================================
+
+    // บังคับให้ป้อนได้เฉพาะตัวเลขในช่องรหัส
+    function validateNumberInput(input) {
+      input.value = input.value.replace(/[^0-9]/g, '');
+    }
+
+    // ฟังก์ชันช่วยสลับปุ่มวิชาลงทะเบียนสอบ
+    function selectExamOption(optionValue) {
+      // ยกเลิก selected ของการ์ดตัวเลือกทั้งหมด
+      const cards = document.querySelectorAll('.exam-option-card');
+      cards.forEach(card => card.classList.remove('selected'));
+
+      // เลือก Input ด้านในและไฮไลต์การ์ดที่ถูกเลือก
+      const radio = document.querySelector(`input[name="examsRadio"][value="${optionValue}"]`);
+      if (radio) {
+        radio.checked = true;
+        radio.closest('.exam-option-card').classList.add('selected');
+      }
+
+      // อัปเดตตารางสรุปค่าธรรมเนียม
+      updateFeeSummary();
+    }
+
+    // อัปเดตราคาแบบไดนามิก
+    function updateFeeSummary() {
+      const selectedRadio = document.querySelector('input[name="examsRadio"]:checked');
+      const priceText = document.getElementById('summaryPriceText');
+
+      if (!selectedRadio) {
+        priceText.textContent = "0";
+        return;
+      }
+
+      const val = selectedRadio.value;
+      if (val === 'TESET') {
+        priceText.textContent = "380";
+      } else if (val === 'TSB') {
+        priceText.textContent = "360";
+      } else if (val === 'BOTH') {
+        priceText.textContent = "740";
+      }
+    }
+
+    // ==========================================
+    // 🏫 อัปเดตตัวเลือกห้อง/ชั้นตามระดับชั้นที่เลือก
+    // ==========================================
+    function updateClassRoomOptions() {
+      const grade = document.getElementById('grade').value;
+      const classSelect = document.getElementById('classType');
+
+      // ข้อมูลห้องเรียนตามระดับชั้น
+      const classRoomMap = {
+        'ป.1': ['/1', '/2', '/3', '/4', '/5', 'A', 'B', 'C'],
+        'ป.2': ['/1', '/2', '/3', '/4', '/5', 'A', 'B', 'C'],
+        'ป.3': ['/1', '/2', '/3', '/4', '/5', 'A', 'B'],
+        'ป.4': ['/1', '/2', '/3', '/4', '/5', 'A', 'B'],
+        'ป.5': ['/1', '/2', '/3', '/4', '/5', 'A', 'B'],
+        'ป.6': ['/1', '/2', '/3', '/4', '/5', 'A', 'B'],
+        'ม.1': ['/1', '/2', '/3', '/4', '/5', '/6', '/7', 'A', 'B', 'C'],
+        'ม.2': ['/1', '/2', '/3', '/4', '/5', '/6', '/7', 'A', 'B'],
+        'ม.3': ['/1', '/2', '/3', '/4', '/5', '/6', '/7', 'A', 'B'],
+        'ม.4': ['/1', '/2', '/3', '/4', '/5', '/6', '/7', '/8', '/9', 'IS', 'IB'],
+        'ม.5': ['/1', '/2', '/3', '/4', '/5', '/6', '/7', '/8', '/9', 'IS', 'IB'],
+        'ม.6': ['/1', '/2', '/3', '/4', '/5', '/6', '/7', '/8', '/9', 'IS', 'IB']
+      };
+
+      // ล้างตัวเลือกเดิม
+      classSelect.innerHTML = '';
+
+      if (!grade || !classRoomMap[grade]) {
+        classSelect.innerHTML = '<option value="" disabled selected>-- กรุณาเลือกระดับชั้น --</option>';
+        classSelect.disabled = true;
+        return;
+      }
+
+      // เปิดใช้งานและเพิ่มตัวเลือกใหม่
+      classSelect.disabled = false;
+      classSelect.innerHTML = '<option value="" disabled selected>-- เลือกห้อง/ชั้น --</option>';
+
+      const gradePrefix = grade;
+      classRoomMap[grade].forEach(room => {
+        const opt = document.createElement('option');
+        opt.value = gradePrefix + room;
+        opt.textContent = gradePrefix + room;
+        classSelect.appendChild(opt);
+      });
+    }
+
+    // ==========================================
+    // 📁 ระบบลากวางไฟล์หลักฐานสลิป (Uploader System)
+    // ==========================================
+    function triggerFileInput() {
+      document.getElementById('slipFileInput').click();
+    }
+
+    function setupDragAndDrop() {
+      const dropZone = document.getElementById('uploaderBox');
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropZone.classList.add('dragover');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          dropZone.classList.remove('dragover');
+        }, false);
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length > 0) {
+          processFile(files[0]);
+        }
+      }, false);
+    }
+
+    function handleFileSelect(e) {
+      const files = e.target.files;
+      if (files.length > 0) {
+        processFile(files[0]);
+      }
+    }
+
+    function processFile(file) {
+      // ตรวจสอบประเภทไฟล์
+      const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      if (!validTypes.includes(file.type)) {
+        showModal("ประเภทไฟล์ไม่รองรับ", "กรุณาอัปโหลดเฉพาะไฟล์รูปภาพสลิปเท่านั้น (.png, .jpg, .jpeg)", "warning");
+        return;
+      }
+
+      // ตรวจสอบขนาดไฟล์ (สูงสุด 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        showModal("ขนาดไฟล์เกินกำหนด", "ไฟล์รูปภาพมีขนาดใหญ่เกินไป (จำกัดไม่เกิน 5MB)", "warning");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadstart = () => {
+        showLoading(true, "กำลังประมวลผลไฟล์รูปภาพ...");
+      };
+      reader.onload = () => {
+        showLoading(false);
+        uploadedSlipBase64 = reader.result;
+        uploadedSlipFileName = file.name;
+
+        // แสดงรูปตัวอย่าง
+        document.getElementById('slipPreviewImage').src = reader.result;
+        document.getElementById('slipPreviewBox').style.display = 'block';
+        document.getElementById('uploaderBox').style.display = 'none';
+      };
+      reader.onerror = () => {
+        showLoading(false);
+        alert("ไม่สามารถอ่านไฟล์ได้สำเร็จ กรุณาลองใหม่อีกครั้ง");
+      };
+    }
+
+    function removeSlipFile() {
+      uploadedSlipBase64 = "";
+      uploadedSlipFileName = "";
+      document.getElementById('slipFileInput').value = "";
+      document.getElementById('slipPreviewBox').style.display = 'none';
+      document.getElementById('uploaderBox').style.display = 'flex';
+    }
+
+    // ==========================================
+    // ⚙️ การประมวลผลการส่งฟอร์ม (Backend GAS API)
+    // ==========================================
+    function handleFormSubmit(event) {
+      event.preventDefault();
+
+      // 1. ตรวจสอบความถูกต้องว่าอัปโหลดรูปภาพสลิปหรือยัง
+      if (!uploadedSlipBase64) {
+        showModal("ข้อมูลไม่ครบถ้วน", "กรุณาอัปโหลดรูปภาพสลิปการโอนเงินเพื่อใช้เป็นหลักฐานการลงทะเบียน", "warning");
+        return;
+      }
+
+      // 2. ดึงข้อมูลตัวเลือกวิชาสอบ
+      const selectedRadio = document.querySelector('input[name="examsRadio"]:checked');
+      if (!selectedRadio) {
+        showModal("ข้อมูลไม่ครบถ้วน", "กรุณาเลือกวิชาที่ต้องการลงทะเบียนสอบ", "warning");
+        return;
+      }
+
+      // 3. Data Cleanup & Validation (ทำความสะอาดข้อมูลก่อนส่ง)
+      const cleanString = (str) => str ? str.trim().replace(/\s+/g, ' ') : '';
+      const cleanNumber = (str) => str ? str.replace(/[^0-9]/g, '') : '';
+
+      const studentId = cleanNumber(document.getElementById('studentId').value);
+      const nationalId = cleanNumber(document.getElementById('nationalId').value);
+      const phone = cleanNumber(document.getElementById('phone').value);
+      const email = cleanString(document.getElementById('email').value);
+      const firstNameTh = cleanString(document.getElementById('firstNameTh').value);
+      const lastNameTh = cleanString(document.getElementById('lastNameTh').value);
+      const firstNameEn = cleanString(document.getElementById('firstNameEn').value);
+      const lastNameEn = cleanString(document.getElementById('lastNameEn').value);
+
+      // --- การตรวจสอบความถูกต้อง (Validation) ---
+      if (studentId.length !== 5) {
+        showModal("ข้อมูลไม่ถูกต้อง", "เลขประจำตัวนักเรียนต้องเป็นตัวเลข 5 หลัก", "warning");
+        return;
+      }
+      if (nationalId.length !== 13) {
+        showModal("ข้อมูลไม่ถูกต้อง", "เลขประจำตัวประชาชนต้องเป็นตัวเลข 13 หลัก", "warning");
+        return;
+      }
+
+      // ตรวจสอบ Checksum ทะเบียนราษฎร์ 13 หลัก
+      let sum = 0;
+      for (let i = 0; i < 12; i++) {
+        sum += parseInt(nationalId.charAt(i)) * (13 - i);
+      }
+      if ((11 - (sum % 11)) % 10 !== parseInt(nationalId.charAt(12))) {
+        showModal("ข้อมูลไม่ถูกต้อง", "เลขประจำตัวประชาชนไม่ถูกต้องตามรูปแบบของกรมการปกครอง", "error");
+        return;
+      }
+
+      if (phone.length < 9) {
+        showModal("ข้อมูลไม่ถูกต้อง", "เบอร์โทรศัพท์ต้องมีอย่างน้อย 9 หลัก", "warning");
+        return;
+      }
+
+      // อัปเดตกลับไปที่ฟิลด์เพื่อความสะอาด
+      document.getElementById('studentId').value = studentId;
+      document.getElementById('nationalId').value = nationalId;
+      document.getElementById('phone').value = phone;
+      document.getElementById('firstNameTh').value = firstNameTh;
+      document.getElementById('lastNameTh').value = lastNameTh;
+      document.getElementById('firstNameEn').value = firstNameEn;
+      document.getElementById('lastNameEn').value = lastNameEn;
+      document.getElementById('email').value = email;
+
+      const formData = {
+        studentId: studentId,
+        titleTh: document.getElementById('titleTh').value,
+        firstNameTh: firstNameTh,
+        lastNameTh: lastNameTh,
+        titleEn: document.getElementById('titleEn').value,
+        firstNameEn: firstNameEn,
+        lastNameEn: lastNameEn,
+        grade: document.getElementById('grade').value,
+        classType: document.getElementById('classType').value,
+        nationalId: nationalId,
+        phone: phone,
+        email: email,
+        lineId: cleanString(document.getElementById('lineId').value),
+        exams: selectedRadio.value
+      };
+
+      // 4. แสดงจอโหลดขณะส่งข้อมูล
+      showLoading(true, "กำลังอัปโหลดรูปสลิปและบันทึกการลงทะเบียนเข้าระบบ... กรุณาอย่าเพิ่งปิดหน้าต่างนี้");
+
+      // 5. เรียกใช้ API ของ Google Apps Script API ผ่านการเชื่อมต่อเครือข่ายภายนอก
+      if (WEB_APP_URL && WEB_APP_URL !== "ใส่ลิงก์เว็บแอป_GOOGLE_APPS_SCRIPT_ตรงนี้") {
+        callGoogleApi("submit", {
+          formData: formData,
+          slipBase64: uploadedSlipBase64,
+          slipFileName: uploadedSlipFileName
+        })
+          .then(onFormSubmitSuccess)
+          .catch(onFormSubmitFailure);
+      } else {
+        // ทำงานใน Local Environment (สำหรับทดสอบหน้าเว็บ - Mockup Response)
+        setTimeout(() => {
+          onFormSubmitSuccess({
+            success: true,
+            registrationId: "REG-2026-9999 (จำลอง)",
+            totalFee: formData.exams === 'BOTH' ? 740 : (formData.exams === 'TESET' ? 380 : 360),
+            studentName: formData.titleTh + formData.firstNameTh + " " + formData.lastNameTh,
+            examsText: formData.exams === 'BOTH' ? "TESET2026 & TSB2026" : formData.exams
+          });
+        }, 1500);
+      }
+    }
+
+    function onFormSubmitSuccess(response) {
+      showLoading(false);
+
+      if (response.success) {
+        // แสดงจอสำเร็จและระบุข้อมูลใบรับลงทะเบียน
+        document.getElementById('resRegId').textContent = response.registrationId;
+        document.getElementById('resStudentName').textContent = response.studentName;
+        document.getElementById('resExams').textContent = response.examsText;
+        document.getElementById('resTotalFee').textContent = response.totalFee + " บาท";
+
+        // สลับวิสัยทัศน์กล่องฟอร์มกับกล่องความสำเร็จ
+        document.getElementById('formCard').style.display = 'none';
+        document.getElementById('successResultScreen').style.display = 'flex';
+
+        // เลื่อนหน้าจอขึ้นบนสุดอย่างนุ่มนวล
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        showModal("ไม่สามารถลงทะเบียนได้", "เกิดข้อผิดพลาดในการลงทะเบียน: " + response.message, "error");
+      }
+    }
+
+    function onFormSubmitFailure(error) {
+      showLoading(false);
+      showModal("ระบบขัดข้อง", "เกิดข้อผิดพลาดในการติดต่อกับฐานข้อมูล Google Sheets: " + error.toString() + "\nกรุณาติดต่อคุณครูผู้ดูแลระบบ", "error");
+    }
+
+    function resetFormToRegisterNew() {
+      // รีเซ็ตค่าอินพุตทั้งหมดในฟอร์ม
+      document.getElementById('registrationForm').reset();
+
+      // เอาไฮไลต์วิชาออก
+      const cards = document.querySelectorAll('.exam-option-card');
+      cards.forEach(card => card.classList.remove('selected'));
+
+      // ลบรูปสลิป
+      removeSlipFile();
+
+      // คืนค่าฟอร์มกลับมาแสดง
+      document.getElementById('formCard').style.display = 'block';
+      document.getElementById('successResultScreen').style.display = 'none';
+
+      // อัปเดตราคารวมเป็น 0
+      updateFeeSummary();
+    }
+
+    // ==========================================
+    // 🔍 การตรวจสอบสถานะการลงทะเบียน (Check Status Logic)
+    // ==========================================
+    function handleStatusCheck() {
+      const studentId = document.getElementById('searchStudentId').value.trim();
+      const nationalId = document.getElementById('searchNationalId').value.trim();
+
+      if (!studentId && !nationalId) {
+        showModal("ข้อมูลไม่ครบถ้วน", "กรุณาระบุเลขประจำตัวนักเรียน (5 หลัก) หรือเลขบัตรประชาชน (13 หลัก) อย่างน้อยหนึ่งช่องทาง", "warning");
+        return;
+      }
+
+      showLoading(true, "กำลังค้นหาข้อมูลประวัติการลงทะเบียน...");
+
+      if (WEB_APP_URL && WEB_APP_URL !== "ใส่ลิงก์เว็บแอป_GOOGLE_APPS_SCRIPT_ตรงนี้") {
+        callGoogleApi("check", {
+          studentId: studentId,
+          nationalId: nationalId
+        })
+          .then(onStatusCheckSuccess)
+          .catch(onStatusCheckFailure);
+      } else {
+        // Local Environment Mockup (ทดสอบการดีไซน์การ์ดสถานะ)
+        setTimeout(() => {
+          onStatusCheckSuccess({
+            success: true,
+            records: [
+              {
+                registrationId: "REG-2026-0088",
+                timestamp: "22/05/2026 10:14 น.",
+                studentId: studentId || "12345",
+                fullNameTh: "เด็กชายสมรัก มีชัย",
+                fullNameEn: "Master Somrak Meechai",
+                grade: "ม.2",
+                classType: "หลักสูตร สสวท./IEP/SEP",
+                nationalId: "1-XXXXX-1234-5",
+                exams: "TESET2026 & TSB2026 (ลงทะเบียนสองรายการ)",
+                totalFee: 740,
+                status: "ยืนยันแล้ว",
+                adminComment: "ได้รับยอดโอนชำระเงินเรียบร้อยแล้ว เลขที่นั่งสอบจะจัดพิมพ์ล่วงหน้า 1 สัปดาห์ก่อนสอบ",
+                slipUrl: "#"
+              },
+              {
+                registrationId: "REG-2026-0105",
+                timestamp: "22/05/2026 12:45 น.",
+                studentId: studentId || "12345",
+                fullNameTh: "เด็กชายสมรัก มีชัย",
+                fullNameEn: "Master Somrak Meechai",
+                grade: "ม.2",
+                classType: "หลักสูตร สสวท./IEP/SEP",
+                nationalId: "1-XXXXX-1234-5",
+                exams: "Thailand Spelling Bee (TSB2026)",
+                totalFee: 360,
+                status: "รอตรวจสอบ",
+                adminComment: "แนบสลิปไม่สมบูรณ์ กำลังส่งตรวจตรวจสอบยอดซ้ำ",
+                slipUrl: "#"
+              }
+            ]
+          });
+        }, 1200);
+      }
+    }
+
+    function onStatusCheckSuccess(response) {
+      showLoading(false);
+      const resultsArea = document.getElementById('checkResultsArea');
+      resultsArea.innerHTML = ""; // ล้างค่าเดิม
+
+      if (!response.success) {
+        resultsArea.innerHTML = `
+          <div class="no-data-box" style="border-color:var(--danger);">
+            <i class="fa-solid fa-triangle-exclamation no-data-icon" style="color:var(--danger);"></i>
+            <h3>เกิดข้อผิดพลาดในการตรวจสอบข้อมูล</h3>
+            <p>${response.message}</p>
+          </div>
+        `;
+        return;
+      }
+
+      const records = response.records;
+      if (!records || records.length === 0) {
+        resultsArea.innerHTML = `
+          <div class="no-data-box">
+            <i class="fa-solid fa-magnifying-glass no-data-icon"></i>
+            <h3>ไม่พบข้อมูลการลงทะเบียน</h3>
+            <p>กรุณาตรวจสอบว่ากรอกข้อมูลเลขประจำตัวนักเรียน 5 หลัก หรือเลขประจำตัวประชาชน 13 หลัก ถูกต้องครบถ้วน หากยังไม่เคยลงทะเบียน ให้กดปุ่มที่แท็บ "ลงทะเบียนสอบ"</p>
+          </div>
+        `;
+        return;
+      }
+
+      // วนลูปสร้างการ์ดผลลัพธ์
+      records.forEach(rec => {
+        let statusClass = "waiting";
+        let statusIcon = '<i class="fa-solid fa-hourglass-half"></i>';
+
+        if (rec.status === "ยืนยันแล้ว") {
+          statusClass = "approved";
+          statusIcon = '<i class="fa-solid fa-circle-check"></i>';
+        } else if (rec.status === "เอกสารไม่ถูกต้อง") {
+          statusClass = "rejected";
+          statusIcon = '<i class="fa-solid fa-circle-xmark"></i>';
+        }
+
+        const cardHtml = `
+          <div class="status-result-card ${statusClass}">
+            <div class="status-card-header">
+              <div class="status-reg-id"><i class="fa-solid fa-file-invoice"></i> เลขการลงทะเบียน: ${rec.registrationId}</div>
+              <span class="status-badge ${statusClass}">
+                ${statusIcon} ${rec.status}
+              </span>
+            </div>
+            
+            <div class="status-details-grid">
+              
+              <div class="status-detail-item">
+                <div class="status-detail-label">ชื่อผู้ลงทะเบียน (TH)</div>
+                <div class="status-detail-value">${rec.fullNameTh}</div>
+              </div>
+              
+              <div class="status-detail-item">
+                <div class="status-detail-label">ระดับชั้น / ห้อง</div>
+                <div class="status-detail-value">${rec.grade}${rec.classType}</div>
+              </div>
+              
+              <div class="status-detail-item">
+                <div class="status-detail-label">ชื่อผู้ลงทะเบียน (EN)</div>
+                <div class="status-detail-value">${rec.fullNameEn}</div>
+              </div>
+              
+              <div class="status-detail-item">
+                <div class="status-detail-label">เลขบัตรประชาชน</div>
+                <div class="status-detail-value">${rec.nationalId}</div>
+              </div>
+              
+              <div class="status-detail-item">
+                <div class="status-detail-label">วิชาที่ลงทะเบียนสอบ</div>
+                <div class="status-detail-value" style="color:var(--primary); font-weight:600;">${rec.exams}</div>
+              </div>
+              
+              <div class="status-detail-item">
+                <div class="status-detail-label">ยอดที่ต้องโอนชำระ</div>
+                <div class="status-detail-value">${rec.totalFee} บาท</div>
+              </div>
+              
+              <div class="status-detail-item">
+                <div class="status-detail-label">เวลาที่ลงทะเบียน</div>
+                <div class="status-detail-value">${rec.timestamp}</div>
+              </div>
+              
+              <div class="status-detail-item">
+                <div class="status-detail-label">เลขประตัวนักเรียน</div>
+                <div class="status-detail-value">${rec.studentId}</div>
+              </div>
+              
+            </div>
+            
+            <!-- กล่องข้อความจากแอดมินหรือสถานะพิเศษ -->
+            <div class="admin-comment-box">
+              <div class="admin-comment-title">
+                <i class="fa-solid fa-comment-dots"></i> หมายเหตุจากแอดมิน:
+              </div>
+              <div>${rec.adminComment}</div>
+              ${rec.slipUrl ? `<div style="margin-top:8px;"><a href="${rec.slipUrl}" target="_blank" style="color:var(--secondary); text-decoration:none; font-size:0.82rem; font-weight:600;"><i class="fa-solid fa-image"></i> คลิกเพื่อเปิดดูสลิปที่แนบไว้</a></div>` : ''}
+            </div>
+          </div>
+        `;
+        resultsArea.insertAdjacentHTML('beforeend', cardHtml);
+      });
+    }
+
+    function onStatusCheckFailure(error) {
+      showLoading(false);
+      showModal("ระบบขัดข้อง", "เกิดข้อผิดพลาดขณะดึงข้อมูลจากเซิร์ฟเวอร์: " + error.toString(), "error");
+    }
+
+    // ==========================================
+    // 🛠️ ฟังก์ชันหน้าจอโหลดสปินเนอร์ (Loading Screen Helper)
+    // ==========================================
+    function showLoading(show, message = "กำลังประมวลผล...") {
+      const overlay = document.getElementById('loadingOverlay');
+      const text = document.getElementById('loadingText');
+
+      if (show) {
+        text.textContent = message;
+        overlay.style.display = 'flex';
+      } else {
+        overlay.style.display = 'none';
+      }
+    }
+
+    // ==========================================
+    // 🔔 ระบบกล่องแจ้งเตือนอัจฉริยะแบบ Modal
+    // ==========================================
+    function showModal(title, message, type = 'error') {
+      const overlay = document.getElementById('customModalOverlay');
+      const titleElem = document.getElementById('customModalTitle');
+      const msgElem = document.getElementById('customModalMessage');
+      const iconWrap = document.getElementById('customModalIcon');
+      const iconInner = document.getElementById('customModalIconInner');
+      const btnElem = document.getElementById('customModalBtn');
+
+      // ลบคลาสก่อนหน้าทั้งหมด
+      iconWrap.className = 'modal-icon ' + type;
+      btnElem.className = 'modal-btn ' + type;
+      iconInner.className = 'fa-solid';
+
+      if (type === 'success') {
+        iconInner.classList.add('fa-circle-check');
+      } else if (type === 'info') {
+        iconInner.classList.add('fa-circle-info');
+      } else if (type === 'warning') {
+        iconInner.classList.add('fa-triangle-exclamation');
+      } else {
+        iconInner.classList.add('fa-circle-exclamation');
+      }
+
+      titleElem.textContent = title;
+      msgElem.innerHTML = message.replace(/\n/g, '<br>');
+
+      overlay.classList.remove('closing');
+      overlay.style.display = 'flex';
+    }
+
+    function closeModal() {
+      const overlay = document.getElementById('customModalOverlay');
+      overlay.classList.add('closing');
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        overlay.classList.remove('closing');
+      }, 200); // รอ animation 200ms
+    }
+  </script>
+</body>
+
+</html>
