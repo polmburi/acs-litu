@@ -1498,6 +1498,161 @@
       box-shadow: 0 0 0 3px rgba(166, 29, 36, 0.15);
     }
 
+    /* ==========================================
+       🔄 ระบบแจ้งเตือนการซิงค์ข้อมูลเบื้องหลัง (Background Sync Toast & HUD CSS)
+       ========================================== */
+    .sync-toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .sync-toast {
+      pointer-events: auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-left: 5px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 14px 20px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 320px;
+      max-width: 450px;
+      animation: toastSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: var(--transition);
+    }
+
+    @keyframes toastSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .sync-toast.success {
+      border-left-color: var(--success);
+    }
+
+    .sync-toast.warning {
+      border-left-color: var(--warning);
+    }
+
+    .sync-toast.danger {
+      border-left-color: var(--danger);
+    }
+
+    .sync-toast.info {
+      border-left-color: var(--accent);
+    }
+
+    .sync-toast .toast-icon {
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .sync-toast.success .toast-icon {
+      color: var(--success);
+    }
+
+    .sync-toast.warning .toast-icon {
+      color: var(--warning);
+    }
+
+    .sync-toast.danger .toast-icon {
+      color: var(--danger);
+    }
+
+    .sync-toast.info .toast-icon {
+      color: var(--accent);
+    }
+
+    .sync-toast .toast-content {
+      flex: 1;
+    }
+
+    .sync-toast .toast-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+
+    .sync-toast .toast-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .sync-toast .toast-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 0 4px;
+      opacity: 0.7;
+      transition: var(--transition);
+    }
+
+    .sync-toast .toast-close:hover {
+      opacity: 1;
+      color: var(--danger);
+    }
+
+    /* Floating Sync Queue HUD */
+    .sync-hud {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 999;
+      background: rgba(15, 32, 66, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #ffffff;
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transform: translateY(100px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .sync-hud.active {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sync-hud .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin-hud 0.8s linear infinite;
+    }
+
+    @keyframes spin-hud {
+      to { transform: rotate(360deg); }
+    }
+
     /* ท้ายตารางและลิขสิทธิ์ */
     footer {
       text-align: center;
@@ -2011,6 +2166,157 @@
     let cachedApplicants = [];
     let currentRotation = 0;
 
+    // ==========================================
+    // 🔄 ระบบจัดการคำขอซิงค์ข้อมูลเบื้องหลัง (Background SyncQueue System)
+    // ==========================================
+    const SyncQueue = {
+      queue: [],
+      isProcessing: false,
+      hudElement: null,
+
+      init() {
+        // สร้าง HUD บันทึกข้อมูลมุมซ้ายล่างแบบไดนามิก
+        const hud = document.createElement('div');
+        hud.id = 'syncHud';
+        hud.className = 'sync-hud';
+        hud.innerHTML = `
+          <div class="spinner"></div>
+          <span>กำลังส่งข้อมูลไป Google Sheet... เหลือ <strong id="syncQueueCount">0</strong> รายการ</span>
+        `;
+        document.body.appendChild(hud);
+        this.hudElement = hud;
+
+        // สร้างที่จัดเก็บ Toast มุมขวาล่างแบบไดนามิก
+        const container = document.createElement('div');
+        container.id = 'syncToastContainer';
+        container.className = 'sync-toast-container';
+        document.body.appendChild(container);
+      },
+
+      showToast(title, desc, type = 'success', duration = 4000) {
+        const container = document.getElementById('syncToastContainer');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `sync-toast ${type}`;
+
+        let iconHtml = '<i class="fa-solid fa-circle-check toast-icon"></i>';
+        if (type === 'danger') {
+          iconHtml = '<i class="fa-solid fa-circle-xmark toast-icon"></i>';
+        } else if (type === 'warning') {
+          iconHtml = '<i class="fa-solid fa-triangle-exclamation toast-icon"></i>';
+        } else if (type === 'info') {
+          iconHtml = '<i class="fa-solid fa-circle-info toast-icon"></i>';
+        }
+
+        toast.innerHTML = `
+          ${iconHtml}
+          <div class="toast-content">
+            <div class="toast-title">${title}</div>
+            <div class="toast-desc">${desc}</div>
+          </div>
+          <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+        `;
+
+        container.appendChild(toast);
+
+        if (duration > 0) {
+          setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(-10px) scale(0.95)';
+            setTimeout(() => toast.remove(), 300);
+          }, duration);
+        }
+      },
+
+      async add(regId, action, data, backupRecord) {
+        this.queue.push({ regId, action, data, backupRecord });
+        this.updateHud();
+        if (!this.isProcessing) {
+          this.processNext();
+        }
+      },
+
+      updateHud() {
+        const count = this.queue.length;
+        const countEl = document.getElementById('syncQueueCount');
+        if (countEl) countEl.textContent = count;
+
+        if (count > 0) {
+          this.hudElement.classList.add('active');
+        } else {
+          this.hudElement.classList.remove('active');
+        }
+      },
+
+      async processNext() {
+        if (this.queue.length === 0) {
+          this.isProcessing = false;
+          this.updateHud();
+          return;
+        }
+
+        this.isProcessing = true;
+        const task = this.queue[0];
+        const passcode = sessionStorage.getItem('acs_admin_passcode');
+
+        try {
+          if (WEB_APP_URL && !WEB_APP_URL.includes("ใส่ลิงก์เว็บแอป")) {
+            const res = await callBackendApi(task.action, {
+              passcode: passcode,
+              registrationId: task.regId,
+              ...task.data
+            });
+
+            if (res.success) {
+              // ดึงออกจากคิวสำเร็จ
+              this.queue.shift();
+              this.updateHud();
+              
+              // ยิง Toast เมื่อเคลียร์สำเร็จ (ถ้ารายการสุดท้ายในคิวหมดแล้ว)
+              if (this.queue.length === 0) {
+                const record = cachedApplicants.find(r => r.registrationId === task.regId);
+                const name = record ? `${record.firstNameTh} ${record.lastNameTh}` : task.regId;
+                this.showToast("☁️ ซิงค์ข้อมูลสำเร็จ", `อัปเดตฐานข้อมูลของ ${name} เรียบร้อยแล้ว`, "success", 3000);
+              }
+            } else {
+              throw new Error(res.message || "เซิร์ฟเวอร์ปฏิเสธการบันทึก");
+            }
+          } else {
+            // โหมดจำลอง Mockup: หน่วงเวลา 600ms เพื่อความสมจริง
+            await new Promise(resolve => setTimeout(resolve, 600));
+            this.queue.shift();
+            this.updateHud();
+            if (this.queue.length === 0) {
+              this.showToast("⚡ โหมดจำลองบันทึกสำเร็จ", `บันทึกข้อมูลรหัส ${task.regId} แล้ว`, "success", 2000);
+            }
+          }
+        } catch (err) {
+          console.error("Background sync error:", err);
+          // นำออกจากคิวและแจ้งความล้มเหลว
+          this.queue.shift();
+          this.updateHud();
+
+          // 🔄 ROLLBACK: ดึงค่าก่อนแก้ของคนนั้นกลับคืนมา
+          const recordIndex = cachedApplicants.findIndex(r => r.registrationId === task.regId);
+          if (recordIndex !== -1 && task.backupRecord) {
+            cachedApplicants[recordIndex] = { ...task.backupRecord };
+            renderDashboardAndTable();
+          }
+
+          this.showToast(
+            "❌ ซิงค์ข้อมูลล้มเหลว!",
+            `ไม่สามารถบันทึกข้อมูลของ ${task.regId} ลง Google Sheet ได้ ระบบได้ย้อนกลับสู่ข้อมูลเดิม: ${err.message}`,
+            "danger",
+            10000
+          );
+        }
+
+        // ประมวลผลรายการถัดไปในคิว
+        this.processNext();
+      }
+    };
+
     const classRoomMap = {
       'ป.1': ['/1', '/2', '/3', '/4', '/5', 'A', 'B', 'C'],
       'ป.2': ['/1', '/2', '/3', '/4', '/5', 'A', 'B', 'C'],
@@ -2027,6 +2333,7 @@
     };
 
     window.addEventListener('DOMContentLoaded', () => {
+      SyncQueue.init();
       const savedPasscode = sessionStorage.getItem('acs_admin_passcode');
       if (savedPasscode) {
         document.getElementById('adminPasscode').value = savedPasscode;
@@ -2676,11 +2983,6 @@
       const record = cachedApplicants.find(r => r.registrationId === regId);
       if (!record) return;
 
-      if (!confirm(`คุณต้องการเปลี่ยนสถานะของ ${record.titleTh}${record.firstNameTh} ${record.lastNameTh} เป็น "${newStatus}" ใช่หรือไม่?`)) {
-        loadAllApplicantsData();
-        return;
-      }
-
       let defaultComment = record.adminComment;
       if (newStatus === "ยืนยันแล้ว") {
         defaultComment = "ได้รับยอดโอนชำระเงินเรียบร้อยแล้ว เลขที่นั่งสอบจะจัดพิมพ์ล่วงหน้า 1 สัปดาห์";
@@ -2688,45 +2990,20 @@
         defaultComment = "สลิปโอนเงินไม่ชัดเจนหรือข้อมูลไม่ถูกต้อง กรุณาอัปโหลดเอกสารใหม่ทางหน้าเว็บระบบลงทะเบียนอีกครั้ง";
       }
 
-      showLoading(true, `กำลังปรับสถานะใบสมัคร ${regId} เป็น ${newStatus}...`);
+      // 🔄 Optimistic Update: สำรองข้อมูลและเปลี่ยนผลลัพธ์บนตาราง/แดชบอร์ดทันที
+      const backupRecord = { ...record };
+      record.status = newStatus;
+      record.adminComment = defaultComment;
 
-      const updatedData = {
-        status: newStatus,
-        adminComment: defaultComment
-      };
+      renderDashboardAndTable();
 
-      const passcode = sessionStorage.getItem('acs_admin_passcode');
-
-      if (WEB_APP_URL && !WEB_APP_URL.includes("ใส่ลิงก์เว็บแอป")) {
-        callBackendApi("adminUpdate", {
-          passcode: passcode,
-          registrationId: regId,
-          updatedData: updatedData
-        })
-          .then(res => {
-            showLoading(false);
-            if (res.success) {
-              record.status = newStatus;
-              record.adminComment = defaultComment;
-              renderDashboardAndTable();
-            } else {
-              alert("เกิดข้อผิดพลาด: " + res.message);
-              loadAllApplicantsData();
-            }
-          })
-          .catch(err => {
-            showLoading(false);
-            alert("เซิร์ฟเวอร์ขัดข้อง: " + err.message);
-            loadAllApplicantsData();
-          });
-      } else {
-        setTimeout(() => {
-          showLoading(false);
-          record.status = newStatus;
-          record.adminComment = defaultComment;
-          renderDashboardAndTable();
-        }, 300);
-      }
+      // ☁️ ส่งคำสั่งอัปเดตลงคิวซิงค์เบื้องหลัง
+      SyncQueue.add(regId, "adminUpdate", {
+        updatedData: {
+          status: newStatus,
+          adminComment: defaultComment
+        }
+      }, backupRecord);
     }
 
     function deleteApplicantRecord(regId) {
@@ -2863,8 +3140,6 @@
         return;
       }
 
-      showLoading(true, "กำลังอัปเดตสถิติและข้อมูลผู้สมัครลงฐานข้อมูล...");
-
       const updatedData = {
         studentId: studentId,
         nationalId: nationalId,
@@ -2885,36 +3160,15 @@
         adminComment: cleanString(document.getElementById('editAdminComment').value)
       };
 
-      const passcode = sessionStorage.getItem('acs_admin_passcode');
+      // 🔄 Optimistic Update: สำรองข้อมูล ปิดหน้าต่างทันที และปรับปรุงสเกลสถิติ/ตาราง
+      const backupRecord = { ...record };
+      Object.assign(record, updatedData);
+      
+      closeEditModal();
+      renderDashboardAndTable();
 
-      if (WEB_APP_URL && !WEB_APP_URL.includes("ใส่ลิงก์เว็บแอป")) {
-        callBackendApi("adminUpdate", {
-          passcode: passcode,
-          registrationId: regId,
-          updatedData: updatedData
-        })
-          .then(res => {
-            showLoading(false);
-            if (res.success) {
-              Object.assign(record, updatedData);
-              closeEditModal();
-              renderDashboardAndTable();
-            } else {
-              alert("เกิดข้อผิดพลาด: " + res.message);
-            }
-          })
-          .catch(err => {
-            showLoading(false);
-            alert("ล้มเหลวในการเชื่อมต่อเครือข่าย: " + err.message);
-          });
-      } else {
-        setTimeout(() => {
-          showLoading(false);
-          Object.assign(record, updatedData);
-          closeEditModal();
-          renderDashboardAndTable();
-        }, 500);
-      }
+      // ☁️ ส่งคำสั่งอัปเดตลงคิวซิงค์เบื้องหลัง
+      SyncQueue.add(regId, "adminUpdate", { updatedData: updatedData }, backupRecord);
     }
 
     function showLoading(show, message = "กำลังประมวลผล...") {
