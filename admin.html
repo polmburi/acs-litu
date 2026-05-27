@@ -2083,7 +2083,7 @@
             <select id="filterExam" class="filter-select" onchange="handleDbFilterChange()">
               <option value="">-- แสดงทั้งหมด --</option>
               <option value="TESET">TESET 2026 เท่านั้น</option>
-              <option value="TSB">TSB 2025 เท่านั้น</option>
+              <option value="TSB">TSB 2026 เท่านั้น</option>
               <option value="BOTH">สมัคร 2 รายการสอบ (TESET & TSB)</option>
             </select>
           </div>
@@ -2276,8 +2276,8 @@
               <label for="editExams">วิชาที่ลงทะเบียนสอบ</label>
               <select id="editExams" class="edit-control" onchange="adjustEditTotalFee()" required>
                 <option value="Thailand English Skills Evaluation Test (TESET2026)">TESET 2026 (380 ฿)</option>
-                <option value="Thailand Spelling Bee (TSB2025)">TSB 2025 (360 ฿)</option>
-                <option value="TESET2026 & TSB2025 (สมัครสองรายการ)">TESET & TSB (740 ฿)</option>
+                <option value="Thailand Spelling Bee (TSB2026)">TSB 2026 (360 ฿)</option>
+                <option value="TESET2026 & TSB2026 (สมัครสองรายการ)">TESET & TSB (740 ฿)</option>
               </select>
             </div>
 
@@ -2601,8 +2601,8 @@
 
       const exams = [
         "Thailand English Skills Evaluation Test (TESET2026)",
-        "Thailand Spelling Bee (TSB2025)",
-        "TESET2026 & TSB2025 (สมัครสองรายการ)"
+        "Thailand Spelling Bee (TSB2026)",
+        "TESET2026 & TSB2026 (สมัครสองรายการ)"
       ];
 
       const statuses = ["ยืนยันแล้ว", "รอตรวจสอบ", "เอกสารไม่ถูกต้อง"];
@@ -3045,7 +3045,7 @@
 
         if (rec.exams.includes("TSB")) {
           examBadgeClass = "tsb";
-          examShortText = "TSB 2025";
+          examShortText = "TSB 2026";
           examLogo = "https://i.postimg.cc/02tgrsrZ/TSB-LOGO.png";
         }
         if (rec.exams.includes("&") || rec.exams.includes("สองรายการ")) {
