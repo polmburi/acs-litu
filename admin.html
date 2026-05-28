@@ -855,11 +855,17 @@
 
     .filter-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 15px;
     }
 
-    @media (max-width: 820px) {
+    @media (max-width: 1024px) {
+      .filter-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
       .filter-grid {
         grid-template-columns: 1fr 1fr;
       }
@@ -2052,7 +2058,7 @@
 
           <div class="filter-field">
             <label for="filterGrade">ระดับชั้นเรียน</label>
-            <select id="filterGrade" class="filter-select" onchange="handleDbFilterChange()">
+            <select id="filterGrade" class="filter-select" onchange="onFilterGradeChange()">
               <option value="">-- แสดงทั้งหมด --</option>
               <option value="ป.1">ประถมศึกษาปีที่ 1 (ป.1)</option>
               <option value="ป.2">ประถมศึกษาปีที่ 2 (ป.2)</option>
@@ -2066,6 +2072,13 @@
               <option value="ม.4">มัธยมศึกษาปีที่ 4 (ม.4)</option>
               <option value="ม.5">มัธยมศึกษาปีที่ 5 (ม.5)</option>
               <option value="ม.6">มัธยมศึกษาปีที่ 6 (ม.6)</option>
+            </select>
+          </div>
+
+          <div class="filter-field">
+            <label for="filterRoom">ห้องเรียน</label>
+            <select id="filterRoom" class="filter-select" onchange="handleDbFilterChange()">
+              <option value="">-- แสดงทั้งหมด --</option>
             </select>
           </div>
 
@@ -2502,6 +2515,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       SyncQueue.init();
+      updateFilterRoomOptions();
       const savedPasscode = sessionStorage.getItem('acs_admin_passcode');
       if (savedPasscode) {
         document.getElementById('adminPasscode').value = savedPasscode;
@@ -2964,6 +2978,7 @@
 
       const searchVal = document.getElementById('dbSearchInput').value.trim().toLowerCase();
       const gradeVal = document.getElementById('filterGrade').value;
+      const roomVal = document.getElementById('filterRoom') ? document.getElementById('filterRoom').value : "";
       const curVal = document.getElementById('filterCurriculum').value;
       const examVal = document.getElementById('filterExam').value;
       const statusVal = document.getElementById('filterStatus').value;
@@ -2991,6 +3006,11 @@
         }
 
         if (gradeVal && rec.grade !== gradeVal) return false;
+
+        if (roomVal) {
+          const expectedClassType = rec.grade + roomVal;
+          if (rec.classType !== expectedClassType) return false;
+        }
 
         if (curVal) {
           const curType = getCurriculumType(rec.classType);
@@ -3367,6 +3387,41 @@
 
     function closeEditModal() {
       document.getElementById('editModalOverlay').classList.remove('active');
+    }
+
+    function updateFilterRoomOptions() {
+      const gradeVal = document.getElementById('filterGrade').value;
+      const roomSelect = document.getElementById('filterRoom');
+      if (!roomSelect) return;
+
+      const currentSelectedRoom = roomSelect.value;
+      roomSelect.innerHTML = '<option value="">-- แสดงทั้งหมด --</option>';
+
+      let rooms = [];
+      if (gradeVal) {
+        rooms = classRoomMap[gradeVal] || [];
+      } else {
+        const allRooms = new Set();
+        Object.values(classRoomMap).forEach(roomList => {
+          roomList.forEach(r => allRooms.add(r));
+        });
+        rooms = Array.from(allRooms).sort();
+      }
+
+      rooms.forEach(room => {
+        const opt = document.createElement('option');
+        opt.value = room;
+        opt.textContent = `ห้อง ${room}`;
+        if (room === currentSelectedRoom) {
+          opt.selected = true;
+        }
+        roomSelect.appendChild(opt);
+      });
+    }
+
+    function onFilterGradeChange() {
+      updateFilterRoomOptions();
+      handleDbFilterChange();
     }
 
     function updateEditClassRoomOptions() {
