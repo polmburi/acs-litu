@@ -2133,8 +2133,8 @@
             ลงทะเบียนสอบทันที <i class="fa-solid fa-arrow-right"></i>
           </button>
 
-          <a href="https://drive.google.com/drive/folders/1HNjgHmAn4L6D5H4tpkiJhtAyR9Y0V30d" target="_blank" rel="noopener"
-            class="btn-submit"
+          <a href="https://drive.google.com/drive/folders/1HNjgHmAn4L6D5H4tpkiJhtAyR9Y0V30d" target="_blank"
+            rel="noopener" class="btn-submit"
             style="margin-top: 10px; background: transparent; color: var(--secondary); border: 2px solid var(--accent); box-shadow: none; text-decoration: none;">
             <i class="fa-solid fa-file-lines"></i> ดูตัวอย่างข้อสอบเก่า
           </a>
@@ -2546,6 +2546,13 @@
 
     <!-- 👣 ส่วนล่างและลิขสิทธิ์ -->
     <footer>
+      <p style="margin-bottom: 8px;">
+        <i class="fa-solid fa-headset" style="color:var(--primary);"></i>
+        <strong>ผู้ประสานงาน:</strong> ม.พลวิชญ์ มูลครบุรี
+        &nbsp;|&nbsp;
+        <i class="fa-brands fa-line" style="color:#06c755;"></i>
+        LINE ID: <strong>gerohayley</strong>
+      </p>
       <p>&copy; 2569 โรงเรียนอัสสัมชัญศรีราชา. สงวนลิขสิทธิ์ทั้งหมด.</p>
       <p style="margin-top:5px; font-size: 0.8rem;">
         ออกแบบและพัฒนาเป็นพิเศษสำหรับระบบ Google App Script ใน Google Sites
@@ -3061,13 +3068,13 @@
 
       // แยก 3 กลุ่มสถานะ
       const groups = {
-        rejected: { label: 'เอกสารไม่ถูกต้อง กรุณาติดต่อผู้ดูแลระบบ', icon: '<i class="fa-solid fa-circle-xmark"></i>', items: [] },
+        rejected: { label: 'เอกสารไม่ถูกต้อง โปรดติดต่อผู้ดูแลระบบ', icon: '<i class="fa-solid fa-circle-xmark"></i>', items: [] },
         waiting: { label: 'กำลังรอตรวจสอบ', icon: '<i class="fa-solid fa-hourglass-half"></i>', items: [] },
         approved: { label: 'ตรวจสอบแล้ว', icon: '<i class="fa-solid fa-circle-check"></i>', items: [] }
       };
 
       sorted.forEach(r => {
-        if (r.status === 'เอกสารไม่ถูกต้อง กรุณาติดต่อผู้ดูแลระบบ') {
+        if (r.status === 'เอกสารไม่ถูกต้อง') {
           groups.rejected.items.push(r);
         } else if (r.status === 'ยืนยันแล้ว') {
           groups.approved.items.push(r);
@@ -3154,7 +3161,7 @@
         { f: 'อนุชา', l: 'สว่างจิต' }, { f: 'พิมพ์ชนก', l: 'หอมกลิ่น' }
       ];
       const rooms = ['/1', '/2', '/3', '/4', '/5'];
-      const statuses = ['รอตรวจสอบ', 'ยืนยันแล้ว', 'เอกสารไม่ถูกต้อง กรุณาติดต่อผู้ดูแลระบบ', 'รอตรวจสอบ', 'ยืนยันแล้ว'];
+      const statuses = ['รอตรวจสอบ', 'ยืนยันแล้ว', 'เอกสารไม่ถูกต้อง', 'รอตรวจสอบ', 'ยืนยันแล้ว'];
       const exams = ['Thailand English Skills Evaluation Test (TESET2026)', 'Thailand Spelling Bee (TSB2026)', 'TESET2026 & TSB2026 (สมัครสองรายการ)'];
 
       return names.map((n, i) => ({
