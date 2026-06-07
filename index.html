@@ -1690,6 +1690,253 @@
     .field-error-text i {
       font-size: 0.72rem;
     }
+
+    /* ==========================================================================
+        📋 หน้า Browse รายชื่อตรวจสอบสถานะ (Browse Status List)
+        ========================================================================== */
+    .browse-filter-bar {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .browse-filter-bar .form-field {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .browse-search-field {
+      flex: 1.5 !important;
+      min-width: 200px;
+    }
+
+    .browse-search-input {
+      font-family: 'Prompt', sans-serif;
+      padding: 10px 14px 10px 38px;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: var(--transition);
+      background-color: #ffffff;
+      color: var(--text-main);
+      width: 100%;
+    }
+
+    .browse-search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(166, 29, 36, 0.15);
+    }
+
+    .browse-search-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .browse-search-wrap {
+      position: relative;
+    }
+
+    .browse-search-wrap i {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    /* Status Group */
+    .status-group {
+      margin-bottom: 20px;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    .status-group-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.92rem;
+      margin-bottom: 8px;
+      user-select: none;
+    }
+
+    .status-group-header.rejected {
+      background: linear-gradient(135deg, #fef2f2, #fee2e2);
+      color: #b91c1c;
+      border: 1px solid rgba(239, 68, 68, 0.15);
+    }
+
+    .status-group-header.waiting {
+      background: linear-gradient(135deg, #fffbeb, #fef3c7);
+      color: #92400e;
+      border: 1px solid rgba(245, 158, 11, 0.15);
+    }
+
+    .status-group-header.approved {
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      color: #065f46;
+      border: 1px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .status-group-count {
+      background: rgba(0, 0, 0, 0.08);
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    /* Browse Table */
+    .browse-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.88rem;
+    }
+
+    .browse-table thead th {
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 2px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .browse-table tbody tr {
+      transition: background 0.15s ease;
+    }
+
+    .browse-table tbody tr:hover {
+      background: rgba(166, 29, 36, 0.02);
+    }
+
+    .browse-table tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+
+    .browse-table .col-id {
+      font-weight: 700;
+      color: var(--secondary);
+      font-family: 'Inter', monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .browse-table .col-exams {
+      font-size: 0.82rem;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .browse-table .col-room {
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .browse-empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .browse-empty-state i {
+      font-size: 2.2rem;
+      color: #cbd5e1;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .browse-stats-bar {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .browse-stat-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 50px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: #f1f5f9;
+      color: var(--text-muted);
+      border: 1px solid #e2e8f0;
+    }
+
+    .browse-stat-chip.total {
+      background: rgba(107, 15, 20, 0.06);
+      color: var(--secondary);
+      border-color: rgba(107, 15, 20, 0.12);
+    }
+
+    /* Responsive browse */
+    @media (max-width: 640px) {
+      .browse-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .browse-filter-bar .form-field {
+        min-width: auto;
+      }
+
+      .browse-table {
+        font-size: 0.82rem;
+      }
+
+      .browse-table thead {
+        display: none;
+      }
+
+      .browse-table tbody tr {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 10px 0;
+        border-bottom: 1px solid #e2e8f0;
+        gap: 2px 8px;
+      }
+
+      .browse-table tbody td {
+        border-bottom: none;
+        padding: 2px 4px;
+      }
+
+      .browse-table tbody td.col-id {
+        font-size: 0.85rem;
+      }
+
+      .browse-table tbody td.col-name {
+        flex: 1;
+      }
+
+      .browse-table tbody td.col-exams {
+        width: 100%;
+        padding-top: 2px;
+      }
+
+      .browse-table tbody td.col-room {
+        margin-left: auto;
+      }
+    }
   </style>
 </head>
 
@@ -2237,42 +2484,55 @@
     <main class="tab-content" id="tab-check">
       <div class="card">
         <h2 class="info-section-title">
-          <i class="fa-solid fa-magnifying-glass"></i> ตรวจสอบข้อมูลการลงทะเบียนสอบ
+          <i class="fa-solid fa-list-ul"></i> ตรวจสอบสถานะการลงทะเบียนสอบ
         </h2>
         <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom: 20px;">
-          กรอกเลขประจำตัวนักเรียน (5 หลัก) หรือเลขบัตรประชาชน (13 หลัก) เพื่อตรวจสอบข้อมูล ลำดับการลงทะเบียน
-          และสถานะยืนยันการรับสลิปเงินโอน
+          เลือกระดับชั้นเพื่อดูรายชื่อผู้สมัครสอบทั้งหมด หรือพิมพ์ค้นหาเลขประจำตัว ชื่อ นามสกุล
         </p>
 
-        <div class="checker-search-box">
-          <div class="checker-grid">
+        <!-- Filter Bar -->
+        <div class="browse-filter-bar">
+          <div class="form-field">
+            <label for="browseGrade">ระดับชั้น</label>
+            <select id="browseGrade" class="input-control" onchange="onBrowseGradeChange()">
+              <option value="" disabled selected>-- เลือกระดับชั้น --</option>
+              <optgroup label="ประถมศึกษา">
+                <option value="ป.1">ป.1</option>
+                <option value="ป.2">ป.2</option>
+                <option value="ป.3">ป.3</option>
+                <option value="ป.4">ป.4</option>
+                <option value="ป.5">ป.5</option>
+                <option value="ป.6">ป.6</option>
+              </optgroup>
+              <optgroup label="มัธยมศึกษาตอนต้น">
+                <option value="ม.1">ม.1</option>
+                <option value="ม.2">ม.2</option>
+                <option value="ม.3">ม.3</option>
+              </optgroup>
+              <optgroup label="มัธยมศึกษาตอนปลาย">
+                <option value="ม.4">ม.4</option>
+                <option value="ม.5">ม.5</option>
+                <option value="ม.6">ม.6</option>
+              </optgroup>
+            </select>
+          </div>
 
-            <div class="checker-field form-field">
-              <label for="searchStudentId">เลขประจำตัวนักเรียน (5 หลัก)</label>
-              <input type="text" id="searchStudentId" class="input-control" placeholder="เช่น 12345" maxlength="5"
-                pattern="\d{5}" oninput="validateNumberInput(this)">
+          <div class="form-field browse-search-field">
+            <label for="browseSearch">ค้นหา</label>
+            <div class="browse-search-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="browseSearch" class="browse-search-input"
+                placeholder="พิมพ์เลขประจำตัว ชื่อ หรือนามสกุล..." oninput="onBrowseSearchInput()">
             </div>
-
-            <div
-              style="align-self: center; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">
-              หรือ</div>
-
-            <div class="checker-field form-field">
-              <label for="searchNationalId">เลขประจำตัวประชาชน (13 หลัก)</label>
-              <input type="text" id="searchNationalId" class="input-control" placeholder="กรอกเฉพาะตัวเลข 13 หลัก"
-                maxlength="13" pattern="\d{13}" oninput="validateNumberInput(this)">
-            </div>
-
-            <button class="btn-check-status" onclick="handleStatusCheck()">
-              <i class="fa-solid fa-search"></i> ค้นหา
-            </button>
-
           </div>
         </div>
 
-        <!-- พื้นที่แสดงผลการค้นหา -->
-        <div id="checkResultsArea">
-          <!-- การ์ดตัวอย่างแสดงสถานะ (เริ่มต้นจะไม่แสดงผลจนกว่าจะกดค้นหา) -->
+        <!-- Results Area -->
+        <div id="browseResultsArea">
+          <div class="browse-empty-state">
+            <i class="fa-solid fa-school"></i>
+            <p>เลือกระดับชั้นเพื่อดูรายชื่อผู้สมัครสอบ</p>
+          </div>
         </div>
 
       </div>
@@ -2690,179 +2950,215 @@
     }
 
     // ==========================================
-    // 🔍 การตรวจสอบสถานะการลงทะเบียน (Check Status Logic)
+    // 📋 ระบบ Browse รายชื่อตรวจสอบสถานะ (Browse Status Logic)
     // ==========================================
-    function handleStatusCheck() {
-      const studentId = document.getElementById('searchStudentId').value.trim();
-      const nationalId = document.getElementById('searchNationalId').value.trim();
 
-      if (!studentId && !nationalId) {
-        showModal("ข้อมูลไม่ครบถ้วน", "กรุณาระบุเลขประจำตัวนักเรียน (5 หลัก) หรือเลขบัตรประชาชน (13 หลัก) อย่างน้อยหนึ่งช่องทาง", "warning");
+    // Cache: เก็บข้อมูลที่ดึงมาแล้ว เพื่อไม่ต้องยิง API ซ้ำ
+    const browseCache = {}; // key = grade, value = { data: [], timestamp: Date.now() }
+    const CACHE_TTL = 5 * 60 * 1000; // 5 นาที (มิลลิวินาที)
+    let currentBrowseData = []; // ข้อมูลปัจจุบันที่แสดงอยู่
+
+    // เมื่อเลือกระดับชั้น
+    function onBrowseGradeChange() {
+      const grade = document.getElementById('browseGrade').value;
+      if (!grade) return;
+
+      // ล้างช่อง search
+      document.getElementById('browseSearch').value = '';
+
+      // ตรวจ cache ก่อน
+      const cached = browseCache[grade];
+      if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
+        console.log('[Cache HIT] ใช้ข้อมูลจาก cache สำหรับ', grade);
+        currentBrowseData = cached.data;
+        renderBrowseList(currentBrowseData);
         return;
       }
 
-      showLoading(true, "กำลังค้นหาข้อมูลประวัติการลงทะเบียน...");
+      // ไม่มี cache → ยิง API
+      console.log('[Cache MISS] ดึงข้อมูลจาก API สำหรับ', grade);
+      showLoading(true, 'กำลังโหลดรายชื่อระดับชั้น ' + grade + '...');
 
       if (WEB_APP_URL && WEB_APP_URL !== "ใส่ลิงก์เว็บแอป_GOOGLE_APPS_SCRIPT_ตรงนี้") {
-        callGoogleApi("check", {
-          studentId: studentId,
-          nationalId: nationalId
-        })
-          .then(onStatusCheckSuccess)
-          .catch(onStatusCheckFailure);
-      } else {
-        // Local Environment Mockup (ทดสอบการดีไซน์การ์ดสถานะ)
-        setTimeout(() => {
-          onStatusCheckSuccess({
-            success: true,
-            records: [
-              {
-                registrationId: "REG-2026-0088",
-                timestamp: "22/05/2026 10:14 น.",
-                studentId: studentId || "12345",
-                fullNameTh: "เด็กชายสมรัก มีชัย",
-                fullNameEn: "Master Somrak Meechai",
-                grade: "ม.2",
-                classType: "หลักสูตร สสวท./IEP/SEP",
-                nationalId: "1-XXXXX-1234-5",
-                exams: "TESET2026 & TSB2026 (ลงทะเบียนสองรายการ)",
-                totalFee: 740,
-                status: "ยืนยันแล้ว",
-                adminComment: "ได้รับยอดโอนชำระเงินเรียบร้อยแล้ว เลขที่นั่งสอบจะจัดพิมพ์ล่วงหน้า 1 สัปดาห์ก่อนสอบ",
-                slipUrl: "#"
-              },
-              {
-                registrationId: "REG-2026-0105",
-                timestamp: "22/05/2026 12:45 น.",
-                studentId: studentId || "12345",
-                fullNameTh: "เด็กชายสมรัก มีชัย",
-                fullNameEn: "Master Somrak Meechai",
-                grade: "ม.2",
-                classType: "หลักสูตร สสวท./IEP/SEP",
-                nationalId: "1-XXXXX-1234-5",
-                exams: "Thailand Spelling Bee (TSB2026)",
-                totalFee: 360,
-                status: "รอตรวจสอบ",
-                adminComment: "แนบสลิปไม่สมบูรณ์ กำลังส่งตรวจตรวจสอบยอดซ้ำ",
-                slipUrl: "#"
-              }
-            ]
+        callGoogleApi("browse", { grade: grade })
+          .then(response => onBrowseSuccess(response, grade))
+          .catch(error => {
+            showLoading(false);
+            showModal("ระบบขัดข้อง", "ไม่สามารถดึงข้อมูลได้: " + error.toString(), "error");
           });
-        }, 1200);
+      } else {
+        // Local Mockup
+        setTimeout(() => {
+          onBrowseSuccess({
+            success: true,
+            records: generateMockBrowseData(grade)
+          }, grade);
+        }, 800);
       }
     }
 
-    function onStatusCheckSuccess(response) {
+    // รับข้อมูลจาก API สำเร็จ
+    function onBrowseSuccess(response, grade) {
       showLoading(false);
-      const resultsArea = document.getElementById('checkResultsArea');
-      resultsArea.innerHTML = ""; // ล้างค่าเดิม
 
       if (!response.success) {
-        resultsArea.innerHTML = `
-            <div class="no-data-box" style="border-color:var(--danger);">
-              <i class="fa-solid fa-triangle-exclamation no-data-icon" style="color:var(--danger);"></i>
-              <h3>เกิดข้อผิดพลาดในการตรวจสอบข้อมูล</h3>
-              <p>${response.message}</p>
-            </div>
-          `;
+        document.getElementById('browseResultsArea').innerHTML = `
+          <div class="browse-empty-state">
+            <i class="fa-solid fa-triangle-exclamation" style="color:var(--danger);"></i>
+            <p>${response.message}</p>
+          </div>`;
         return;
       }
 
-      const records = response.records;
-      if (!records || records.length === 0) {
-        resultsArea.innerHTML = `
-            <div class="no-data-box">
-              <i class="fa-solid fa-magnifying-glass no-data-icon"></i>
-              <h3>ไม่พบข้อมูลการลงทะเบียน</h3>
-              <p>กรุณาตรวจสอบว่ากรอกข้อมูลเลขประจำตัวนักเรียน 5 หลัก หรือเลขประจำตัวประชาชน 13 หลัก ถูกต้องครบถ้วน หากยังไม่เคยลงทะเบียน ให้กดปุ่มที่แท็บ "ลงทะเบียนสอบ"</p>
-            </div>
-          `;
-        return;
-      }
-
-      // วนลูปสร้างการ์ดผลลัพธ์
-      records.forEach(rec => {
-        let statusClass = "waiting";
-        let statusIcon = '<i class="fa-solid fa-hourglass-half"></i>';
-
-        if (rec.status === "ยืนยันแล้ว") {
-          statusClass = "approved";
-          statusIcon = '<i class="fa-solid fa-circle-check"></i>';
-        } else if (rec.status === "เอกสารไม่ถูกต้อง") {
-          statusClass = "rejected";
-          statusIcon = '<i class="fa-solid fa-circle-xmark"></i>';
-        }
-
-        const cardHtml = `
-            <div class="status-result-card ${statusClass}">
-              <div class="status-card-header">
-                <div class="status-reg-id"><i class="fa-solid fa-file-invoice"></i> เลขการลงทะเบียน: ${rec.registrationId}</div>
-                <span class="status-badge ${statusClass}">
-                  ${statusIcon} ${rec.status}
-                </span>
-              </div>
-              
-              <div class="status-details-grid">
-                
-                <div class="status-detail-item">
-                  <div class="status-detail-label">ชื่อผู้ลงทะเบียน (TH)</div>
-                  <div class="status-detail-value">${rec.fullNameTh}</div>
-                </div>
-                
-                <div class="status-detail-item">
-                  <div class="status-detail-label">ระดับชั้น / ห้อง</div>
-                  <div class="status-detail-value">${rec.classType}</div>
-                </div>
-                
-                <div class="status-detail-item">
-                  <div class="status-detail-label">ชื่อผู้ลงทะเบียน (EN)</div>
-                  <div class="status-detail-value">${rec.fullNameEn}</div>
-                </div>
-                
-                <div class="status-detail-item">
-                  <div class="status-detail-label">เลขบัตรประชาชน</div>
-                  <div class="status-detail-value">${rec.nationalId}</div>
-                </div>
-                
-                <div class="status-detail-item">
-                  <div class="status-detail-label">วิชาที่ลงทะเบียนสอบ</div>
-                  <div class="status-detail-value" style="color:var(--primary); font-weight:600;">${rec.exams}</div>
-                </div>
-                
-                <div class="status-detail-item">
-                  <div class="status-detail-label">ยอดที่ต้องโอนชำระ</div>
-                  <div class="status-detail-value">${rec.totalFee} บาท</div>
-                </div>
-                
-                <div class="status-detail-item">
-                  <div class="status-detail-label">เวลาที่ลงทะเบียน</div>
-                  <div class="status-detail-value">${rec.timestamp}</div>
-                </div>
-                
-                <div class="status-detail-item">
-                  <div class="status-detail-label">เลขประตัวนักเรียน</div>
-                  <div class="status-detail-value">${rec.studentId}</div>
-                </div>
-                
-              </div>
-              
-              <!-- กล่องข้อความจากแอดมินหรือสถานะพิเศษ -->
-              <div class="admin-comment-box">
-                <div class="admin-comment-title">
-                  <i class="fa-solid fa-comment-dots"></i> หมายเหตุจากแอดมิน:
-                </div>
-                <div>${rec.adminComment}</div>
-                ${rec.slipUrl ? `<div style="margin-top:8px;"><a href="${rec.slipUrl}" target="_blank" style="color:var(--secondary); text-decoration:none; font-size:0.82rem; font-weight:600;"><i class="fa-solid fa-image"></i> คลิกเพื่อเปิดดูสลิปที่แนบไว้</a></div>` : ''}
-              </div>
-            </div>
-          `;
-        resultsArea.insertAdjacentHTML('beforeend', cardHtml);
-      });
+      // เก็บ cache
+      browseCache[grade] = { data: response.records, timestamp: Date.now() };
+      currentBrowseData = response.records;
+      renderBrowseList(currentBrowseData);
     }
 
-    function onStatusCheckFailure(error) {
-      showLoading(false);
-      showModal("ระบบขัดข้อง", "เกิดข้อผิดพลาดขณะดึงข้อมูลจากเซิร์ฟเวอร์: " + error.toString(), "error");
+    // Search — กรองจาก currentBrowseData
+    function onBrowseSearchInput() {
+      const query = document.getElementById('browseSearch').value.trim().toLowerCase();
+      if (!currentBrowseData.length && !query) return;
+
+      if (!query) {
+        renderBrowseList(currentBrowseData);
+        return;
+      }
+
+      const filtered = currentBrowseData.filter(r => {
+        const searchable = [r.studentId, r.firstNameTh, r.lastNameTh, r.classType, r.exams].join(' ').toLowerCase();
+        return searchable.includes(query);
+      });
+      renderBrowseList(filtered, query);
+    }
+
+    // แสดงผลรายชื่อแยกตามสถานะ
+    function renderBrowseList(records, searchQuery = '') {
+      const area = document.getElementById('browseResultsArea');
+
+      if (!records || records.length === 0) {
+        area.innerHTML = `
+          <div class="browse-empty-state">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <p>${searchQuery ? 'ไม่พบรายชื่อที่ตรงกับ "' + searchQuery + '"' : 'ไม่พบผู้สมัครสอบในระดับชั้นนี้'}</p>
+          </div>`;
+        return;
+      }
+
+      // เรียงตาม ห้อง → เลขประจำตัว
+      const sorted = [...records].sort((a, b) => {
+        const roomCmp = a.classType.localeCompare(b.classType, 'th');
+        if (roomCmp !== 0) return roomCmp;
+        return a.studentId.localeCompare(b.studentId);
+      });
+
+      // แยก 3 กลุ่มสถานะ
+      const groups = {
+        rejected: { label: 'เอกสารไม่ถูกต้อง', icon: '<i class="fa-solid fa-circle-xmark"></i>', items: [] },
+        waiting: { label: 'กำลังรอตรวจสอบ', icon: '<i class="fa-solid fa-hourglass-half"></i>', items: [] },
+        approved: { label: 'ตรวจสอบแล้ว', icon: '<i class="fa-solid fa-circle-check"></i>', items: [] }
+      };
+
+      sorted.forEach(r => {
+        if (r.status === 'เอกสารไม่ถูกต้อง') {
+          groups.rejected.items.push(r);
+        } else if (r.status === 'ยืนยันแล้ว') {
+          groups.approved.items.push(r);
+        } else {
+          groups.waiting.items.push(r);
+        }
+      });
+
+      // สร้าง stats bar
+      let html = `<div class="browse-stats-bar">
+        <span class="browse-stat-chip total"><i class="fa-solid fa-users"></i> ทั้งหมด ${records.length} คน</span>`;
+      if (groups.rejected.items.length > 0) {
+        html += `<span class="browse-stat-chip" style="color:#b91c1c;border-color:rgba(239,68,68,0.2);background:#fef2f2;"><i class="fa-solid fa-circle-xmark"></i> ${groups.rejected.items.length}</span>`;
+      }
+      if (groups.waiting.items.length > 0) {
+        html += `<span class="browse-stat-chip" style="color:#92400e;border-color:rgba(245,158,11,0.2);background:#fffbeb;"><i class="fa-solid fa-hourglass-half"></i> ${groups.waiting.items.length}</span>`;
+      }
+      if (groups.approved.items.length > 0) {
+        html += `<span class="browse-stat-chip" style="color:#065f46;border-color:rgba(16,185,129,0.2);background:#ecfdf5;"><i class="fa-solid fa-circle-check"></i> ${groups.approved.items.length}</span>`;
+      }
+      html += `</div>`;
+
+      // สร้างตารางแต่ละกลุ่ม (เรียง: rejected → waiting → approved)
+      ['rejected', 'waiting', 'approved'].forEach(key => {
+        const group = groups[key];
+        if (group.items.length === 0) return;
+
+        html += `
+          <div class="status-group">
+            <div class="status-group-header ${key}">
+              ${group.icon}
+              <span>${group.label}</span>
+              <span class="status-group-count">${group.items.length}</span>
+            </div>
+            <table class="browse-table">
+              <thead>
+                <tr>
+                  <th>เลขประจำตัว</th>
+                  <th>ชื่อ</th>
+                  <th>นามสกุล</th>
+                  <th>ห้อง</th>
+                  <th>รายการที่สมัคร</th>
+                </tr>
+              </thead>
+              <tbody>`;
+
+        group.items.forEach(r => {
+          // ย่อชื่อรายการสอบให้สั้นลง
+          let examShort = r.exams;
+          if (examShort.includes('TESET') && examShort.includes('TSB')) {
+            examShort = 'TESET + TSB';
+          } else if (examShort.includes('TESET')) {
+            examShort = 'TESET';
+          } else if (examShort.includes('TSB')) {
+            examShort = 'TSB';
+          }
+
+          html += `
+                <tr>
+                  <td class="col-id">${r.studentId}</td>
+                  <td class="col-name">${r.firstNameTh}</td>
+                  <td class="col-name">${r.lastNameTh}</td>
+                  <td class="col-room">${r.classType}</td>
+                  <td class="col-exams">${examShort}</td>
+                </tr>`;
+        });
+
+        html += `
+              </tbody>
+            </table>
+          </div>`;
+      });
+
+      area.innerHTML = html;
+    }
+
+    // Mockup data สำหรับทดสอบ local
+    function generateMockBrowseData(grade) {
+      const names = [
+        { f: 'สมชาย', l: 'ใจดี' }, { f: 'สมหญิง', l: 'รักเรียน' },
+        { f: 'ธนกร', l: 'แสงทอง' }, { f: 'ปิยะ', l: 'มีสุข' },
+        { f: 'กานดา', l: 'ศรีสุข' }, { f: 'วรรณา', l: 'พงษ์พันธ์' },
+        { f: 'ณัฐพล', l: 'วิชัย' }, { f: 'ศิริพร', l: 'ดีมาก' },
+        { f: 'อนุชา', l: 'สว่างจิต' }, { f: 'พิมพ์ชนก', l: 'หอมกลิ่น' }
+      ];
+      const rooms = ['/1', '/2', '/3', '/4', '/5'];
+      const statuses = ['รอตรวจสอบ', 'ยืนยันแล้ว', 'เอกสารไม่ถูกต้อง', 'รอตรวจสอบ', 'ยืนยันแล้ว'];
+      const exams = ['Thailand English Skills Evaluation Test (TESET2026)', 'Thailand Spelling Bee (TSB2026)', 'TESET2026 & TSB2026 (สมัครสองรายการ)'];
+
+      return names.map((n, i) => ({
+        studentId: String(10001 + i),
+        firstNameTh: n.f,
+        lastNameTh: n.l,
+        classType: grade + rooms[i % rooms.length],
+        exams: exams[i % exams.length],
+        status: statuses[i % statuses.length]
+      }));
     }
 
     // ==========================================
