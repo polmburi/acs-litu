@@ -1924,8 +1924,11 @@
       <div class="stat-card revenue">
         <div class="stat-card-info">
           <h3>รายได้รวมทั้งหมด</h3>
-          <div class="stat-value" style="color:var(--accent);" id="statTotalRevenue">0 ฿</div>
-          <div class="stat-desc">ยอดเงินรวมทุกหลักสูตรสะสม</div>
+          <div class="stat-value" style="color:var(--accent); font-size: 1.6rem;" id="statTotalRevenue">0 ฿</div>
+          <div class="stat-desc" id="statRevenueBreakdown" style="font-weight: 500; color: var(--text-main); margin-top: 2px;">
+            TESET: 0 ฿ | TSB: 0 ฿
+          </div>
+          <div class="stat-desc" style="margin-top: 4px;">ยอดเงินรวมทุกหลักสูตรสะสม</div>
         </div>
         <div class="stat-card-icon"><i class="fa-solid fa-wallet"></i></div>
       </div>
@@ -2786,6 +2789,8 @@
       let countPending = 0;
       let countRejected = 0;
       let totalRevenueAll = 0;
+      let totalRevenueTeset = 0;
+      let totalRevenueTsb = 0;
 
       let countNormal = 0;
       let revNormal = 0;
@@ -2813,6 +2818,14 @@
         if (rec.status === "ยืนยันแล้ว") {
           countApproved++;
           totalRevenueAll += fee;
+          if (rec.exams.includes("สองรายการ") || rec.exams.includes("BOTH") || rec.exams.includes("&")) {
+            totalRevenueTeset += 380;
+            totalRevenueTsb += 360;
+          } else if (rec.exams.includes("TESET")) {
+            totalRevenueTeset += 380;
+          } else if (rec.exams.includes("TSB")) {
+            totalRevenueTsb += 360;
+          }
         } else if (rec.status === "เอกสารไม่ถูกต้อง") {
           countRejected++;
         } else {
@@ -2854,6 +2867,7 @@
       document.getElementById('statPending').textContent = countPending;
       document.getElementById('statRejected').textContent = countRejected;
       document.getElementById('statTotalRevenue').textContent = totalRevenueAll.toLocaleString() + " ฿";
+      document.getElementById('statRevenueBreakdown').textContent = `TESET: ${totalRevenueTeset.toLocaleString()} ฿ | TSB: ${totalRevenueTsb.toLocaleString()} ฿`;
 
       document.getElementById('curNormalCount').textContent = countNormal + " คน";
       document.getElementById('curNormalRevenue').textContent = revNormal.toLocaleString() + " บาท";
