@@ -3084,6 +3084,43 @@
         return;
       }
 
+      // ยุบรวมคนสะสมที่สมัครแยกรายวิชา/รอบ
+      const mergedRecords = [];
+      const studentMap = {};
+
+      records.forEach(r => {
+        const key = r.studentId ? r.studentId.trim() : `${r.firstNameTh.trim()}_${r.lastNameTh.trim()}`;
+        if (!studentMap[key]) {
+          studentMap[key] = { ...r };
+          mergedRecords.push(studentMap[key]);
+        } else {
+          const existing = studentMap[key];
+          let examsList = [];
+          [existing.exams, r.exams].forEach(ex => {
+            if (ex.includes('TESET')) examsList.push('TESET');
+            if (ex.includes('TSB')) examsList.push('TSB');
+          });
+          examsList = [...new Set(examsList)];
+          
+          if (examsList.includes('TESET') && examsList.includes('TSB')) {
+            existing.exams = 'TESET2026 & TSB2026 (สมัครสองรายการ)';
+          } else if (examsList.includes('TESET')) {
+            existing.exams = 'Thailand English Skills Evaluation Test (TESET2026)';
+          } else if (examsList.includes('TSB')) {
+            existing.exams = 'Thailand Spelling Bee (TSB2026)';
+          }
+
+          const statuses = [existing.status, r.status];
+          if (statuses.includes('เอกสารไม่ถูกต้อง')) {
+            existing.status = 'เอกสารไม่ถูกต้อง';
+          } else if (statuses.includes('รอตรวจสอบ') || statuses.includes('กำลังรอตรวจสอบ') || statuses.some(s => s !== 'ยืนยันแล้ว')) {
+            existing.status = 'รอตรวจสอบ';
+          } else {
+            existing.status = 'ยืนยันแล้ว';
+          }
+        }
+      });
+
       const getRecordGrade = (r) => {
         if (r.grade) return r.grade;
         const match = r.classType ? r.classType.match(/^(ป\.\d|ม\.\d)/) : null;
@@ -3092,7 +3129,7 @@
 
       // แยกตามระดับชั้น
       const recordsByGrade = {};
-      records.forEach(r => {
+      mergedRecords.forEach(r => {
         const g = getRecordGrade(r);
         if (!recordsByGrade[g]) {
           recordsByGrade[g] = [];
@@ -3111,7 +3148,7 @@
 
       // สร้าง stats bar
       let html = `<div class="browse-stats-bar">
-        <span class="browse-stat-chip total"><i class="fa-solid fa-users"></i> ทั้งหมด ${records.length} คน</span>
+        <span class="browse-stat-chip total"><i class="fa-solid fa-users"></i> ทั้งหมด ${mergedRecords.length} คน</span>
       </div>`;
 
       sortedGrades.forEach(gradeKey => {
