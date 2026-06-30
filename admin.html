@@ -1540,6 +1540,7 @@
         opacity: 0;
         transform: translateY(20px) scale(0.95);
       }
+
       to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -1656,7 +1657,9 @@
     }
 
     @keyframes spin-hud {
-      to { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     /* ==========================================
@@ -1722,6 +1725,7 @@
         opacity: 0;
         transform: translateY(8px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -1806,6 +1810,43 @@
       margin-top: auto;
       border-top: 1px solid rgba(15, 32, 66, 0.05);
     }
+
+    /* 🟢 ปุ่มส่งออก Excel สวยงาม */
+    .table-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .btn-excel-export {
+      background: #107c41; /* สีเขียว Excel พรีเมียม */
+      color: #ffffff !important;
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-family: 'Prompt', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-excel-export:hover {
+      background: #0e6b38;
+      box-shadow: 0 4px 12px rgba(16, 124, 65, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .btn-excel-export:active {
+      transform: translateY(0);
+    }
   </style>
 </head>
 
@@ -1883,281 +1924,285 @@
       <h2 class="stats-section-title"><i class="fa-solid fa-chart-pie"></i> ข้อมูลสถิติเชิงลึก (Registration Statistics
         Dashboard)</h2>
 
-    <div class="stats-row">
+      <div class="stats-row">
 
-      <div class="stat-card all">
-        <div class="stat-card-info">
-          <h3>ผู้สมัครทั้งหมด</h3>
-          <div class="stat-value" id="statTotal">0</div>
-          <div class="stat-desc">จำนวนผู้ลงทะเบียนสอบรวม</div>
-        </div>
-        <div class="stat-card-icon"><i class="fa-solid fa-users"></i></div>
-      </div>
-
-      <div class="stat-card approved">
-        <div class="stat-card-info">
-          <h3>ชำระเงินเรียบร้อยแล้ว</h3>
-          <div class="stat-value" style="color:var(--success);" id="statApproved">0</div>
-          <div class="stat-desc">ตรวจสอบสลิปผ่านเรียบร้อย</div>
-        </div>
-        <div class="stat-card-icon"><i class="fa-solid fa-circle-check"></i></div>
-      </div>
-
-      <div class="stat-card pending">
-        <div class="stat-card-info">
-          <h3>รอตรวจสอบ</h3>
-          <div class="stat-value" style="color:var(--warning);" id="statPending">0</div>
-          <div class="stat-desc">รายการแนบสลิปใหม่รอแอดมิน</div>
-        </div>
-        <div class="stat-card-icon"><i class="fa-solid fa-hourglass-half"></i></div>
-      </div>
-
-      <div class="stat-card rejected">
-        <div class="stat-card-info">
-          <h3>เอกสารไม่ถูกต้อง</h3>
-          <div class="stat-value" style="color:var(--danger);" id="statRejected">0</div>
-          <div class="stat-desc">ใบสมัครไม่ผ่าน/สลิปไม่ตรง</div>
-        </div>
-        <div class="stat-card-icon"><i class="fa-solid fa-circle-xmark"></i></div>
-      </div>
-
-      <div class="stat-card revenue">
-        <div class="stat-card-info">
-          <h3>รายได้รวมทั้งหมด</h3>
-          <div class="stat-value" style="color:var(--accent); font-size: 1.6rem;" id="statTotalRevenue">0 ฿</div>
-          <div class="stat-desc" id="statRevenueBreakdown" style="font-weight: 500; color: var(--text-main); margin-top: 2px;">
-            TESET: 0 ฿ | TSB: 0 ฿
+        <div class="stat-card all">
+          <div class="stat-card-info">
+            <h3>ผู้สมัครทั้งหมด</h3>
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-desc">จำนวนผู้ลงทะเบียนสอบรวม</div>
           </div>
-          <div class="stat-desc" style="margin-top: 4px;">ยอดเงินรวมทุกหลักสูตรสะสม</div>
+          <div class="stat-card-icon"><i class="fa-solid fa-users"></i></div>
         </div>
-        <div class="stat-card-icon"><i class="fa-solid fa-wallet"></i></div>
-      </div>
 
-    </div>
-
-    <!-- 🏛️ การวิเคราะห์เจาะลึกประเภทหลักสูตร (ปกติ VS MLP) -->
-    <div class="curriculum-grid">
-
-      <!-- ฝั่งหลักสูตรปกติ -->
-      <div class="curriculum-card">
-        <div class="curriculum-card-header normal">
-          <h2><i class="fa-solid fa-school"></i> หลักสูตรปกติ (Normal Curriculum)</h2>
-          <span class="cur-badge">ห้อง/ตัวเลข (เช่น /1, /2)</span>
+        <div class="stat-card approved">
+          <div class="stat-card-info">
+            <h3>ชำระเงินเรียบร้อยแล้ว</h3>
+            <div class="stat-value" style="color:var(--success);" id="statApproved">0</div>
+            <div class="stat-desc">ตรวจสอบสลิปผ่านเรียบร้อย</div>
+          </div>
+          <div class="stat-card-icon"><i class="fa-solid fa-circle-check"></i></div>
         </div>
-        <div class="curriculum-card-body">
-          <div class="cur-stat-top-row">
-            <div class="cur-top-item">
-              <span>จำนวนคนสมัคร</span>
-              <strong id="curNormalCount">0 คน</strong>
+
+        <div class="stat-card pending">
+          <div class="stat-card-info">
+            <h3>รอตรวจสอบ</h3>
+            <div class="stat-value" style="color:var(--warning);" id="statPending">0</div>
+            <div class="stat-desc">รายการแนบสลิปใหม่รอแอดมิน</div>
+          </div>
+          <div class="stat-card-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+        </div>
+
+        <div class="stat-card rejected">
+          <div class="stat-card-info">
+            <h3>เอกสารไม่ถูกต้อง</h3>
+            <div class="stat-value" style="color:var(--danger);" id="statRejected">0</div>
+            <div class="stat-desc">ใบสมัครไม่ผ่าน/สลิปไม่ตรง</div>
+          </div>
+          <div class="stat-card-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+        </div>
+
+        <div class="stat-card revenue">
+          <div class="stat-card-info">
+            <h3>รายได้รวมทั้งหมด</h3>
+            <div class="stat-value" style="color:var(--accent); font-size: 1.6rem;" id="statTotalRevenue">0 ฿</div>
+            <div class="stat-desc" id="statRevenueBreakdown"
+              style="font-weight: 500; color: var(--text-main); margin-top: 2px;">
+              TESET: 0 ฿ | TSB: 0 ฿
             </div>
-            <div class="cur-top-item">
-              <span>ยอดเงินสะสมจริง</span>
-              <strong class="highlight" id="curNormalRevenue">0 บาท</strong>
-            </div>
+            <div class="stat-desc" style="margin-top: 4px;">ยอดเงินรวมทุกหลักสูตรสะสม</div>
           </div>
-
-          <div class="exams-breakdown-title">
-            <img src="https://i.postimg.cc/15Wx4Q4H/TESET-LOGO.png" alt="TESET"
-              style="width:16px; height:16px; object-fit:contain;">
-            <span>ยอดจำแนกวิชาสอบ (ปกติ)</span>
-          </div>
-          <div class="exam-bar-container" id="curNormalExamsArea">
-            <!-- แถบจำแนกวิชาสอบอัปเดตไดนามิก -->
-          </div>
+          <div class="stat-card-icon"><i class="fa-solid fa-wallet"></i></div>
         </div>
+
       </div>
 
-      <!-- ฝั่งหลักสูตร MLP /  SEP / พิเศษ -->
-      <div class="curriculum-card">
-        <div class="curriculum-card-header mlp">
-          <h2><i class="fa-solid fa-award"></i> หลักสูตร MLP (MLP Curriculum)</h2>
-          <span class="cur-badge">ห้อง/ตัวอักษร (เช่น A, B, IS, IB)</span>
-        </div>
-        <div class="curriculum-card-body">
-          <div class="cur-stat-top-row">
-            <div class="cur-top-item">
-              <span>จำนวนคนสมัคร</span>
-              <strong id="curMlpCount">0 คน</strong>
+      <!-- 🏛️ การวิเคราะห์เจาะลึกประเภทหลักสูตร (ปกติ VS MLP) -->
+      <div class="curriculum-grid">
+
+        <!-- ฝั่งหลักสูตรปกติ -->
+        <div class="curriculum-card">
+          <div class="curriculum-card-header normal">
+            <h2><i class="fa-solid fa-school"></i> หลักสูตรปกติ (Normal Curriculum)</h2>
+            <span class="cur-badge">ห้อง/ตัวเลข (เช่น /1, /2)</span>
+          </div>
+          <div class="curriculum-card-body">
+            <div class="cur-stat-top-row">
+              <div class="cur-top-item">
+                <span>จำนวนคนสมัคร</span>
+                <strong id="curNormalCount">0 คน</strong>
+              </div>
+              <div class="cur-top-item">
+                <span>ยอดเงินสะสมจริง</span>
+                <strong class="highlight" id="curNormalRevenue">0 บาท</strong>
+              </div>
             </div>
-            <div class="cur-top-item">
-              <span>ยอดเงินสะสมจริง</span>
-              <strong class="highlight" style="color:var(--accent);" id="curMlpRevenue">0 บาท</strong>
+
+            <div class="exams-breakdown-title">
+              <img src="https://i.postimg.cc/15Wx4Q4H/TESET-LOGO.png" alt="TESET"
+                style="width:16px; height:16px; object-fit:contain;">
+              <span>ยอดจำแนกวิชาสอบ (ปกติ)</span>
+            </div>
+            <div class="exam-bar-container" id="curNormalExamsArea">
+              <!-- แถบจำแนกวิชาสอบอัปเดตไดนามิก -->
             </div>
           </div>
+        </div>
 
-          <div class="exams-breakdown-title">
-            <img src="https://i.postimg.cc/02tgrsrZ/TSB-LOGO.png" alt="TSB"
-              style="width:16px; height:16px; object-fit:contain;">
-            <span>ยอดจำแนกวิชาสอบ (MLP)</span>
+        <!-- ฝั่งหลักสูตร MLP /  SEP / พิเศษ -->
+        <div class="curriculum-card">
+          <div class="curriculum-card-header mlp">
+            <h2><i class="fa-solid fa-award"></i> หลักสูตร MLP (MLP Curriculum)</h2>
+            <span class="cur-badge">ห้อง/ตัวอักษร (เช่น A, B, IS, IB)</span>
           </div>
-          <div class="exam-bar-container" id="curMlpExamsArea">
-            <!-- แถบจำแนกวิชาสอบอัปเดตไดนามิก -->
+          <div class="curriculum-card-body">
+            <div class="cur-stat-top-row">
+              <div class="cur-top-item">
+                <span>จำนวนคนสมัคร</span>
+                <strong id="curMlpCount">0 คน</strong>
+              </div>
+              <div class="cur-top-item">
+                <span>ยอดเงินสะสมจริง</span>
+                <strong class="highlight" style="color:var(--accent);" id="curMlpRevenue">0 บาท</strong>
+              </div>
+            </div>
+
+            <div class="exams-breakdown-title">
+              <img src="https://i.postimg.cc/02tgrsrZ/TSB-LOGO.png" alt="TSB"
+                style="width:16px; height:16px; object-fit:contain;">
+              <span>ยอดจำแนกวิชาสอบ (MLP)</span>
+            </div>
+            <div class="exam-bar-container" id="curMlpExamsArea">
+              <!-- แถบจำแนกวิชาสอบอัปเดตไดนามิก -->
+            </div>
           </div>
         </div>
+
       </div>
 
-    </div>
+      <!-- 📈 สถิติจำนวนคนรายระดับชั้น และ ยอดรายห้อง -->
+      <div class="grades-rooms-row">
 
-    <!-- 📈 สถิติจำนวนคนรายระดับชั้น และ ยอดรายห้อง -->
-    <div class="grades-rooms-row">
-
-      <!-- สถิติตามระดับชั้น ป.1 - ม.6 -->
-      <div class="grades-rooms-card">
-        <h3 class="card-title"><i class="fa-solid fa-stairs"></i> สถิติแยกตามระดับชั้น (Grade-Level Breakdown)</h3>
-        <div class="grades-list-container" id="gradeStatsArea">
-          <!-- Progress bar สำหรับระดับชั้น -->
+        <!-- สถิติตามระดับชั้น ป.1 - ม.6 -->
+        <div class="grades-rooms-card">
+          <h3 class="card-title"><i class="fa-solid fa-stairs"></i> สถิติแยกตามระดับชั้น (Grade-Level Breakdown)</h3>
+          <div class="grades-list-container" id="gradeStatsArea">
+            <!-- Progress bar สำหรับระดับชั้น -->
+          </div>
         </div>
-      </div>
 
-      <!-- สถิติตามห้องเรียน -->
-      <div class="grades-rooms-card">
-        <h3 class="card-title"><i class="fa-solid fa-chalkboard-user"></i> ยอดผู้ลงทะเบียนจำแนกรายห้องเรียน (Classroom
-          Statistics)</h3>
-        <div class="rooms-table-container">
-          <table class="rooms-table">
-            <thead>
-              <tr>
-                <th>ระดับชั้น/ห้อง</th>
-                <th>หลักสูตร</th>
-                <th style="text-align: center;">จำนวนผู้สมัคร</th>
-                <th style="text-align: right;">เงินสะสม (อนุมัติ)</th>
-              </tr>
-            </thead>
-            <tbody id="roomsStatsTableArea">
-              <!-- ข้อมูลห้องเรียนจะแทรกเข้ามา -->
-            </tbody>
-          </table>
+        <!-- สถิติตามห้องเรียน -->
+        <div class="grades-rooms-card">
+          <h3 class="card-title"><i class="fa-solid fa-chalkboard-user"></i> ยอดผู้ลงทะเบียนจำแนกรายห้องเรียน (Classroom
+            Statistics)</h3>
+          <div class="rooms-table-container">
+            <table class="rooms-table">
+              <thead>
+                <tr>
+                  <th>ระดับชั้น/ห้อง</th>
+                  <th>หลักสูตร</th>
+                  <th style="text-align: center;">จำนวนผู้สมัคร</th>
+                  <th style="text-align: right;">เงินสะสม (อนุมัติ)</th>
+                </tr>
+              </thead>
+              <tbody id="roomsStatsTableArea">
+                <!-- ข้อมูลห้องเรียนจะแทรกเข้ามา -->
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-    </div>
+      </div>
 
     </div> <!-- ปิด tabStatsContent -->
 
     <!-- 📂 คอนเทนต์แถบที่ 2: จัดการฐานข้อมูลผู้สมัคร -->
     <div id="tabDataContent" class="tab-content" style="display: none;">
 
-    <!-- 📋 ตารางควบคุม ค้นหา กรองข้อมูลฐานข้อมูล -->
-    <div class="management-card">
+      <!-- 📋 ตารางควบคุม ค้นหา กรองข้อมูลฐานข้อมูล -->
+      <div class="management-card">
 
-      <h2 class="stats-section-title"><i class="fa-solid fa-database"></i> จัดการข้อมูลประวัติและแก้ไขผู้สมัคร (CRUD
-        Control Centre)</h2>
+        <h2 class="stats-section-title"><i class="fa-solid fa-database"></i> จัดการข้อมูลประวัติและแก้ไขผู้สมัคร (CRUD
+          Control Centre)</h2>
 
-      <!-- แผงค้นหาและตัวกรองข้อมูลล้อดีไซน์ Checker -->
-      <div class="filter-panel">
+        <!-- แผงค้นหาและตัวกรองข้อมูลล้อดีไซน์ Checker -->
+        <div class="filter-panel">
 
-        <div class="search-row">
-          <div class="search-input-wrap">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="dbSearchInput" class="search-control"
-              placeholder="พิมพ์ชื่อผู้สมัคร, เลขประจำตัวนักเรียน (5 หลัก), เลขบัตรประชาชน หรือ เลขใบสมัคร..."
-              oninput="handleDbFilterChange()">
-            <button class="btn-search-clear" id="dbSearchClear" onclick="clearDbSearch()"><i
-                class="fa-solid fa-circle-xmark"></i></button>
+          <div class="search-row">
+            <div class="search-input-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="dbSearchInput" class="search-control"
+                placeholder="พิมพ์ชื่อผู้สมัคร, เลขประจำตัวนักเรียน (5 หลัก), เลขบัตรประชาชน หรือ เลขใบสมัคร..."
+                oninput="handleDbFilterChange()">
+              <button class="btn-search-clear" id="dbSearchClear" onclick="clearDbSearch()"><i
+                  class="fa-solid fa-circle-xmark"></i></button>
+            </div>
           </div>
+
+          <div class="filter-grid">
+
+            <div class="filter-field">
+              <label for="filterGrade">ระดับชั้นเรียน</label>
+              <select id="filterGrade" class="filter-select" onchange="onFilterGradeChange()">
+                <option value="">-- แสดงทั้งหมด --</option>
+                <option value="ป.1">ประถมศึกษาปีที่ 1 (ป.1)</option>
+                <option value="ป.2">ประถมศึกษาปีที่ 2 (ป.2)</option>
+                <option value="ป.3">ประถมศึกษาปีที่ 3 (ป.3)</option>
+                <option value="ป.4">ประถมศึกษาปีที่ 4 (ป.4)</option>
+                <option value="ป.5">ประถมศึกษาปีที่ 5 (ป.5)</option>
+                <option value="ป.6">ประถมศึกษาปีที่ 6 (ป.6)</option>
+                <option value="ม.1">มัธยมศึกษาปีที่ 1 (ม.1)</option>
+                <option value="ม.2">มัธยมศึกษาปีที่ 2 (ม.2)</option>
+                <option value="ม.3">มัธยมศึกษาปีที่ 3 (ม.3)</option>
+                <option value="ม.4">มัธยมศึกษาปีที่ 4 (ม.4)</option>
+                <option value="ม.5">มัธยมศึกษาปีที่ 5 (ม.5)</option>
+                <option value="ม.6">มัธยมศึกษาปีที่ 6 (ม.6)</option>
+              </select>
+            </div>
+
+            <div class="filter-field">
+              <label for="filterRoom">ห้องเรียน</label>
+              <select id="filterRoom" class="filter-select" onchange="handleDbFilterChange()">
+                <option value="">-- แสดงทั้งหมด --</option>
+              </select>
+            </div>
+
+            <div class="filter-field">
+              <label for="filterCurriculum">หลักสูตรห้องเรียน</label>
+              <select id="filterCurriculum" class="filter-select" onchange="handleDbFilterChange()">
+                <option value="">-- แสดงทั้งหมด --</option>
+                <option value="ปกติ">หลักสูตรปกติ (ห้อง/ตัวเลข)</option>
+                <option value="MLP">หลักสูตร MLP (ห้อง/ตัวอักษร)</option>
+              </select>
+            </div>
+
+            <div class="filter-field">
+              <label for="filterExam">ประเภทวิชาสอบ</label>
+              <select id="filterExam" class="filter-select" onchange="handleDbFilterChange()">
+                <option value="">-- แสดงทั้งหมด --</option>
+                <option value="TESET">TESET 2026 เท่านั้น</option>
+                <option value="TSB">TSB 2026 เท่านั้น</option>
+                <option value="BOTH">สมัคร 2 รายการสอบ (TESET & TSB)</option>
+              </select>
+            </div>
+
+            <div class="filter-field">
+              <label for="filterStatus">สถานะตรวจสอบสลิป</label>
+              <select id="filterStatus" class="filter-select" onchange="handleDbFilterChange()">
+                <option value="">-- แสดงทั้งหมด --</option>
+                <option value="รอตรวจสอบ">รอตรวจสอบ</option>
+                <option value="ยืนยันแล้ว">ยืนยันแล้ว</option>
+                <option value="เอกสารไม่ถูกต้อง">เอกสารไม่ถูกต้อง</option>
+              </select>
+            </div>
+
+          </div>
+
         </div>
 
-        <div class="filter-grid">
-
-          <div class="filter-field">
-            <label for="filterGrade">ระดับชั้นเรียน</label>
-            <select id="filterGrade" class="filter-select" onchange="onFilterGradeChange()">
-              <option value="">-- แสดงทั้งหมด --</option>
-              <option value="ป.1">ประถมศึกษาปีที่ 1 (ป.1)</option>
-              <option value="ป.2">ประถมศึกษาปีที่ 2 (ป.2)</option>
-              <option value="ป.3">ประถมศึกษาปีที่ 3 (ป.3)</option>
-              <option value="ป.4">ประถมศึกษาปีที่ 4 (ป.4)</option>
-              <option value="ป.5">ประถมศึกษาปีที่ 5 (ป.5)</option>
-              <option value="ป.6">ประถมศึกษาปีที่ 6 (ป.6)</option>
-              <option value="ม.1">มัธยมศึกษาปีที่ 1 (ม.1)</option>
-              <option value="ม.2">มัธยมศึกษาปีที่ 2 (ม.2)</option>
-              <option value="ม.3">มัธยมศึกษาปีที่ 3 (ม.3)</option>
-              <option value="ม.4">มัธยมศึกษาปีที่ 4 (ม.4)</option>
-              <option value="ม.5">มัธยมศึกษาปีที่ 5 (ม.5)</option>
-              <option value="ม.6">มัธยมศึกษาปีที่ 6 (ม.6)</option>
-            </select>
+        <!-- รายละเอียดจำนวนแถวผลการค้นหา -->
+        <div class="table-header-row">
+          <div class="records-count-indicator">
+            สืบค้นผู้ลงทะเบียนพบ: <strong id="recordsCountFiltered">0</strong> ราย จากในฐานข้อมูลทั้งหมด <span
+              id="recordsCountTotal">0</span> ราย
           </div>
-
-          <div class="filter-field">
-            <label for="filterRoom">ห้องเรียน</label>
-            <select id="filterRoom" class="filter-select" onchange="handleDbFilterChange()">
-              <option value="">-- แสดงทั้งหมด --</option>
-            </select>
-          </div>
-
-          <div class="filter-field">
-            <label for="filterCurriculum">หลักสูตรห้องเรียน</label>
-            <select id="filterCurriculum" class="filter-select" onchange="handleDbFilterChange()">
-              <option value="">-- แสดงทั้งหมด --</option>
-              <option value="ปกติ">หลักสูตรปกติ (ห้อง/ตัวเลข)</option>
-              <option value="MLP">หลักสูตร MLP (ห้อง/ตัวอักษร)</option>
-            </select>
-          </div>
-
-          <div class="filter-field">
-            <label for="filterExam">ประเภทวิชาสอบ</label>
-            <select id="filterExam" class="filter-select" onchange="handleDbFilterChange()">
-              <option value="">-- แสดงทั้งหมด --</option>
-              <option value="TESET">TESET 2026 เท่านั้น</option>
-              <option value="TSB">TSB 2026 เท่านั้น</option>
-              <option value="BOTH">สมัคร 2 รายการสอบ (TESET & TSB)</option>
-            </select>
-          </div>
-
-          <div class="filter-field">
-            <label for="filterStatus">สถานะตรวจสอบสลิป</label>
-            <select id="filterStatus" class="filter-select" onchange="handleDbFilterChange()">
-              <option value="">-- แสดงทั้งหมด --</option>
-              <option value="รอตรวจสอบ">รอตรวจสอบ</option>
-              <option value="ยืนยันแล้ว">ยืนยันแล้ว</option>
-              <option value="เอกสารไม่ถูกต้อง">เอกสารไม่ถูกต้อง</option>
-            </select>
-          </div>
-
+          <button class="btn-excel-export" onclick="exportToExcel()">
+            <i class="fa-solid fa-file-excel"></i> ส่งออกข้อมูล Excel
+          </button>
         </div>
 
-      </div>
-
-      <!-- รายละเอียดจำนวนแถวผลการค้นหา -->
-      <div class="table-header-row">
-        <div class="records-count-indicator">
-          สืบค้นผู้ลงทะเบียนพบ: <strong id="recordsCountFiltered">0</strong> ราย จากในฐานข้อมูลทั้งหมด <span
-            id="recordsCountTotal">0</span> ราย
+        <!-- ตัวตารางข้อมูลพรีเมียม -->
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th width="80">ลำดับ</th>
+                <th width="110">เลขใบสมัคร</th>
+                <th>ข้อมูลรายบุคคลผู้สมัคร</th>
+                <th>วิชาสอบที่เลือกลงทะเบียน</th>
+                <th width="80" style="text-align: center;">รูปสลิป</th>
+                <th width="180">ยืนยันสถานะ</th>
+                <th>ความเห็นแจ้งผู้สมัคร / หมายเหตุ</th>
+                <th width="110" style="text-align: center;">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="applicantsTableBody">
+              <!-- ข้อมูลจะแทรกเข้ามา -->
+            </tbody>
+          </table>
         </div>
-      </div>
 
-      <!-- ตัวตารางข้อมูลพรีเมียม -->
-      <div class="table-responsive">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th width="80">ลำดับ</th>
-              <th width="110">เลขใบสมัคร</th>
-              <th>ข้อมูลรายบุคคลผู้สมัคร</th>
-              <th>วิชาสอบที่เลือกลงทะเบียน</th>
-              <th width="80" style="text-align: center;">รูปสลิป</th>
-              <th width="180">ยืนยันสถานะ</th>
-              <th>ความเห็นแจ้งผู้สมัคร / หมายเหตุ</th>
-              <th width="110" style="text-align: center;">จัดการ</th>
-            </tr>
-          </thead>
-          <tbody id="applicantsTableBody">
-            <!-- ข้อมูลจะแทรกเข้ามา -->
-          </tbody>
-        </table>
-      </div>
+        <!-- 🔢 แผงสลับหน้าตารางแบ่งหน้า (Pagination Controls) -->
+        <div id="tablePagination" class="pagination-container">
+          <!-- ปุ่มและตัวเลขคุมหน้าเขียนโดย JS -->
+        </div>
 
-      <!-- 🔢 แผงสลับหน้าตารางแบ่งหน้า (Pagination Controls) -->
-      <div id="tablePagination" class="pagination-container">
-        <!-- ปุ่มและตัวเลขคุมหน้าเขียนโดย JS -->
-      </div>
+      </div> <!-- ปิด management-card -->
 
-    </div> <!-- ปิด management-card -->
+    </div> <!-- ปิด tabDataContent -->
 
-  </div> <!-- ปิด tabDataContent -->
-
-  <!-- สัญลักษณ์และท้ายแดชบอร์ด -->
-  <footer>
+    <!-- สัญลักษณ์และท้ายแดชบอร์ด -->
+    <footer>
       <p>&copy; 2569 โรงเรียนอัสสัมชัญศรีราชา - ระบบวิเคราะห์สถิติและความปลอดภัยฐานข้อมูลผู้สมัครสอบ</p>
       <p style="margin-top:5px; font-size: 0.8rem; opacity: 0.6;">ออกแบบและพัฒนาเพื่อความกลมกลืนกับระบบลงทะเบียนสอบหลัก
         (AC Sriracha Design System)</p>
@@ -2456,7 +2501,7 @@
               // ดึงออกจากคิวสำเร็จ
               this.queue.shift();
               this.updateHud();
-              
+
               // ยิง Toast เมื่อเคลียร์สำเร็จ (ถ้ารายการสุดท้ายในคิวหมดแล้ว)
               if (this.queue.length === 0) {
                 const record = cachedApplicants.find(r => r.registrationId === task.regId);
@@ -2590,8 +2635,8 @@
     // 🛠️ โหมดการทดสอบจำลอง (Mockup Engine)
     // ==========================================
     function runMockupSystem(passcode) {
-      if (passcode !== "Hoshijima760") {
-        alert("รหัสผ่านโหมดจำลองไม่ถูกต้อง! กรุณาใช้รหัส: Hoshijima760");
+      if (passcode !== "OHMYGOD6767") {
+        alert("รหัสผ่านโหมดจำลองไม่ถูกต้อง! กรุณาใช้รหัส: OHMYGOD6767");
         return;
       }
 
@@ -3209,7 +3254,7 @@
       const maxButtons = 5;
       let startPage = Math.max(1, currentPage - 2);
       let endPage = Math.min(totalPages, startPage + maxButtons - 1);
-      
+
       if (endPage - startPage < maxButtons - 1) {
         startPage = Math.max(1, endPage - maxButtons + 1);
       }
@@ -3239,7 +3284,7 @@
       currentPage = pageNum;
       // วาดหน้าตารางใหม่โดยไม่รีเซ็ต currentPage
       filterAndRenderApplicantsTable(false);
-      
+
       // เลื่อนจอบางส่วนกลับขึ้นไปบนสุดของแผงจัดการตารางเพื่อความลื่นไหล
       const mCard = document.querySelector('.management-card');
       if (mCard) {
@@ -3513,7 +3558,7 @@
       // 🔄 Optimistic Update: สำรองข้อมูล ปิดหน้าต่างทันที และปรับปรุงสเกลสถิติ/ตาราง
       const backupRecord = { ...record };
       Object.assign(record, updatedData);
-      
+
       closeEditModal();
       renderDashboardAndTable(false);
 
@@ -3531,6 +3576,98 @@
       } else {
         overlay.style.display = 'none';
       }
+    }
+
+    // 🟢 ฟังก์ชันส่งออกข้อมูลผู้สมัครเป็น Excel (CSV UTF-8 BOM)
+    function exportToExcel() {
+      if (!filteredRecords || filteredRecords.length === 0) {
+        alert("ไม่มีข้อมูลสำหรับส่งออก");
+        return;
+      }
+
+      const headers = [
+        "วันเวลาที่สมัคร",
+        "เลขใบสมัคร",
+        "เลขประจำตัวนักเรียน",
+        "คำนำหน้า (TH)",
+        "ชื่อจริง (TH)",
+        "นามสกุล (TH)",
+        "คำนำหน้า (EN)",
+        "ชื่อจริง (EN)",
+        "นามสกุล (EN)",
+        "ระดับชั้น",
+        "ห้องเรียน/หลักสูตร",
+        "เลขประจำตัวประชาชน",
+        "เบอร์โทรศัพท์",
+        "อีเมล",
+        "Line ID",
+        "วิชาที่สอบ",
+        "ยอดชำระเงิน (บาท)",
+        "ลิงก์สลิปโอนเงิน",
+        "สถานะใบสมัคร",
+        "หมายเหตุผู้ดูแลระบบ"
+      ];
+
+      const escapeCSVValue = (val, colIndex) => {
+        if (val === null || val === undefined) return '""';
+        let str = String(val).trim();
+        
+        // 🔒 บล็อกจัดการจัดรูปแบบข้อความสำหรับ Excel เพื่อไม่ให้ตัดเลข 0 หรือแปลงเป็นเลขวิทยาศาสตร์
+        // คอลัมน์เลขประจำตัวนักเรียน (index 2), เลขบัตรประชาชน (index 11), เบอร์โทรศัพท์ (index 12)
+        if (colIndex === 2 || colIndex === 11 || colIndex === 12) {
+          str = `'${str}`;
+        }
+        
+        str = str.replace(/"/g, '""');
+        return `"${str}"`;
+      };
+
+      let csvContent = "\ufeff"; // UTF-8 BOM เพื่อให้ภาษาไทยใน Excel แสดงผลถูกต้อง
+      csvContent += headers.map(h => `"${h}"`).join(",") + "\r\n";
+
+      filteredRecords.forEach(rec => {
+        const row = [
+          rec.timestamp,
+          rec.registrationId,
+          rec.studentId,
+          rec.titleTh,
+          rec.firstNameTh,
+          rec.lastNameTh,
+          rec.titleEn,
+          rec.firstNameEn,
+          rec.lastNameEn,
+          rec.grade,
+          rec.classType,
+          rec.nationalId,
+          rec.phone,
+          rec.email,
+          rec.lineId,
+          rec.exams,
+          rec.totalFee,
+          rec.slipUrl,
+          rec.status,
+          rec.adminComment
+        ];
+        csvContent += row.map((val, idx) => escapeCSVValue(val, idx)).join(",") + "\r\n";
+      });
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      
+      const now = new Date();
+      const dateString = now.getFullYear() + 
+                         String(now.getMonth() + 1).padStart(2, '0') + 
+                         String(now.getDate()).padStart(2, '0') + "_" +
+                         String(now.getHours()).padStart(2, '0') +
+                         String(now.getMinutes()).padStart(2, '0');
+      
+      link.setAttribute("href", url);
+      link.setAttribute("download", `ACS_Exam_Applicants_${dateString}.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   </script>
 </body>
