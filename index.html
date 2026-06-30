@@ -2415,9 +2415,14 @@
           </div>
 
           <!-- Dynamic Fee Summary Card -->
-          <div class="summary-fee-box">
-            <span>สรุปยอดเงินชำระค่าลงทะเบียนสอบทั้งหมด:</span>
-            <strong><span id="summaryPriceText">0</span> บาท</strong>
+          <div class="summary-fee-box" style="flex-direction: column; align-items: stretch; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <span>สรุปยอดเงินชำระค่าลงทะเบียนสอบทั้งหมด:</span>
+              <strong><span id="summaryPriceText">0</span> บาท</strong>
+            </div>
+            <div id="summaryPriceBreakdown" style="font-size: 0.85rem; text-align: right; color: rgba(255, 255, 255, 0.85); width: 100%; display: none;">
+              (แยกเป็น TESET: 380 บาท | TSB: 360 บาท)
+            </div>
           </div>
 
           <div class="privacy-notice">
@@ -2501,7 +2506,7 @@
           <div class="form-field">
             <label for="browseGrade">ระดับชั้น</label>
             <select id="browseGrade" class="input-control" onchange="onBrowseGradeChange()">
-              <option value="" disabled selected>-- เลือกระดับชั้น --</option>
+              <option value="ALL" selected>แสดงทุกระดับชั้น</option>
               <optgroup label="ประถมศึกษา">
                 <option value="ป.1">ป.1</option>
                 <option value="ป.2">ป.2</option>
@@ -2630,6 +2635,8 @@
       } else if (tabName === 'check') {
         buttons[2].classList.add('active');
         document.getElementById('tab-check').classList.add('active');
+        const currentGrade = document.getElementById('browseGrade').value || 'ALL';
+        loadBrowseData(currentGrade);
       }
     }
 
@@ -2663,19 +2670,33 @@
     function updateFeeSummary() {
       const selectedRadio = document.querySelector('input[name="examsRadio"]:checked');
       const priceText = document.getElementById('summaryPriceText');
+      const breakdownText = document.getElementById('summaryPriceBreakdown');
 
       if (!selectedRadio) {
         priceText.textContent = "0";
+        if (breakdownText) breakdownText.style.display = 'none';
         return;
       }
 
       const val = selectedRadio.value;
       if (val === 'TESET') {
         priceText.textContent = "380";
+        if (breakdownText) {
+          breakdownText.textContent = "(แยกเป็น TESET: 380 บาท)";
+          breakdownText.style.display = 'block';
+        }
       } else if (val === 'TSB') {
         priceText.textContent = "360";
+        if (breakdownText) {
+          breakdownText.textContent = "(แยกเป็น TSB: 360 บาท)";
+          breakdownText.style.display = 'block';
+        }
       } else if (val === 'BOTH') {
         priceText.textContent = "740";
+        if (breakdownText) {
+          breakdownText.textContent = "(แยกเป็น TESET: 380 บาท | TSB: 360 บาท)";
+          breakdownText.style.display = 'block';
+        }
       }
     }
 
@@ -2971,9 +2992,7 @@
     const CACHE_TTL = 5 * 60 * 1000; // 5 นาที (มิลลิวินาที)
     let currentBrowseData = []; // ข้อมูลปัจจุบันที่แสดงอยู่
 
-    // เมื่อเลือกระดับชั้น
-    function onBrowseGradeChange() {
-      const grade = document.getElementById('browseGrade').value;
+    function loadBrowseData(grade) {
       if (!grade) return;
 
       // ล้างช่อง search
@@ -2990,7 +3009,7 @@
 
       // ไม่มี cache → ยิง API
       console.log('[Cache MISS] ดึงข้อมูลจาก API สำหรับ', grade);
-      showLoading(true, 'กำลังโหลดรายชื่อระดับชั้น ' + grade + '...');
+      showLoading(true, grade === 'ALL' ? 'กำลังโหลดรายชื่อทุกระดับชั้น...' : 'กำลังโหลดรายชื่อระดับชั้น ' + grade + '...');
 
       if (WEB_APP_URL && WEB_APP_URL !== "ใส่ลิงก์เว็บแอป_GOOGLE_APPS_SCRIPT_ตรงนี้") {
         callGoogleApi("browse", { grade: grade })
@@ -3008,6 +3027,12 @@
           }, grade);
         }, 800);
       }
+    }
+
+    // เมื่อเลือกระดับชั้น
+    function onBrowseGradeChange() {
+      const grade = document.getElementById('browseGrade').value;
+      loadBrowseData(grade);
     }
 
     // รับข้อมูลจาก API สำเร็จ
@@ -3046,7 +3071,7 @@
       renderBrowseList(filtered, query);
     }
 
-    // แสดงผลรายชื่อแยกตามสถานะ
+    // แสดงผลรายชื่อแยกตามสถานะและระดับชั้น
     function renderBrowseList(records, searchQuery = '') {
       const area = document.getElementById('browseResultsArea');
 
@@ -3059,93 +3084,119 @@
         return;
       }
 
-      // เรียงตาม ห้อง → เลขประจำตัว
-      const sorted = [...records].sort((a, b) => {
-        const roomCmp = a.classType.localeCompare(b.classType, 'th');
-        if (roomCmp !== 0) return roomCmp;
-        return a.studentId.localeCompare(b.studentId);
-      });
-
-      // แยก 3 กลุ่มสถานะ
-      const groups = {
-        rejected: { label: 'เอกสารไม่ถูกต้อง โปรดติดต่อผู้ดูแลระบบ', icon: '<i class="fa-solid fa-circle-xmark"></i>', items: [] },
-        waiting: { label: 'กำลังรอตรวจสอบ', icon: '<i class="fa-solid fa-hourglass-half"></i>', items: [] },
-        approved: { label: 'ตรวจสอบแล้ว', icon: '<i class="fa-solid fa-circle-check"></i>', items: [] }
+      const getRecordGrade = (r) => {
+        if (r.grade) return r.grade;
+        const match = r.classType ? r.classType.match(/^(ป\.\d|ม\.\d)/) : null;
+        return match ? match[1] : "อื่นๆ";
       };
 
-      sorted.forEach(r => {
-        if (r.status === 'เอกสารไม่ถูกต้อง') {
-          groups.rejected.items.push(r);
-        } else if (r.status === 'ยืนยันแล้ว') {
-          groups.approved.items.push(r);
-        } else {
-          groups.waiting.items.push(r);
+      // แยกตามระดับชั้น
+      const recordsByGrade = {};
+      records.forEach(r => {
+        const g = getRecordGrade(r);
+        if (!recordsByGrade[g]) {
+          recordsByGrade[g] = [];
         }
+        recordsByGrade[g].push(r);
+      });
+
+      const gradesOrder = ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"];
+      const sortedGrades = Object.keys(recordsByGrade).sort((a, b) => {
+        let idxA = gradesOrder.indexOf(a);
+        let idxB = gradesOrder.indexOf(b);
+        if (idxA === -1) idxA = 999;
+        if (idxB === -1) idxB = 999;
+        return idxA - idxB;
       });
 
       // สร้าง stats bar
       let html = `<div class="browse-stats-bar">
-        <span class="browse-stat-chip total"><i class="fa-solid fa-users"></i> ทั้งหมด ${records.length} คน</span>`;
-      if (groups.rejected.items.length > 0) {
-        html += `<span class="browse-stat-chip" style="color:#b91c1c;border-color:rgba(239,68,68,0.2);background:#fef2f2;"><i class="fa-solid fa-circle-xmark"></i> ${groups.rejected.items.length}</span>`;
-      }
-      if (groups.waiting.items.length > 0) {
-        html += `<span class="browse-stat-chip" style="color:#92400e;border-color:rgba(245,158,11,0.2);background:#fffbeb;"><i class="fa-solid fa-hourglass-half"></i> ${groups.waiting.items.length}</span>`;
-      }
-      if (groups.approved.items.length > 0) {
-        html += `<span class="browse-stat-chip" style="color:#065f46;border-color:rgba(16,185,129,0.2);background:#ecfdf5;"><i class="fa-solid fa-circle-check"></i> ${groups.approved.items.length}</span>`;
-      }
-      html += `</div>`;
+        <span class="browse-stat-chip total"><i class="fa-solid fa-users"></i> ทั้งหมด ${records.length} คน</span>
+      </div>`;
 
-      // สร้างตารางแต่ละกลุ่ม (เรียง: rejected → waiting → approved)
-      ['rejected', 'waiting', 'approved'].forEach(key => {
-        const group = groups[key];
-        if (group.items.length === 0) return;
+      sortedGrades.forEach(gradeKey => {
+        const gradeRecords = recordsByGrade[gradeKey];
 
-        html += `
-          <div class="status-group">
-            <div class="status-group-header ${key}">
-              ${group.icon}
-              <span>${group.label}</span>
-              <span class="status-group-count">${group.items.length}</span>
-            </div>
-            <table class="browse-table">
-              <thead>
-                <tr>
-                  <th>เลขประจำตัว</th>
-                  <th>ชื่อ</th>
-                  <th>นามสกุล</th>
-                  <th>ห้อง</th>
-                  <th>รายการที่สมัคร</th>
-                </tr>
-              </thead>
-              <tbody>`;
+        const sorted = [...gradeRecords].sort((a, b) => {
+          const roomCmp = a.classType.localeCompare(b.classType, 'th');
+          if (roomCmp !== 0) return roomCmp;
+          return a.studentId.localeCompare(b.studentId);
+        });
 
-        group.items.forEach(r => {
-          // ย่อชื่อรายการสอบให้สั้นลง
-          let examShort = r.exams;
-          if (examShort.includes('TESET') && examShort.includes('TSB')) {
-            examShort = 'TESET + TSB';
-          } else if (examShort.includes('TESET')) {
-            examShort = 'TESET';
-          } else if (examShort.includes('TSB')) {
-            examShort = 'TSB';
+        const groups = {
+          rejected: { label: 'เอกสารไม่ถูกต้อง โปรดติดต่อผู้ดูแลระบบ', icon: '<i class="fa-solid fa-circle-xmark"></i>', items: [] },
+          waiting: { label: 'กำลังรอตรวจสอบ', icon: '<i class="fa-solid fa-hourglass-half"></i>', items: [] },
+          approved: { label: 'ตรวจสอบแล้ว', icon: '<i class="fa-solid fa-circle-check"></i>', items: [] }
+        };
+
+        sorted.forEach(r => {
+          if (r.status === 'เอกสารไม่ถูกต้อง') {
+            groups.rejected.items.push(r);
+          } else if (r.status === 'ยืนยันแล้ว') {
+            groups.approved.items.push(r);
+          } else {
+            groups.waiting.items.push(r);
           }
-
-          html += `
-                <tr>
-                  <td class="col-id">${r.studentId}</td>
-                  <td class="col-name">${r.firstNameTh}</td>
-                  <td class="col-name">${r.lastNameTh}</td>
-                  <td class="col-room">${r.classType}</td>
-                  <td class="col-exams">${examShort}</td>
-                </tr>`;
         });
 
         html += `
-              </tbody>
-            </table>
-          </div>`;
+          <div class="grade-group-section" style="margin-top: 25px; border-bottom: 2px solid rgba(15, 32, 66, 0.05); padding-bottom: 15px;">
+            <h3 style="font-size: 1.25rem; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-school"></i> ระดับชั้น ${gradeKey} 
+              <span style="font-size: 0.85rem; font-weight: normal; color: var(--text-muted);">(${gradeRecords.length} คน)</span>
+            </h3>
+        `;
+
+        ['rejected', 'waiting', 'approved'].forEach(key => {
+          const group = groups[key];
+          if (group.items.length === 0) return;
+
+          html += `
+            <div class="status-group" style="margin-bottom: 12px;">
+              <div class="status-group-header ${key}">
+                ${group.icon}
+                <span>${group.label}</span>
+                <span class="status-group-count">${group.items.length}</span>
+              </div>
+              <table class="browse-table">
+                <thead>
+                  <tr>
+                    <th>เลขประจำตัว</th>
+                    <th>ชื่อ</th>
+                    <th>นามสกุล</th>
+                    <th>ห้อง</th>
+                    <th>รายการที่สมัคร</th>
+                  </tr>
+                </thead>
+                <tbody>`;
+
+          group.items.forEach(r => {
+            let examShort = r.exams;
+            if (examShort.includes('TESET') && examShort.includes('TSB')) {
+              examShort = 'TESET + TSB';
+            } else if (examShort.includes('TESET')) {
+              examShort = 'TESET';
+            } else if (examShort.includes('TSB')) {
+              examShort = 'TSB';
+            }
+
+            html += `
+                  <tr>
+                    <td class="col-id">${r.studentId}</td>
+                    <td class="col-name">${r.firstNameTh}</td>
+                    <td class="col-name">${r.lastNameTh}</td>
+                    <td class="col-room">${r.classType}</td>
+                    <td class="col-exams">${examShort}</td>
+                  </tr>`;
+          });
+
+          html += `
+                </tbody>
+              </table>
+            </div>`;
+        });
+
+        html += `</div>`;
       });
 
       area.innerHTML = html;
@@ -3164,14 +3215,25 @@
       const statuses = ['รอตรวจสอบ', 'ยืนยันแล้ว', 'เอกสารไม่ถูกต้อง', 'รอตรวจสอบ', 'ยืนยันแล้ว'];
       const exams = ['Thailand English Skills Evaluation Test (TESET2026)', 'Thailand Spelling Bee (TSB2026)', 'TESET2026 & TSB2026 (สมัครสองรายการ)'];
 
-      return names.map((n, i) => ({
-        studentId: String(10001 + i),
-        firstNameTh: n.f,
-        lastNameTh: n.l,
-        classType: grade + rooms[i % rooms.length],
-        exams: exams[i % exams.length],
-        status: statuses[i % statuses.length]
-      }));
+      const grades = grade === 'ALL'
+        ? ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "ม.1", "ม.2", "ม.3", "ม.4", "ม.5", "ม.6"]
+        : [grade];
+
+      const list = [];
+      grades.forEach((g) => {
+        names.forEach((n, i) => {
+          list.push({
+            studentId: String(10001 + i + g.charCodeAt(0) * 10),
+            firstNameTh: n.f,
+            lastNameTh: n.l,
+            classType: g + rooms[i % rooms.length],
+            grade: g,
+            exams: exams[i % exams.length],
+            status: statuses[i % statuses.length]
+          });
+        });
+      });
+      return list;
     }
 
     // ==========================================
